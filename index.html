@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <meta name="theme-color" content="#F4EFE6" />
 <title>yourboardlab — 오늘을 가볍게 남기는 작은 앱들</title>
-<meta name="description" content="yourboardlab은 매일의 작은 순간을 부담 없이 남기는 모바일 앱을 만드는 1인 스튜디오입니다." />
+<meta name="description" content="yourboardlab은 매일의 작은 순간을 부담 없이 남기는 모바일 앱을 정성껏 만들고 있습니다." />
 <meta property="og:title" content="yourboardlab" />
 <meta property="og:description" content="오늘을 가볍게 남기는 작은 앱들." />
 <meta property="og:type" content="website" />
@@ -32,6 +32,8 @@
     --green: #9DC9A0;  /* 했니 체크 */
     --purple: #C1A9D9; /* 기록 숫자 */
     --peach: #F0BF94;
+    --teal: #89CFC9;   /* 일정 공유 */
+    --coral: #F4A48C;  /* 도시락 */
 
     --radius: 22px;
     --radius-sm: 14px;
@@ -150,6 +152,51 @@
   }
   .nav-cta:hover { background: #000; transform: translateY(-1px); }
   .nav-cta svg { width: 14px; height: 14px; }
+
+  /* ---------- Lang switcher ---------- */
+  .lang-switcher { position: relative; }
+  .lang-btn {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    color: var(--ink-soft);
+    padding: 7px 11px;
+    border-radius: 999px;
+    font-size: 13px; font-weight: 500;
+    cursor: pointer;
+    transition: background .2s, color .2s;
+    font-family: var(--font-sans);
+  }
+  .lang-btn:hover { background: #fff; color: var(--ink); }
+  .lang-btn svg { width: 11px; height: 11px; transition: transform .2s; }
+  .lang-btn.open svg { transform: rotate(180deg); }
+  .lang-dropdown {
+    position: absolute; top: calc(100% + 6px); right: 0;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-md);
+    padding: 6px;
+    min-width: 160px;
+    display: none;
+    z-index: 200;
+  }
+  .lang-dropdown.open { display: block; }
+  .lang-dropdown button {
+    display: block; width: 100%;
+    background: none; border: none;
+    text-align: left;
+    padding: 7px 10px;
+    border-radius: 8px;
+    font-size: 13px; font-weight: 500;
+    color: var(--ink-soft);
+    cursor: pointer;
+    font-family: var(--font-sans);
+    transition: background .15s, color .15s;
+  }
+  .lang-dropdown button:hover { background: rgba(31,27,22,0.05); color: var(--ink); }
+  .lang-dropdown button.active { color: var(--ink); font-weight: 700; }
+
   @media (max-width: 520px) {
     .nav-link.hide-sm { display: none; }
   }
@@ -404,6 +451,8 @@
   .chip.green  .swatch { background: var(--green); }
   .chip.purple .swatch { background: var(--purple); }
   .chip.peach  .swatch { background: var(--peach); }
+  .chip.teal   .swatch { background: var(--teal); }
+  .chip.coral  .swatch { background: var(--coral); }
 
   .app-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: auto; }
   .app-actions .btn { font-size: 14px; padding: 10px 16px; }
@@ -591,8 +640,26 @@
         <span>yourboardlab</span>
       </a>
       <div class="nav-links">
-        <a class="nav-link hide-sm" href="#apps">Apps</a>
-        <a class="nav-link hide-sm" href="#story">Story</a>
+        <a class="nav-link hide-sm" href="#apps" data-i18n="nav-apps">Apps</a>
+        <a class="nav-link hide-sm" href="#story" data-i18n="nav-story">Story</a>
+        <div class="lang-switcher">
+          <button class="lang-btn" id="langBtn" aria-label="Language">
+            <span id="langCurrent">한국어</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+          <div class="lang-dropdown" id="langDropdown">
+            <button data-lang="ko" class="active">한국어</button>
+            <button data-lang="en">English</button>
+            <button data-lang="zh">中文</button>
+            <button data-lang="ja">日本語</button>
+            <button data-lang="tl">Tagalog</button>
+            <button data-lang="vi">Tiếng Việt</button>
+            <button data-lang="ru">Русский</button>
+            <button data-lang="es">Español</button>
+            <button data-lang="de">Deutsch</button>
+            <button data-lang="fr">Français</button>
+          </div>
+        </div>
         <a class="nav-cta" href="https://github.com/yourboardlab" target="_blank" rel="noopener">
           <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.09 3.29 9.4 7.86 10.92.58.11.79-.25.79-.55v-2c-3.2.7-3.88-1.37-3.88-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.04-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.76 2.69 1.25 3.35.96.1-.75.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.28 1.18-3.09-.12-.29-.51-1.46.11-3.04 0 0 .97-.31 3.18 1.18.92-.26 1.91-.39 2.89-.39s1.97.13 2.89.39c2.2-1.49 3.17-1.18 3.17-1.18.62 1.58.23 2.75.11 3.04.74.81 1.18 1.83 1.18 3.09 0 4.43-2.69 5.4-5.26 5.69.41.35.78 1.05.78 2.12v3.14c0 .31.21.66.79.55C20.21 21.4 23.5 17.09 23.5 12 23.5 5.65 18.35.5 12 .5z"/></svg>
           GitHub
@@ -606,35 +673,36 @@
     <!-- ============ HERO ============ -->
     <section class="hero">
       <div class="wrap">
-        <span class="eyebrow reveal"><span class="dot"></span> Building small apps · 2026</span>
+        <span class="eyebrow reveal"><span class="dot"></span><span data-i18n="eyebrow"> Building small apps · 2026</span></span>
 
-        <h1 class="headline reveal">
+        <h1 class="headline reveal" data-i18n-html="headline">
           <span class="ko">오늘을 가볍게 남기는</span><br/>
           <em>작은 앱</em>을 만듭니다.
         </h1>
 
-        <p class="lede reveal">
-          yourboardlab은 한 사람이 운영하는 작은 스튜디오예요.<br/>
-          매일의 작은 순간 — 메모, 가계부, 체크, 기분 — 을<br/>
-          <span class="accent-underline">부담 없이</span> 남기는 모바일 앱을 천천히 만들고 있어요.
+        <p class="lede reveal" data-i18n-html="lede">
+          yourboardlab에서 정성껏 만드는 작은 앱들이에요.<br/>
+          매일의 순간 — 메모, 가계부, 체크, 기분, 일정 — 을
+          <span class="accent-underline">부담 없이</span> 남기고,<br/>
+          원할 때는 도시락처럼 담아 함께 나눌 수 있는 앱을 만들어요.
         </p>
 
         <div class="hero-cta reveal">
           <a class="btn btn-primary" href="#apps">
-            앱 살펴보기
+            <span data-i18n="btn-apps">앱 살펴보기</span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 5l7 7-7 7"/></svg>
           </a>
           <a class="btn btn-ghost" href="https://github.com/yourboardlab" target="_blank" rel="noopener">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
-            연락하기
+            <span data-i18n="btn-contact">연락하기</span>
           </a>
         </div>
 
         <div class="hero-meta reveal">
-          <div><b>1</b> 출시된 앱</div>
-          <div><b>10</b> 지원 언어</div>
-          <div><b>0</b> 광고 · 추적</div>
-          <div>모든 데이터는 <b>내 휴대폰 안에만</b></div>
+          <div><b>1</b> <span data-i18n="meta-apps">출시된 앱</span></div>
+          <div><b>10</b> <span data-i18n="meta-langs">지원 언어</span></div>
+          <div><b>0</b> <span data-i18n="meta-ads">광고 · 추적</span></div>
+          <div data-i18n-html="meta-data">기록은 <b>기기 안에만</b> · 공유는 선택으로</div>
         </div>
       </div>
     </section>
@@ -644,10 +712,10 @@
       <div class="wrap">
         <div class="sec-head reveal">
           <div>
-            <div class="sec-label">— Apps</div>
-            <h2 class="sec-title">지금 만나볼 수 있는 앱</h2>
+            <div class="sec-label" data-i18n="sec-apps-label">— Apps</div>
+            <h2 class="sec-title" data-i18n="sec-apps-title">지금 만나볼 수 있는 앱</h2>
           </div>
-          <p class="sec-sub">각 앱은 GitHub의 README로 자세한 소개를 이어 봅니다.</p>
+          <p class="sec-sub" data-i18n="sec-apps-sub">각 앱은 GitHub의 README로 자세한 소개를 이어 봅니다.</p>
         </div>
 
         <div class="app-list">
@@ -669,39 +737,42 @@
                   <div class="app-icon">📅</div>
                   <div>
                     <h3 class="app-title">Lifelong Calendar</h3>
-                    <div class="app-subtitle">오늘을 기록하는 작은 달력</div>
+                    <div class="app-subtitle" data-i18n="app-subtitle">오늘을 기록하는 작은 달력</div>
                   </div>
                 </div>
-                <p class="app-desc">
+                <p class="app-desc" data-i18n-html="app-desc">
                   한 번에 한 문장, 한 줄짜리 지출, 체크박스 하나, 점수 하나 — 그리고 오늘의 기분.
                   이만큼만 매일 남기면, 한 달이 모일 즈음 달력 안에서 자기 자신이 보입니다.
+                  <em>도시락</em>으로 하루를 담아 소중한 사람과 일정을 나눌 수도 있어요.
                 </p>
                 <div class="chips">
-                  <span class="chip pink"><i class="swatch"></i>오늘은</span>
-                  <span class="chip blue"><i class="swatch"></i>썼니</span>
-                  <span class="chip green"><i class="swatch"></i>했니</span>
-                  <span class="chip purple"><i class="swatch"></i>기록</span>
-                  <span class="chip peach"><i class="swatch"></i>기분</span>
+                  <span class="chip pink"><i class="swatch"></i><span data-i18n="chip-today">오늘은</span></span>
+                  <span class="chip blue"><i class="swatch"></i><span data-i18n="chip-spent">썼니</span></span>
+                  <span class="chip green"><i class="swatch"></i><span data-i18n="chip-done">했니</span></span>
+                  <span class="chip purple"><i class="swatch"></i><span data-i18n="chip-stats">기록</span></span>
+                  <span class="chip peach"><i class="swatch"></i><span data-i18n="chip-mood">기분</span></span>
+                  <span class="chip teal"><i class="swatch"></i><span data-i18n="chip-share">일정 공유</span></span>
+                  <span class="chip coral"><i class="swatch"></i><span data-i18n="chip-bento">도시락</span></span>
                 </div>
                 <div class="app-actions">
                   <a class="btn btn-primary" href="https://youtu.be/QZBNNUx_LD0" target="_blank" rel="noopener">
                     <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.7 15.5V8.5L15.8 12l-6.1 3.5z"/></svg>
-                    소개 영상
+                    <span data-i18n="btn-video">소개 영상</span>
                   </a>
                   <a class="btn btn-ghost" href="https://github.com/yourboardlab/calendar_readme" target="_blank" rel="noopener">
                     <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.09 3.29 9.4 7.86 10.92.58.11.79-.25.79-.55v-2c-3.2.7-3.88-1.37-3.88-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.04-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.76 2.69 1.25 3.35.96.1-.75.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.28 1.18-3.09-.12-.29-.51-1.46.11-3.04 0 0 .97-.31 3.18 1.18.92-.26 1.91-.39 2.89-.39s1.97.13 2.89.39c2.2-1.49 3.17-1.18 3.17-1.18.62 1.58.23 2.75.11 3.04.74.81 1.18 1.83 1.18 3.09 0 4.43-2.69 5.4-5.26 5.69.41.35.78 1.05.78 2.12v3.14c0 .31.21.66.79.55C20.21 21.4 23.5 17.09 23.5 12 23.5 5.65 18.35.5 12 .5z"/></svg>
-                    README 보기
+                    <span data-i18n="btn-readme">README 보기</span>
                   </a>
                   <a class="btn btn-ghost" href="https://github.com/yourboardlab/calendar_readme#%ED%95%B5%EC%8B%AC-%EA%B8%B0%EB%8A%A5" target="_blank" rel="noopener">
-                    기능 자세히
+                    <span data-i18n="btn-features">기능 자세히</span>
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg>
                   </a>
                 </div>
                 <div class="app-tags">
-                  <span>· <b>Android</b> Beta</span>
-                  <span>· <b>오프라인</b> 동작</span>
-                  <span>· <b>10개 언어</b></span>
-                  <span>· <b>8가지</b> 파스텔 테마</span>
+                  <span>· <b>Android</b></span>
+                  <span>· <b><span data-i18n="tag-offline">오프라인</span></b><span data-i18n="tag-offline-suffix"> + 선택 공유</span></span>
+                  <span>· <b data-i18n="tag-langs">10개 언어</b></span>
+                  <span>· <b data-i18n="tag-themes">8가지 파스텔 테마</b></span>
                 </div>
               </div>
             </div>
@@ -710,9 +781,9 @@
           <!-- Coming soon placeholder -->
           <article class="app-card soon reveal">
             <div class="soon-body">
-              <div class="soon-icon">Next · 준비중</div>
-              <h3>다음 앱을 만들고 있어요</h3>
-              <p>또 다른 작은 도구가 준비되면 이 자리에서 가장 먼저 소개할게요.</p>
+              <div class="soon-icon" data-i18n="soon-badge">코일 · 준비중</div>
+              <h3 data-i18n="soon-title">코일 시스템이 다가옵니다</h3>
+              <p data-i18n-html="soon-desc">앱 내 재화 <strong>코일</strong>을 현금으로 구매해 특별한 기능을 이용할 수 있는 시스템을 준비하고 있어요. 곧 소개됩니다.</p>
             </div>
           </article>
 
@@ -725,27 +796,27 @@
       <div class="wrap">
         <div class="sec-head reveal">
           <div>
-            <div class="sec-label">— Story</div>
-            <h2 class="sec-title">작게, 천천히, <em style="font-style:italic; color:var(--ink-soft); font-variation-settings:'opsz' 144,'SOFT' 100;">따뜻하게</em></h2>
+            <div class="sec-label" data-i18n="sec-story-label">— Story</div>
+            <h2 class="sec-title" data-i18n-html="sec-story-title">작게, 천천히, <em style="font-style:italic; color:var(--ink-soft); font-variation-settings:'opsz' 144,'SOFT' 100;">따뜻하게</em></h2>
           </div>
-          <p class="sec-sub">앱을 만들 때 지키려고 하는 세 가지 약속입니다.</p>
+          <p class="sec-sub" data-i18n="sec-story-sub">앱을 만들 때 지키려고 하는 세 가지 약속입니다.</p>
         </div>
 
         <div class="principles">
           <div class="principle reveal">
             <div class="num">01</div>
-            <h4>매일 켜기에 부담 없게</h4>
-            <p>너무 화려하지도, 너무 단순하지도 않게. 30초면 끝나는 입력, 한 달이 모이면 의미가 보이는 기록을 지향해요.</p>
+            <h4 data-i18n="p1-title">매일 켜기에 부담 없게</h4>
+            <p data-i18n="p1-body">너무 화려하지도, 너무 단순하지도 않게. 30초면 끝나는 입력, 한 달이 모이면 의미가 보이는 기록을 지향해요.</p>
           </div>
           <div class="principle reveal">
             <div class="num">02</div>
-            <h4>데이터는 내 안에만</h4>
-            <p>로그인도, 클라우드도, 광고 추적도 없습니다. 기록은 휴대폰 안에서만 살아가고, ZIP 한 파일로 옮길 수 있어요.</p>
+            <h4 data-i18n="p2-title">데이터는 내 안에, 공유는 내 선택으로</h4>
+            <p data-i18n="p2-body">광고 추적도, 강제 클라우드 저장도 없습니다. 기록은 기기 안에서만 살아가고, ZIP 한 파일로 옮길 수 있어요. 일정 공유는 원할 때만, 선택적으로.</p>
           </div>
           <div class="principle reveal">
             <div class="num">03</div>
-            <h4>요청은 듣고, 천천히</h4>
-            <p>기능 추가는 충분한 의견 수렴 뒤에. 아이디어를 모아 한 번에 정성껏 다듬는 쪽을 택합니다.</p>
+            <h4 data-i18n="p3-title">요청은 듣고, 천천히</h4>
+            <p data-i18n="p3-body">기능 추가는 충분한 의견 수렴 뒤에. 아이디어를 모아 한 번에 정성껏 다듬는 쪽을 택합니다.</p>
           </div>
         </div>
       </div>
@@ -758,20 +829,21 @@
       <div class="foot-grid">
         <div class="foot-brand">
           <h3>yourboardlab</h3>
-          <p>오늘을 가볍게 남기는 작은 앱들. 1인 스튜디오에서 한 줄 한 줄 만들고 있습니다.</p>
+          <p data-i18n="foot-desc">오늘을 가볍게 남기는 작은 앱들. yourboardlab에서 정성껏 만들고 있습니다.</p>
         </div>
         <div class="foot-col">
-          <h5>Apps</h5>
+          <h5 data-i18n="foot-apps">Apps</h5>
           <a href="https://github.com/yourboardlab/calendar_readme" target="_blank" rel="noopener">Lifelong Calendar</a>
-          <a href="#apps">전체 보기</a>
+          <a href="#apps" data-i18n="foot-apps-all">전체 보기</a>
         </div>
         <div class="foot-col">
           <h5>Video</h5>
-          <a href="https://youtu.be/QZBNNUx_LD0" target="_blank" rel="noopener">요미 달력 소개 (YouTube)</a>
+          <a href="https://youtu.be/QZBNNUx_LD0" target="_blank" rel="noopener" data-i18n="foot-video">요미 달력 소개 (YouTube)</a>
         </div>
         <div class="foot-col">
-          <h5>Contact</h5>
+          <h5 data-i18n="foot-contact">Contact</h5>
           <a href="https://github.com/yourboardlab" target="_blank" rel="noopener">github.com/yourboardlab</a>
+          <a href="mailto:yourboardlab@gmail.com">yourboardlab@gmail.com</a>
         </div>
       </div>
       <div class="copyright">
@@ -782,7 +854,368 @@
   </footer>
 
 <script>
-  // Scroll reveal — IntersectionObserver
+  // ── Translations ──────────────────────────────────────────────────────────
+  const T = {
+    ko: {
+      'nav-apps': 'Apps', 'nav-story': 'Story',
+      'eyebrow': ' Building small apps · 2026',
+      'headline': '<span class="ko">오늘을 가볍게 남기는</span><br/><em>작은 앱</em>을 만듭니다.',
+      'lede': 'yourboardlab에서 정성껏 만드는 작은 앱들이에요.<br/>매일의 순간 — 메모, 가계부, 체크, 기분, 일정 — 을 <span class="accent-underline">부담 없이</span> 남기고,<br/>원할 때는 도시락처럼 담아 함께 나눌 수 있는 앱을 만들어요.',
+      'btn-apps': '앱 살펴보기', 'btn-contact': '연락하기',
+      'meta-apps': '출시된 앱', 'meta-langs': '지원 언어', 'meta-ads': '광고 · 추적',
+      'meta-data': '기록은 <b>기기 안에만</b> · 공유는 선택으로',
+      'sec-apps-label': '— Apps', 'sec-apps-title': '지금 만나볼 수 있는 앱',
+      'sec-apps-sub': '각 앱은 GitHub의 README로 자세한 소개를 이어 봅니다.',
+      'app-subtitle': '오늘을 기록하는 작은 달력',
+      'app-desc': '한 번에 한 문장, 한 줄짜리 지출, 체크박스 하나, 점수 하나 — 그리고 오늘의 기분. 이만큼만 매일 남기면, 한 달이 모일 즈음 달력 안에서 자기 자신이 보입니다. <em>도시락</em>으로 하루를 담아 소중한 사람과 일정을 나눌 수도 있어요.',
+      'chip-today': '오늘은', 'chip-spent': '썼니', 'chip-done': '했니',
+      'chip-stats': '기록', 'chip-mood': '기분', 'chip-share': '일정 공유', 'chip-bento': '도시락',
+      'btn-video': '소개 영상', 'btn-readme': 'README 보기', 'btn-features': '기능 자세히',
+      'tag-offline': '오프라인', 'tag-offline-suffix': ' + 선택 공유',
+      'tag-langs': '10개 언어', 'tag-themes': '8가지 파스텔 테마',
+      'soon-badge': '코일 · 준비중', 'soon-title': '코일 시스템이 다가옵니다',
+      'soon-desc': '앱 내 재화 <strong>코일</strong>을 현금으로 구매해 특별한 기능을 이용할 수 있는 시스템을 준비하고 있어요. 곧 소개됩니다.',
+      'sec-story-label': '— Story',
+      'sec-story-title': '작게, 천천히, <em style="font-style:italic;color:var(--ink-soft);font-variation-settings:\'opsz\' 144,\'SOFT\' 100;">따뜻하게</em>',
+      'sec-story-sub': '앱을 만들 때 지키려고 하는 세 가지 약속입니다.',
+      'p1-title': '매일 켜기에 부담 없게',
+      'p1-body': '너무 화려하지도, 너무 단순하지도 않게. 30초면 끝나는 입력, 한 달이 모이면 의미가 보이는 기록을 지향해요.',
+      'p2-title': '데이터는 내 안에, 공유는 내 선택으로',
+      'p2-body': '광고 추적도, 강제 클라우드 저장도 없습니다. 기록은 기기 안에서만 살아가고, ZIP 한 파일로 옮길 수 있어요. 일정 공유는 원할 때만, 선택적으로.',
+      'p3-title': '요청은 듣고, 천천히',
+      'p3-body': '기능 추가는 충분한 의견 수렴 뒤에. 아이디어를 모아 한 번에 정성껏 다듬는 쪽을 택합니다.',
+      'foot-desc': '오늘을 가볍게 남기는 작은 앱들. yourboardlab에서 정성껏 만들고 있습니다.',
+      'foot-apps': 'Apps', 'foot-apps-all': '전체 보기', 'foot-video': '요미 달력 소개 (YouTube)', 'foot-contact': 'Contact',
+    },
+    en: {
+      'nav-apps': 'Apps', 'nav-story': 'Story',
+      'eyebrow': ' Building small apps · 2026',
+      'headline': 'Small apps for<br/><em>capturing</em> today.',
+      'lede': 'yourboardlab makes small apps where every daily moment — memos, expenses, checklists, moods, schedules — can be recorded <span class="accent-underline">effortlessly</span>,<br/>and shared like a bento when you feel like it.',
+      'btn-apps': 'Explore Apps', 'btn-contact': 'Contact',
+      'meta-apps': 'app launched', 'meta-langs': 'languages', 'meta-ads': 'ads · tracking',
+      'meta-data': 'records <b>on device</b> · sharing is optional',
+      'sec-apps-label': '— Apps', 'sec-apps-title': 'Apps available now',
+      'sec-apps-sub': 'Each app has a detailed README on GitHub.',
+      'app-subtitle': 'A tiny calendar for daily records',
+      'app-desc': 'One sentence, one expense, one checkbox, one score — and today\'s mood. Keep this up every day, and a month later you\'ll see yourself in the calendar. <em>Bento</em> lets you pack your day and share schedules with someone close.',
+      'chip-today': 'Today', 'chip-spent': 'Spent?', 'chip-done': 'Done?',
+      'chip-stats': 'Stats', 'chip-mood': 'Mood', 'chip-share': 'Schedule', 'chip-bento': 'Bento',
+      'btn-video': 'Intro Video', 'btn-readme': 'View README', 'btn-features': 'Features',
+      'tag-offline': 'Offline', 'tag-offline-suffix': ' + opt-in sharing',
+      'tag-langs': '10 languages', 'tag-themes': '8 pastel themes',
+      'soon-badge': 'Coil · Coming', 'soon-title': 'Coil system is coming',
+      'soon-desc': 'Purchase <strong>Coil</strong> — the in-app currency — with real money to unlock special features. Coming soon.',
+      'sec-story-label': '— Story',
+      'sec-story-title': 'Small, slow, <em style="font-style:italic;color:var(--ink-soft);font-variation-settings:\'opsz\' 144,\'SOFT\' 100;">warm.</em>',
+      'sec-story-sub': 'Three promises we keep when building each app.',
+      'p1-title': 'Light enough to open every day',
+      'p1-body': 'Not too fancy, not too bare. 30 seconds to enter, a month to see meaning — that\'s what we aim for.',
+      'p2-title': 'Your data stays with you, sharing is your choice',
+      'p2-body': 'No ad tracking, no forced cloud. Records live on your device and move with one ZIP. Sharing schedules is always optional.',
+      'p3-title': 'We listen, slowly',
+      'p3-body': 'New features come after enough input. Ideas are collected and polished all at once.',
+      'foot-desc': 'Small apps for capturing today. Made with care at yourboardlab.',
+      'foot-apps': 'Apps', 'foot-apps-all': 'See all', 'foot-video': 'Yomi Calendar intro (YouTube)', 'foot-contact': 'Contact',
+    },
+    zh: {
+      'nav-apps': '应用', 'nav-story': '理念',
+      'eyebrow': ' 打造小应用 · 2026',
+      'headline': '轻轻记录<br/><em>今天</em>的小时光。',
+      'lede': 'yourboardlab 专注打造让日常记录毫无负担的小应用。<br/>备忘、账本、清单、心情、日程 — <span class="accent-underline">轻松记录</span>，<br/>需要时像便当一样打包，与重要的人分享。',
+      'btn-apps': '浏览应用', 'btn-contact': '联系我们',
+      'meta-apps': '款已上线', 'meta-langs': '支持语言', 'meta-ads': '广告 · 追踪',
+      'meta-data': '记录仅存于 <b>设备</b> · 分享随你选',
+      'sec-apps-label': '— 应用', 'sec-apps-title': '现在可以使用的应用',
+      'sec-apps-sub': '每款应用都有详细的 GitHub README 介绍。',
+      'app-subtitle': '记录今天的小日历',
+      'app-desc': '一句备忘、一笔支出、一个待办、一个分数——还有今天的心情。每天坚持这些，月末就能在日历里看见自己。用<em>便当</em>功能打包今天，与重要的人分享日程。',
+      'chip-today': '今天', 'chip-spent': '花了？', 'chip-done': '做了？',
+      'chip-stats': '记录', 'chip-mood': '心情', 'chip-share': '日程共享', 'chip-bento': '便当',
+      'btn-video': '介绍视频', 'btn-readme': '查看 README', 'btn-features': '功能详情',
+      'tag-offline': '离线', 'tag-offline-suffix': ' + 可选分享',
+      'tag-langs': '10 种语言', 'tag-themes': '8 种柔和主题',
+      'soon-badge': 'Coil · 即将推出', 'soon-title': 'Coil 系统即将上线',
+      'soon-desc': '用现金购买应用内货币 <strong>Coil</strong>，解锁特别功能。敬请期待。',
+      'sec-story-label': '— 理念',
+      'sec-story-title': '小而慢，<em style="font-style:italic;color:var(--ink-soft);font-variation-settings:\'opsz\' 144,\'SOFT\' 100;">温暖。</em>',
+      'sec-story-sub': '我们在打造每款应用时坚守的三个承诺。',
+      'p1-title': '每天打开都不觉得负担',
+      'p1-body': '不过于华丽，也不过于简洁。30 秒输入，一个月后看见意义。',
+      'p2-title': '数据由你保管，分享由你决定',
+      'p2-body': '没有广告追踪，也没有强制云端存储。记录只在设备上，可用一个 ZIP 迁移。分享日程永远是可选的。',
+      'p3-title': '倾听需求，慢慢打磨',
+      'p3-body': '新功能在充分收集意见后推出，集中精心打磨。',
+      'foot-desc': '轻记今日的小应用。yourboardlab 用心制作。',
+      'foot-apps': '应用', 'foot-apps-all': '查看全部', 'foot-video': '要米日历介绍 (YouTube)', 'foot-contact': '联系',
+    },
+    ja: {
+      'nav-apps': 'アプリ', 'nav-story': 'ストーリー',
+      'eyebrow': ' 小さなアプリを作る · 2026',
+      'headline': '今日を気軽に残す<br/><em>小さなアプリ</em>。',
+      'lede': 'yourboardlab は、毎日の小さな瞬間を気軽に残せるアプリを作っています。<br/>メモ、家計簿、チェック、気分、予定を <span class="accent-underline">気軽に</span> 記録し、<br/>お弁当のように大切な人と日程をシェアできます。',
+      'btn-apps': 'アプリを見る', 'btn-contact': 'お問い合わせ',
+      'meta-apps': 'リリース済み', 'meta-langs': '対応言語', 'meta-ads': '広告 · 追跡なし',
+      'meta-data': '記録は <b>デバイス内のみ</b> · 共有は任意',
+      'sec-apps-label': '— アプリ', 'sec-apps-title': '今すぐ使えるアプリ',
+      'sec-apps-sub': '各アプリの詳細は GitHub の README でご確認いただけます。',
+      'app-subtitle': '今日を記録する小さなカレンダー',
+      'app-desc': '一言メモ、一行の支出、チェックボックス、スコア——そして今日の気分。毎日続ければ、ひと月後にカレンダーで自分が見えてきます。<em>お弁当</em>機能で今日をまとめて、大切な人と予定をシェアできます。',
+      'chip-today': '今日は', 'chip-spent': '使った？', 'chip-done': 'やった？',
+      'chip-stats': '記録', 'chip-mood': '気分', 'chip-share': '予定共有', 'chip-bento': 'お弁当',
+      'btn-video': '紹介動画', 'btn-readme': 'README を見る', 'btn-features': '機能詳細',
+      'tag-offline': 'オフライン', 'tag-offline-suffix': ' + 任意共有',
+      'tag-langs': '10 言語対応', 'tag-themes': '8 種のパステルテーマ',
+      'soon-badge': 'コイル · 準備中', 'soon-title': 'コイルシステムが来ます',
+      'soon-desc': '現金でアプリ内通貨 <strong>コイル</strong> を購入し、特別な機能を利用できるシステムを準備中です。',
+      'sec-story-label': '— ストーリー',
+      'sec-story-title': '小さく、ゆっくり、<em style="font-style:italic;color:var(--ink-soft);font-variation-settings:\'opsz\' 144,\'SOFT\' 100;">温かく。</em>',
+      'sec-story-sub': 'アプリを作るときに守りたい三つの約束です。',
+      'p1-title': '毎日開いても負担にならない',
+      'p1-body': '派手すぎず、シンプルすぎず。30 秒で入力でき、ひと月後に意味が見えてくる記録を目指しています。',
+      'p2-title': 'データは手元に、共有は自分で決める',
+      'p2-body': '広告追跡も、強制的なクラウド保存もありません。記録はデバイス内に留まり、ZIP 一ファイルで移行できます。予定の共有は常に任意です。',
+      'p3-title': '要望は聞いて、ゆっくりと',
+      'p3-body': '機能追加は十分な意見収集の後で。アイデアを集めて、まとめて丁寧に仕上げます。',
+      'foot-desc': '今日を気軽に残す小さなアプリ。yourboardlab が心を込めて作っています。',
+      'foot-apps': 'アプリ', 'foot-apps-all': 'すべて見る', 'foot-video': '요미 달력 紹介 (YouTube)', 'foot-contact': 'お問い合わせ',
+    },
+    tl: {
+      'nav-apps': 'Mga App', 'nav-story': 'Kwento',
+      'eyebrow': ' Gumagawa ng maliliit na app · 2026',
+      'headline': 'Maliliit na app para<br/><em>sa iyong araw</em>.',
+      'lede': 'Gumagawa ang yourboardlab ng maliliit na apps para <span class="accent-underline">walang pahirap</span> na magtala<br/>ng mga sandali sa araw-araw — memo, gastos, gawain, mood, iskedyul —<br/>at ibahagi tulad ng bento kung nais mo.',
+      'btn-apps': 'Tingnan ang Apps', 'btn-contact': 'Makipag-ugnayan',
+      'meta-apps': 'app na inilabas', 'meta-langs': 'mga wika', 'meta-ads': 'ads · tracking',
+      'meta-data': 'datos <b>sa device mo lang</b> · pagbabahagi opsyonal',
+      'sec-apps-label': '— Mga App', 'sec-apps-title': 'Mga app na available ngayon',
+      'sec-apps-sub': 'Bawat app ay may detalyadong README sa GitHub.',
+      'app-subtitle': 'Isang maliit na kalendaryo para sa pang-araw-araw na tala',
+      'app-desc': 'Isang pangungusap, isang gastos, isang checkbox, isang puntos — at ang mood ngayon. Gawin ito araw-araw, at sa loob ng isang buwan makikita mo ang iyong sarili sa kalendaryo. Gamitin ang <em>Bento</em> para ibahagi ang iyong araw sa isang espesyal na tao.',
+      'chip-today': 'Ngayon', 'chip-spent': 'Gastos?', 'chip-done': 'Tapos na?',
+      'chip-stats': 'Tala', 'chip-mood': 'Mood', 'chip-share': 'Iskedyul', 'chip-bento': 'Bento',
+      'btn-video': 'Intro Video', 'btn-readme': 'Tingnan ang README', 'btn-features': 'Mga Feature',
+      'tag-offline': 'Offline', 'tag-offline-suffix': ' + opsyonal na pagbabahagi',
+      'tag-langs': '10 wika', 'tag-themes': '8 pastel na tema',
+      'soon-badge': 'Coil · Paparating', 'soon-title': 'Paparating ang Coil system',
+      'soon-desc': 'Bilhin ang <strong>Coil</strong> — ang in-app currency — gamit ang totoong pera para ma-unlock ang espesyal na mga feature. Paparating na.',
+      'sec-story-label': '— Kwento',
+      'sec-story-title': 'Maliit, dahan-dahan, <em style="font-style:italic;color:var(--ink-soft);font-variation-settings:\'opsz\' 144,\'SOFT\' 100;">mainit.</em>',
+      'sec-story-sub': 'Tatlong pangako na sinisikap naming gawin sa bawat app.',
+      'p1-title': 'Magaan para buksan araw-araw',
+      'p1-body': 'Hindi masyadong puno, hindi masyadong simple. 30 segundo para mag-input, isang buwan para makita ang kahulugan.',
+      'p2-title': 'Ang datos mo ay para sa iyo, ang pagbabahagi ay sa iyo',
+      'p2-body': 'Walang ad tracking, walang puwersahang cloud. Nananatili ang datos sa device, inililipat gamit ang isang ZIP. Ang pagbabahagi ng iskedyul ay palaging opsyonal.',
+      'p3-title': 'Nakikinig kami, dahan-dahan',
+      'p3-body': 'Ang mga bagong feature ay idinaragdag pagkatapos ng sapat na feedback. Kinokolekta ang mga ideya at pinipino nang sabay-sabay.',
+      'foot-desc': 'Maliliit na app para sa iyong araw. Ginawa nang may pagmamahal sa yourboardlab.',
+      'foot-apps': 'Mga App', 'foot-apps-all': 'Tingnan lahat', 'foot-video': 'Yomi Calendar intro (YouTube)', 'foot-contact': 'Makipag-ugnayan',
+    },
+    vi: {
+      'nav-apps': 'Ứng dụng', 'nav-story': 'Câu chuyện',
+      'eyebrow': ' Tạo ra những ứng dụng nhỏ · 2026',
+      'headline': 'Ứng dụng nhỏ để<br/><em>lưu giữ hôm nay</em>.',
+      'lede': 'yourboardlab tạo ra những ứng dụng nhỏ giúp bạn ghi lại khoảnh khắc hàng ngày<br/>— ghi chú, chi tiêu, danh sách, tâm trạng, lịch — một cách <span class="accent-underline">dễ dàng</span>,<br/>và chia sẻ như hộp cơm khi bạn muốn.',
+      'btn-apps': 'Xem ứng dụng', 'btn-contact': 'Liên hệ',
+      'meta-apps': 'ứng dụng', 'meta-langs': 'ngôn ngữ', 'meta-ads': 'quảng cáo · theo dõi',
+      'meta-data': 'dữ liệu <b>chỉ trên thiết bị</b> · chia sẻ tùy chọn',
+      'sec-apps-label': '— Ứng dụng', 'sec-apps-title': 'Ứng dụng hiện có',
+      'sec-apps-sub': 'Mỗi ứng dụng có README chi tiết trên GitHub.',
+      'app-subtitle': 'Lịch nhỏ để ghi lại mỗi ngày',
+      'app-desc': 'Một câu ghi chú, một khoản chi tiêu, một checkbox, một điểm số — và tâm trạng hôm nay. Làm điều này mỗi ngày, một tháng sau bạn sẽ thấy chính mình trong lịch. <em>Bento</em> giúp bạn đóng gói ngày của mình và chia sẻ lịch với người thân yêu.',
+      'chip-today': 'Hôm nay', 'chip-spent': 'Tiêu?', 'chip-done': 'Xong chưa?',
+      'chip-stats': 'Số liệu', 'chip-mood': 'Tâm trạng', 'chip-share': 'Lịch', 'chip-bento': 'Bento',
+      'btn-video': 'Video giới thiệu', 'btn-readme': 'Xem README', 'btn-features': 'Tính năng',
+      'tag-offline': 'Ngoại tuyến', 'tag-offline-suffix': ' + chia sẻ tùy chọn',
+      'tag-langs': '10 ngôn ngữ', 'tag-themes': '8 chủ đề pastel',
+      'soon-badge': 'Coil · Sắp ra mắt', 'soon-title': 'Hệ thống Coil sắp đến',
+      'soon-desc': 'Mua <strong>Coil</strong> — tiền tệ trong ứng dụng — bằng tiền thật để mở khóa tính năng đặc biệt. Sắp ra mắt.',
+      'sec-story-label': '— Câu chuyện',
+      'sec-story-title': 'Nhỏ, chậm, <em style="font-style:italic;color:var(--ink-soft);font-variation-settings:\'opsz\' 144,\'SOFT\' 100;">ấm áp.</em>',
+      'sec-story-sub': 'Ba cam kết chúng tôi giữ khi tạo ra mỗi ứng dụng.',
+      'p1-title': 'Nhẹ nhàng để mở mỗi ngày',
+      'p1-body': 'Không quá cầu kỳ, không quá đơn giản. 30 giây để nhập, một tháng để thấy ý nghĩa.',
+      'p2-title': 'Dữ liệu ở bên bạn, chia sẻ là lựa chọn của bạn',
+      'p2-body': 'Không theo dõi quảng cáo, không lưu đám mây bắt buộc. Dữ liệu sống trên thiết bị, di chuyển bằng một file ZIP. Chia sẻ lịch luôn là tùy chọn.',
+      'p3-title': 'Lắng nghe, từ từ',
+      'p3-body': 'Tính năng mới được thêm sau khi có đủ phản hồi. Ý tưởng được tập hợp và trau chuốt cùng một lúc.',
+      'foot-desc': 'Ứng dụng nhỏ để lưu giữ hôm nay. Được tạo ra với tâm huyết tại yourboardlab.',
+      'foot-apps': 'Ứng dụng', 'foot-apps-all': 'Xem tất cả', 'foot-video': 'Giới thiệu Yomi Calendar (YouTube)', 'foot-contact': 'Liên hệ',
+    },
+    ru: {
+      'nav-apps': 'Приложения', 'nav-story': 'История',
+      'eyebrow': ' Создаём маленькие приложения · 2026',
+      'headline': 'Маленькие приложения<br/>для <em>записи дня</em>.',
+      'lede': 'yourboardlab создаёт маленькие приложения, где каждый момент дня — заметки, расходы, задачи, настроение, расписание — можно записать <span class="accent-underline">без усилий</span>,<br/>а поделиться — когда захочется.',
+      'btn-apps': 'Смотреть приложения', 'btn-contact': 'Связаться',
+      'meta-apps': 'приложение', 'meta-langs': 'языков', 'meta-ads': 'реклама · слежка',
+      'meta-data': 'данные <b>только на устройстве</b> · sharing по желанию',
+      'sec-apps-label': '— Приложения', 'sec-apps-title': 'Доступные приложения',
+      'sec-apps-sub': 'У каждого приложения есть подробный README на GitHub.',
+      'app-subtitle': 'Маленький календарь для ежедневных записей',
+      'app-desc': 'Одно предложение, одна трата, один флажок, одна оценка — и настроение дня. Делайте это каждый день, и через месяц вы увидите себя в календаре. <em>Бэнто</em> позволяет упаковать день и поделиться расписанием с близким человеком.',
+      'chip-today': 'Сегодня', 'chip-spent': 'Потратил?', 'chip-done': 'Сделал?',
+      'chip-stats': 'Записи', 'chip-mood': 'Настроение', 'chip-share': 'Расписание', 'chip-bento': 'Бэнто',
+      'btn-video': 'Видео', 'btn-readme': 'Смотреть README', 'btn-features': 'Функции',
+      'tag-offline': 'Оффлайн', 'tag-offline-suffix': ' + sharing по желанию',
+      'tag-langs': '10 языков', 'tag-themes': '8 пастельных тем',
+      'soon-badge': 'Coil · Скоро', 'soon-title': 'Система Coil на подходе',
+      'soon-desc': 'Покупайте <strong>Coil</strong> — внутриигровую валюту — за реальные деньги, чтобы разблокировать особые функции. Скоро.',
+      'sec-story-label': '— История',
+      'sec-story-title': 'Маленькое, медленное, <em style="font-style:italic;color:var(--ink-soft);font-variation-settings:\'opsz\' 144,\'SOFT\' 100;">тёплое.</em>',
+      'sec-story-sub': 'Три обещания, которые мы выполняем при создании каждого приложения.',
+      'p1-title': 'Достаточно лёгкое, чтобы открывать каждый день',
+      'p1-body': 'Не слишком пёстро, не слишком просто. 30 секунд на ввод, месяц — чтобы увидеть смысл.',
+      'p2-title': 'Ваши данные при вас, sharing — ваш выбор',
+      'p2-body': 'Никакой рекламной слежки, никакого принудительного облака. Данные живут на устройстве и переносятся одним ZIP. Делиться расписанием — всегда опционально.',
+      'p3-title': 'Слушаем, медленно',
+      'p3-body': 'Новые функции появляются после достаточного количества отзывов. Идеи собираются и шлифуются разом.',
+      'foot-desc': 'Маленькие приложения для записи дня. Сделано с заботой в yourboardlab.',
+      'foot-apps': 'Приложения', 'foot-apps-all': 'Смотреть все', 'foot-video': 'Обзор Yomi Calendar (YouTube)', 'foot-contact': 'Контакты',
+    },
+    es: {
+      'nav-apps': 'Apps', 'nav-story': 'Historia',
+      'eyebrow': ' Creando pequeñas apps · 2026',
+      'headline': 'Pequeñas apps para<br/><em>capturar hoy</em>.',
+      'lede': 'yourboardlab crea pequeñas apps para registrar los momentos del día — notas, gastos, tareas, humor, agenda — <span class="accent-underline">sin esfuerzo</span>,<br/>y compartirlos como un bento cuando quieras.',
+      'btn-apps': 'Ver Apps', 'btn-contact': 'Contacto',
+      'meta-apps': 'app lanzada', 'meta-langs': 'idiomas', 'meta-ads': 'anuncios · rastreo',
+      'meta-data': 'datos <b>solo en tu dispositivo</b> · compartir es opcional',
+      'sec-apps-label': '— Apps', 'sec-apps-title': 'Apps disponibles ahora',
+      'sec-apps-sub': 'Cada app tiene un README detallado en GitHub.',
+      'app-subtitle': 'Un pequeño calendario para registros diarios',
+      'app-desc': 'Una frase, un gasto, una casilla, una puntuación — y el humor de hoy. Hazlo cada día, y al mes verás quién eres en el calendario. <em>Bento</em> te permite empacar tu día y compartir agenda con alguien especial.',
+      'chip-today': 'Hoy', 'chip-spent': '¿Gasté?', 'chip-done': '¿Hecho?',
+      'chip-stats': 'Registros', 'chip-mood': 'Humor', 'chip-share': 'Horario', 'chip-bento': 'Bento',
+      'btn-video': 'Video intro', 'btn-readme': 'Ver README', 'btn-features': 'Funciones',
+      'tag-offline': 'Sin conexión', 'tag-offline-suffix': ' + compartir opcional',
+      'tag-langs': '10 idiomas', 'tag-themes': '8 temas pastel',
+      'soon-badge': 'Coil · Próximamente', 'soon-title': 'Sistema Coil en camino',
+      'soon-desc': 'Compra <strong>Coil</strong> — la moneda in-app — con dinero real para desbloquear funciones especiales. Próximamente.',
+      'sec-story-label': '— Historia',
+      'sec-story-title': 'Pequeño, lento, <em style="font-style:italic;color:var(--ink-soft);font-variation-settings:\'opsz\' 144,\'SOFT\' 100;">cálido.</em>',
+      'sec-story-sub': 'Tres promesas que mantenemos al crear cada app.',
+      'p1-title': 'Lo suficientemente ligera para abrirla cada día',
+      'p1-body': 'Ni demasiado elaborada, ni demasiado simple. 30 segundos para ingresar, un mes para ver el significado.',
+      'p2-title': 'Tus datos son tuyos, compartir es tu elección',
+      'p2-body': 'Sin rastreo de anuncios, sin nube forzada. Los datos viven en tu dispositivo y se mueven con un ZIP. Compartir agenda es siempre opcional.',
+      'p3-title': 'Escuchamos, despacio',
+      'p3-body': 'Las nuevas funciones llegan tras suficientes opiniones. Las ideas se recogen y pulen todas a la vez.',
+      'foot-desc': 'Pequeñas apps para capturar hoy. Hecho con cariño en yourboardlab.',
+      'foot-apps': 'Apps', 'foot-apps-all': 'Ver todo', 'foot-video': 'Intro Yomi Calendar (YouTube)', 'foot-contact': 'Contacto',
+    },
+    de: {
+      'nav-apps': 'Apps', 'nav-story': 'Geschichte',
+      'eyebrow': ' Kleine Apps bauen · 2026',
+      'headline': 'Kleine Apps zum<br/><em>Festhalten des Tages</em>.',
+      'lede': 'yourboardlab baut kleine Apps, mit denen du tägliche Momente — Notizen, Ausgaben, Aufgaben, Stimmung, Termine — <span class="accent-underline">mühelos</span> festhältst<br/>und wie ein Bento teilst, wann du möchtest.',
+      'btn-apps': 'Apps ansehen', 'btn-contact': 'Kontakt',
+      'meta-apps': 'App veröffentlicht', 'meta-langs': 'Sprachen', 'meta-ads': 'Werbung · Tracking',
+      'meta-data': 'Daten <b>nur auf dem Gerät</b> · Teilen optional',
+      'sec-apps-label': '— Apps', 'sec-apps-title': 'Verfügbare Apps',
+      'sec-apps-sub': 'Jede App hat eine ausführliche README auf GitHub.',
+      'app-subtitle': 'Ein kleiner Kalender für tägliche Einträge',
+      'app-desc': 'Ein Satz, eine Ausgabe, ein Checkbox, ein Wert — und die Stimmung heute. Mach das jeden Tag, und nach einem Monat siehst du dich selbst im Kalender. <em>Bento</em> lässt dich deinen Tag einpacken und Termine mit jemandem Besonderen teilen.',
+      'chip-today': 'Heute', 'chip-spent': 'Ausgegeben?', 'chip-done': 'Erledigt?',
+      'chip-stats': 'Werte', 'chip-mood': 'Stimmung', 'chip-share': 'Termine', 'chip-bento': 'Bento',
+      'btn-video': 'Intro-Video', 'btn-readme': 'README ansehen', 'btn-features': 'Funktionen',
+      'tag-offline': 'Offline', 'tag-offline-suffix': ' + opt. Teilen',
+      'tag-langs': '10 Sprachen', 'tag-themes': '8 Pastell-Themes',
+      'soon-badge': 'Coil · Demnächst', 'soon-title': 'Coil-System kommt bald',
+      'soon-desc': 'Kaufe <strong>Coil</strong> — die In-App-Währung — mit echtem Geld, um besondere Funktionen freizuschalten. Demnächst.',
+      'sec-story-label': '— Geschichte',
+      'sec-story-title': 'Klein, langsam, <em style="font-style:italic;color:var(--ink-soft);font-variation-settings:\'opsz\' 144,\'SOFT\' 100;">warm.</em>',
+      'sec-story-sub': 'Drei Versprechen, die wir beim Bauen jeder App halten.',
+      'p1-title': 'Leicht genug, um sie jeden Tag zu öffnen',
+      'p1-body': 'Nicht zu ausgefallen, nicht zu karg. 30 Sekunden zum Eingeben, ein Monat bis zum Sinn.',
+      'p2-title': 'Deine Daten gehören dir, Teilen ist deine Wahl',
+      'p2-body': 'Kein Ad-Tracking, kein erzwungenes Cloud-Speichern. Daten bleiben auf dem Gerät und wandern per ZIP. Termine teilen ist immer optional.',
+      'p3-title': 'Wir hören zu, langsam',
+      'p3-body': 'Neue Funktionen kommen nach ausreichend Feedback. Ideen werden gesammelt und auf einmal verfeinert.',
+      'foot-desc': 'Kleine Apps zum Festhalten des Tages. Mit Sorgfalt gemacht bei yourboardlab.',
+      'foot-apps': 'Apps', 'foot-apps-all': 'Alle ansehen', 'foot-video': 'Yomi Calendar Intro (YouTube)', 'foot-contact': 'Kontakt',
+    },
+    fr: {
+      'nav-apps': 'Apps', 'nav-story': 'Histoire',
+      'eyebrow': ' Créer de petites apps · 2026',
+      'headline': 'Petites apps pour<br/><em>capturer aujourd\'hui</em>.',
+      'lede': 'yourboardlab crée de petites apps pour noter sans effort les moments du quotidien — mémos, dépenses, tâches, humeur, agenda — <span class="accent-underline">facilement</span>,<br/>et les partager comme un bento quand vous le souhaitez.',
+      'btn-apps': 'Voir les apps', 'btn-contact': 'Contact',
+      'meta-apps': 'app lancée', 'meta-langs': 'langues', 'meta-ads': 'pubs · tracking',
+      'meta-data': 'données <b>sur votre appareil</b> · partage optionnel',
+      'sec-apps-label': '— Apps', 'sec-apps-title': 'Apps disponibles maintenant',
+      'sec-apps-sub': 'Chaque app a un README détaillé sur GitHub.',
+      'app-subtitle': 'Un petit calendrier pour les enregistrements quotidiens',
+      'app-desc': 'Une phrase, une dépense, une case, un score — et l\'humeur du jour. Faites-le chaque jour, et au bout d\'un mois vous vous verrez dans le calendrier. <em>Bento</em> vous permet d\'emballer votre journée et de partager votre agenda avec quelqu\'un de proche.',
+      'chip-today': 'Aujourd\'hui', 'chip-spent': 'Dépensé ?', 'chip-done': 'Fait ?',
+      'chip-stats': 'Suivi', 'chip-mood': 'Humeur', 'chip-share': 'Agenda', 'chip-bento': 'Bento',
+      'btn-video': 'Vidéo intro', 'btn-readme': 'Voir README', 'btn-features': 'Fonctions',
+      'tag-offline': 'Hors ligne', 'tag-offline-suffix': ' + partage optionnel',
+      'tag-langs': '10 langues', 'tag-themes': '8 thèmes pastel',
+      'soon-badge': 'Coil · Bientôt', 'soon-title': 'Le système Coil arrive',
+      'soon-desc': 'Achetez <strong>Coil</strong> — la monnaie in-app — avec de l\'argent réel pour débloquer des fonctions spéciales. Bientôt disponible.',
+      'sec-story-label': '— Histoire',
+      'sec-story-title': 'Petit, lent, <em style="font-style:italic;color:var(--ink-soft);font-variation-settings:\'opsz\' 144,\'SOFT\' 100;">chaleureux.</em>',
+      'sec-story-sub': 'Trois promesses que nous tenons en créant chaque app.',
+      'p1-title': 'Assez légère pour être ouverte chaque jour',
+      'p1-body': 'Pas trop élaborée, pas trop simple. 30 secondes pour saisir, un mois pour voir le sens.',
+      'p2-title': 'Vos données vous appartiennent, partager est votre choix',
+      'p2-body': 'Pas de tracking pub, pas de cloud forcé. Les données restent sur l\'appareil et se transfèrent avec un ZIP. Partager l\'agenda est toujours optionnel.',
+      'p3-title': 'Nous écoutons, lentement',
+      'p3-body': 'Les nouvelles fonctions arrivent après suffisamment de retours. Les idées sont collectées et polies en une fois.',
+      'foot-desc': 'Petites apps pour capturer aujourd\'hui. Fait avec soin chez yourboardlab.',
+      'foot-apps': 'Apps', 'foot-apps-all': 'Voir tout', 'foot-video': 'Intro Yomi Calendar (YouTube)', 'foot-contact': 'Contact',
+    },
+  };
+
+  // ── Apply language ─────────────────────────────────────────────────────────
+  function applyLang(lang) {
+    const dict = T[lang] || T['ko'];
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (dict[key] !== undefined) el.textContent = dict[key];
+    });
+    document.querySelectorAll('[data-i18n-html]').forEach(el => {
+      const key = el.getAttribute('data-i18n-html');
+      if (dict[key] !== undefined) el.innerHTML = dict[key];
+    });
+    // Update lang switcher label
+    const labels = { ko:'한국어', en:'English', zh:'中文', ja:'日本語', tl:'Tagalog', vi:'Tiếng Việt', ru:'Русский', es:'Español', de:'Deutsch', fr:'Français' };
+    document.getElementById('langCurrent').textContent = labels[lang] || lang;
+    document.querySelectorAll('#langDropdown button').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.lang === lang);
+    });
+    // Persist choice
+    try { localStorage.setItem('ybLang', lang); } catch(e) {}
+  }
+
+  // ── Lang switcher toggle ───────────────────────────────────────────────────
+  (function(){
+    const btn = document.getElementById('langBtn');
+    const dropdown = document.getElementById('langDropdown');
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const open = dropdown.classList.toggle('open');
+      btn.classList.toggle('open', open);
+    });
+    document.addEventListener('click', () => {
+      dropdown.classList.remove('open');
+      btn.classList.remove('open');
+    });
+    dropdown.addEventListener('click', (e) => {
+      const target = e.target.closest('button[data-lang]');
+      if (!target) return;
+      applyLang(target.dataset.lang);
+      dropdown.classList.remove('open');
+      btn.classList.remove('open');
+    });
+    // Restore saved language
+    let saved = 'ko';
+    try { saved = localStorage.getItem('ybLang') || 'ko'; } catch(e) {}
+    if (T[saved] && saved !== 'ko') applyLang(saved);
+  })();
+
+  // ── Scroll reveal ──────────────────────────────────────────────────────────
   (function(){
     const els = document.querySelectorAll('.reveal');
     if (!('IntersectionObserver' in window)) {
@@ -800,7 +1233,7 @@
     els.forEach(el => io.observe(el));
   })();
 
-  // Smooth anchor scroll without scrollIntoView quirks
+  // ── Smooth anchor scroll ───────────────────────────────────────────────────
   document.querySelectorAll('a[href^="#"]').forEach(a => {
     a.addEventListener('click', (e) => {
       const id = a.getAttribute('href').slice(1);
