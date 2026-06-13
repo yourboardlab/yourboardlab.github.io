@@ -189,6 +189,57 @@
   }
   .logout-btn:hover { color: var(--ink); border-color: var(--ink-mute); }
 
+  /* ── Settings modal ── */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px);
+    z-index: 100;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--bg2);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 32px 28px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 40px 80px -20px rgba(0,0,0,0.7);
+  }
+  .modal h2 { font-size: 17px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.02em; }
+  .modal p  { font-size: 13px; color: var(--ink-soft); margin-bottom: 22px; }
+  .modal-actions { display: flex; gap: 8px; margin-top: 20px; }
+  .btn-save {
+    flex: 1;
+    background: var(--teal);
+    color: #0D1E1D;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px; font-weight: 700;
+    font-family: var(--font-sans);
+    padding: 11px;
+    cursor: pointer;
+    transition: opacity .2s;
+  }
+  .btn-save:hover { opacity: 0.88; }
+  .btn-cancel {
+    flex: 1;
+    background: none;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    color: var(--ink-soft);
+    font-size: 14px; font-weight: 600;
+    font-family: var(--font-sans);
+    padding: 11px;
+    cursor: pointer;
+    transition: border-color .2s, color .2s;
+  }
+  .btn-cancel:hover { border-color: var(--ink-mute); color: var(--ink); }
+
   .main-wrap { max-width: 1200px; margin: 0 auto; padding: 28px 24px 60px; }
 
   /* ── Stat cards ── */
@@ -375,16 +426,34 @@
 
     <div class="field-group">
       <div class="field">
-        <label>API Endpoint</label>
-        <input id="api-url" type="url" placeholder="https://yomi-share-backend.vercel.app" autocomplete="off" />
+        <label>ID</label>
+        <input id="id-input" type="text" placeholder="관리자 ID" autocomplete="username" />
       </div>
       <div class="field">
-        <label>Analytics Secret</label>
-        <input id="secret-input" type="password" placeholder="ANALYTICS_SECRET 값을 입력하세요" autocomplete="current-password" />
+        <label>Password</label>
+        <input id="secret-input" type="password" placeholder="비밀번호" autocomplete="current-password" />
       </div>
     </div>
     <button class="btn-login" id="login-btn">로그인</button>
-    <div class="login-error" id="login-error">인증 실패 — URL과 시크릿을 확인해주세요.</div>
+    <div class="login-error" id="login-error">인증 실패 — ID 또는 비밀번호를 확인해주세요.</div>
+  </div>
+</div>
+
+<!-- ══ SETTINGS MODAL ══ -->
+<div class="modal-overlay" id="settings-modal">
+  <div class="modal">
+    <h2>비밀번호 변경</h2>
+    <p>새 비밀번호(ANALYTICS_SECRET)를 입력하세요.</p>
+    <div class="field-group">
+      <div class="field">
+        <label>새 Password</label>
+        <input id="modal-secret" type="password" placeholder="새 비밀번호 입력" autocomplete="new-password" />
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" id="modal-cancel">취소</button>
+      <button class="btn-save" id="modal-save">저장 &amp; 재연결</button>
+    </div>
   </div>
 </div>
 
@@ -402,6 +471,12 @@
           <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/>
         </svg>
         새로고침
+      </button>
+      <button class="refresh-btn" id="settings-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+        설정
       </button>
       <button class="logout-btn" id="logout-btn">로그아웃</button>
     </div>
@@ -487,7 +562,9 @@
 
 <script>
 // ── Config ─────────────────────────────────────────────
-const STORAGE_KEY = 'yomi_analytics_cfg';
+const API_URL     = 'https://yomi-share-backend.vercel.app';
+const ADMIN_ID    = 'yourboardlab';
+const STORAGE_KEY = 'yomi_analytics_pw';
 
 const EVENT_COLORS = {
   BENTO_CHECKIN:        { bg: 'rgba(157,201,160,0.2)',  border: '#9DC9A0', text: '#9DC9A0' },
@@ -503,16 +580,14 @@ function eventStyle(type) {
 }
 
 // ── State ───────────────────────────────────────────────
-let cfg = null;
+let secret = null;
 let dailyChartInst = null;
 let donutChartInst = null;
 
-// ── Login ───────────────────────────────────────────────
-function loadCfg() {
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); } catch { return null; }
-}
-function saveCfg(c) { localStorage.setItem(STORAGE_KEY, JSON.stringify(c)); }
-function clearCfg() { localStorage.removeItem(STORAGE_KEY); }
+// ── Storage ─────────────────────────────────────────────
+function loadPw()    { try { return localStorage.getItem(STORAGE_KEY) || null; } catch { return null; } }
+function savePw(pw)  { localStorage.setItem(STORAGE_KEY, pw); }
+function clearPw()   { localStorage.removeItem(STORAGE_KEY); }
 
 const loginScreen = document.getElementById('login-screen');
 const dashboardEl = document.getElementById('dashboard');
@@ -523,24 +598,26 @@ function showDashboard() {
   loadAll();
 }
 
+// ── Login ───────────────────────────────────────────────
 document.getElementById('login-btn').addEventListener('click', async () => {
-  const url = document.getElementById('api-url').value.trim().replace(/\/$/, '');
-  const secret = document.getElementById('secret-input').value.trim();
+  const id  = document.getElementById('id-input').value.trim();
+  const pw  = document.getElementById('secret-input').value.trim();
   const errEl = document.getElementById('login-error');
   errEl.classList.remove('visible');
 
-  if (!url || !secret) { errEl.textContent = 'URL과 시크릿을 모두 입력해주세요.'; errEl.classList.add('visible'); return; }
+  if (!id || !pw) { errEl.textContent = 'ID와 비밀번호를 입력해주세요.'; errEl.classList.add('visible'); return; }
+  if (id !== ADMIN_ID) { errEl.textContent = 'ID 또는 비밀번호가 틀렸습니다.'; errEl.classList.add('visible'); return; }
 
   try {
-    const res = await fetch(`${url}/api/analytics/summary`, {
-      headers: { Authorization: `Bearer ${secret}` },
+    const res = await fetch(`${API_URL}/api/analytics/summary`, {
+      headers: { Authorization: `Bearer ${pw}` },
     });
-    if (!res.ok) { errEl.textContent = `인증 실패 (${res.status}) — URL과 시크릿을 확인해주세요.`; errEl.classList.add('visible'); return; }
-    cfg = { url, secret };
-    saveCfg(cfg);
+    if (!res.ok) { errEl.textContent = 'ID 또는 비밀번호가 틀렸습니다.'; errEl.classList.add('visible'); return; }
+    secret = pw;
+    savePw(pw);
     showDashboard();
   } catch (e) {
-    errEl.textContent = `연결 실패 — API URL을 확인해주세요. (${e.message})`;
+    errEl.textContent = `연결 실패 (${e.message})`;
     errEl.classList.add('visible');
   }
 });
@@ -549,20 +626,50 @@ document.getElementById('secret-input').addEventListener('keydown', e => {
   if (e.key === 'Enter') document.getElementById('login-btn').click();
 });
 
+// ── Logout ──────────────────────────────────────────────
 document.getElementById('logout-btn').addEventListener('click', () => {
-  clearCfg();
-  cfg = null;
+  clearPw();
+  secret = null;
   dashboardEl.style.display = 'none';
   loginScreen.style.display = 'flex';
+  document.getElementById('id-input').value = '';
   document.getElementById('secret-input').value = '';
+});
+
+// ── Settings modal ──────────────────────────────────────
+document.getElementById('settings-btn').addEventListener('click', () => {
+  document.getElementById('modal-secret').value = '';
+  document.getElementById('settings-modal').classList.add('open');
+});
+document.getElementById('modal-cancel').addEventListener('click', () => {
+  document.getElementById('settings-modal').classList.remove('open');
+});
+document.getElementById('modal-save').addEventListener('click', async () => {
+  const newPw = document.getElementById('modal-secret').value.trim();
+  if (!newPw) return;
+  try {
+    const res = await fetch(`${API_URL}/api/analytics/summary`, {
+      headers: { Authorization: `Bearer ${newPw}` },
+    });
+    if (!res.ok) { alert('비밀번호가 올바르지 않습니다.'); return; }
+    secret = newPw;
+    savePw(newPw);
+    document.getElementById('settings-modal').classList.remove('open');
+    loadAll();
+  } catch (e) {
+    alert(`연결 실패: ${e.message}`);
+  }
+});
+document.getElementById('settings-modal').addEventListener('click', e => {
+  if (e.target === e.currentTarget) e.currentTarget.classList.remove('open');
 });
 
 document.getElementById('refresh-btn').addEventListener('click', loadAll);
 
 // ── API helpers ─────────────────────────────────────────
 async function apiFetch(path) {
-  const res = await fetch(`${cfg.url}${path}`, {
-    headers: { Authorization: `Bearer ${cfg.secret}` },
+  const res = await fetch(`${API_URL}${path}`, {
+    headers: { Authorization: `Bearer ${secret}` },
   });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return res.json();
@@ -713,12 +820,11 @@ function renderTable(data) {
   }).join('');
 }
 
-// ── Auto-fill saved config ──────────────────────────────
+// ── Auto-login if password saved ────────────────────────
 (function init() {
-  const saved = loadCfg();
+  const saved = loadPw();
   if (saved) {
-    cfg = saved;
-    document.getElementById('api-url').value = saved.url || '';
+    secret = saved;
     showDashboard();
   }
 })();
