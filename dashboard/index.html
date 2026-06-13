@@ -609,9 +609,7 @@ document.getElementById('login-btn').addEventListener('click', async () => {
   if (id !== ADMIN_ID) { errEl.textContent = 'ID 또는 비밀번호가 틀렸습니다.'; errEl.classList.add('visible'); return; }
 
   try {
-    const res = await fetch(`${API_URL}/api/analytics?type=summary`, {
-      headers: { Authorization: `Bearer ${pw}` },
-    });
+    const res = await fetch(`${API_URL}/api/analytics?type=summary&secret=${encodeURIComponent(pw)}`);
     if (!res.ok) { errEl.textContent = 'ID 또는 비밀번호가 틀렸습니다.'; errEl.classList.add('visible'); return; }
     secret = pw;
     savePw(pw);
@@ -648,9 +646,7 @@ document.getElementById('modal-save').addEventListener('click', async () => {
   const newPw = document.getElementById('modal-secret').value.trim();
   if (!newPw) return;
   try {
-    const res = await fetch(`${API_URL}/api/analytics?type=summary`, {
-      headers: { Authorization: `Bearer ${newPw}` },
-    });
+    const res = await fetch(`${API_URL}/api/analytics?type=summary&secret=${encodeURIComponent(newPw)}`);
     if (!res.ok) { alert('비밀번호가 올바르지 않습니다.'); return; }
     secret = newPw;
     savePw(newPw);
@@ -668,9 +664,8 @@ document.getElementById('refresh-btn').addEventListener('click', loadAll);
 
 // ── API helpers ─────────────────────────────────────────
 async function apiFetch(path) {
-  const res = await fetch(`${API_URL}${path}`, {
-    headers: { Authorization: `Bearer ${secret}` },
-  });
+  const sep = path.includes('?') ? '&' : '?';
+  const res = await fetch(`${API_URL}${path}${sep}secret=${encodeURIComponent(secret)}`);
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return res.json();
 }
