@@ -609,7 +609,7 @@ document.getElementById('login-btn').addEventListener('click', async () => {
   if (id !== ADMIN_ID) { errEl.textContent = 'ID 또는 비밀번호가 틀렸습니다.'; errEl.classList.add('visible'); return; }
 
   try {
-    const res = await fetch(`${API_URL}/api/analytics/summary`, {
+    const res = await fetch(`${API_URL}/api/analytics?type=summary`, {
       headers: { Authorization: `Bearer ${pw}` },
     });
     if (!res.ok) { errEl.textContent = 'ID 또는 비밀번호가 틀렸습니다.'; errEl.classList.add('visible'); return; }
@@ -648,7 +648,7 @@ document.getElementById('modal-save').addEventListener('click', async () => {
   const newPw = document.getElementById('modal-secret').value.trim();
   if (!newPw) return;
   try {
-    const res = await fetch(`${API_URL}/api/analytics/summary`, {
+    const res = await fetch(`${API_URL}/api/analytics?type=summary`, {
       headers: { Authorization: `Bearer ${newPw}` },
     });
     if (!res.ok) { alert('비밀번호가 올바르지 않습니다.'); return; }
@@ -680,9 +680,9 @@ async function loadAll() {
   document.getElementById('error-banner').classList.remove('visible');
   try {
     const [summary, daily, recent] = await Promise.all([
-      apiFetch('/api/analytics/summary'),
-      apiFetch('/api/analytics/daily?days=14'),
-      apiFetch('/api/analytics/recent?limit=50'),
+      apiFetch('/api/analytics?type=summary'),
+      apiFetch('/api/analytics?type=daily&days=14'),
+      apiFetch('/api/analytics?type=recent&limit=50'),
     ]);
     renderSummary(summary);
     renderDailyChart(daily);
