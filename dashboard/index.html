@@ -463,7 +463,48 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
       </div>
     </div>
 
-    <!-- § 6. 최근 이벤트 -->
+    <!-- § 6. 세션 분석 -->
+    <div class="sec-head">
+      <div class="sec-label">— 세션 분석 <span style="font-weight:400;font-size:10px;letter-spacing:0;text-transform:none;color:var(--ink-mute)">(앱 실행 시간 · 탭 체류)</span></div>
+      <div class="range-tabs" id="session-tabs">
+        <button class="rtab active" data-days="14">14일</button>
+        <button class="rtab" data-days="30">30일</button>
+        <button class="rtab" data-days="90">90일</button>
+      </div>
+    </div>
+    <div class="cards-row cards-3" style="margin-bottom:16px">
+      <div class="stat-card">
+        <div class="stat-label"><span class="stat-dot" style="background:var(--teal)"></span>세션 수</div>
+        <div class="stat-value" id="sess-count">—</div>
+        <div class="stat-sub">앱을 실행한 횟수</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label"><span class="stat-dot" style="background:var(--blue)"></span>평균 세션 시간</div>
+        <div class="stat-value" id="sess-avg-dur" style="font-size:22px;padding-top:6px">—</div>
+        <div class="stat-sub">한 번 실행 시 평균 사용 시간</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label"><span class="stat-dot" style="background:var(--peach)"></span>최다 체류 탭</div>
+        <div class="stat-value" id="sess-top-tab" style="font-size:20px;padding-top:4px">—</div>
+        <div class="stat-sub" id="sess-top-tab-sub">—</div>
+      </div>
+    </div>
+    <div class="chart-grid-2">
+      <div class="chart-card">
+        <div class="chart-card-head">
+          <div class="chart-title">탭별 평균 체류 시간 <span>초 단위</span></div>
+        </div>
+        <div class="chart-wrap"><canvas id="sess-tab-chart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-card-head">
+          <div class="chart-title">일별 세션 수 <span>라인 차트</span></div>
+        </div>
+        <div class="chart-wrap"><canvas id="sess-daily-chart"></canvas></div>
+      </div>
+    </div>
+
+    <!-- § 7. 최근 이벤트 -->
     <div class="sec-head">
       <div class="sec-label">— 최근 이벤트 로그</div>
       <span id="table-count" style="font-family:var(--mono);font-size:10px;color:var(--ink-mute);letter-spacing:.06em;text-transform:uppercase">—</span>
@@ -524,7 +565,8 @@ const CHART_DEFAULTS = {
 let sessionToken  = null;
 let currentMonths = 6;
 let currentDays   = 14;
-let currentGeoDays = 30;
+let currentGeoDays    = 30;
+let currentSessionDays = 30;
 const charts = {};
 
 // ─── Token ───────────────────────────────────────────────────────────────────
@@ -712,24 +754,31 @@ function bindRangeTabs(groupId,attr,onSelect){
 bindRangeTabs('month-tabs','months',async m=>{currentMonths=m;await reloadMonthly()});
 bindRangeTabs('day-tabs','days',async d=>{currentDays=d;await reloadDaily()});
 bindRangeTabs('geo-tabs','days',async d=>{currentGeoDays=d;await reloadGeo()});
+bindRangeTabs('session-tabs','days',async d=>{currentSessionDays=d;await reloadSession()});
 
 // ─── Chart utils ──────────────────────────────────────────────────────────────
 function destroyChart(key){if(charts[key]){charts[key].destroy();delete charts[key]}}
 function dayLabel(d){const dt=new Date(String(d).slice(0,10)+'T00:00:00');return`${dt.getMonth()+1}/${dt.getDate()}`}
 function monthLabel(m){const[y,mo]=String(m).split('-');return`${y}.${mo}`}
 function fmtN(n){return Number(n||0).toLocaleString()}
+function fmtDuration(ms){
+  if(!ms||ms<1000)return '—';
+  const s=Math.round(ms/1000);const m=Math.floor(s/60);const sec=s%60;
+  return m>0?`${m}분 ${sec}초`:`${sec}초`;
+}
 
 // ─── Load all ─────────────────────────────────────────────────────────────────
 async function loadAll(){
   document.getElementById('error-banner').classList.remove('visible');
   try{
-    const [summary, alltime, monthly, daily, dau, geo, recent] = await Promise.all([
+    const [summary, alltime, monthly, daily, dau, geo, session, recent] = await Promise.all([
       apiFetch('/api/analytics?type=summary'),
       apiFetch('/api/analytics?type=all-time'),
       apiFetch(`/api/analytics?type=monthly&months=${currentMonths}`),
       apiFetch(`/api/analytics?type=daily&days=${currentDays}`),
       apiFetch(`/api/analytics?type=dau&days=${currentDays}`),
       apiFetch(`/api/analytics?type=geo&days=${currentGeoDays}`),
+      apiFetch(`/api/analytics?type=session&days=${currentSessionDays}`),
       apiFetch('/api/analytics?type=recent&limit=100'),
     ]);
     renderSummary(summary);
@@ -739,6 +788,7 @@ async function loadAll(){
     renderDaily(daily);
     renderDau(dau);
     renderGeo(geo);
+    renderSession(session);
     renderLog(recent);
     document.getElementById('last-updated').textContent=`Last updated: ${new Date().toLocaleString('ko-KR')}`;
   }catch(e){
@@ -917,6 +967,90 @@ function renderDau(data){
 
 async function reloadGeo(){
   try{const d=await apiFetch(`/api/analytics?type=geo&days=${currentGeoDays}`);renderGeo(d)}catch{}
+}
+
+const TAB_KO = {calendar:'달력',chart:'차트',settings:'설정',bento:'도시락'};
+const TAB_COLORS = ['#9DC9A0','#C1A9D9','#8EB8E0','#F4A48C'];
+
+function renderSession(data){
+  const s = data?.summary || {};
+  const sessions = s.sessions || 0;
+  const avgDur   = s.avgDurationMs || 0;
+  const tabMs    = s.avgTabMs || {calendar:0,chart:0,settings:0,bento:0};
+
+  // stat cards
+  document.getElementById('sess-count').textContent = sessions > 0 ? fmtN(sessions) : '—';
+  document.getElementById('sess-avg-dur').textContent = fmtDuration(avgDur);
+
+  // top tab
+  const tabs = ['calendar','chart','settings','bento'];
+  let topTab='', topMs=0;
+  for(const t of tabs){if((tabMs[t]||0)>topMs){topMs=tabMs[t];topTab=t}}
+  if(topTab && sessions>0){
+    document.getElementById('sess-top-tab').textContent = TAB_KO[topTab] || topTab;
+    document.getElementById('sess-top-tab-sub').textContent = '평균 ' + fmtDuration(topMs);
+  } else {
+    document.getElementById('sess-top-tab').textContent = '—';
+    document.getElementById('sess-top-tab-sub').textContent = '데이터 없음';
+  }
+
+  // 탭별 체류 시간 가로 막대 차트
+  destroyChart('sessTab');
+  const tabCtx = document.getElementById('sess-tab-chart');
+  if(tabCtx && sessions > 0){
+    charts['sessTab'] = new Chart(tabCtx,{
+      type:'bar',
+      data:{
+        labels: tabs.map(t=>TAB_KO[t]),
+        datasets:[{
+          label:'평균 체류 시간 (초)',
+          data: tabs.map(t=>Math.round((tabMs[t]||0)/1000)),
+          backgroundColor: TAB_COLORS,
+          borderRadius:4,
+        }],
+      },
+      options:{
+        indexAxis:'y',
+        responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false}},
+        scales:{
+          x:{beginAtZero:true,ticks:{callback:v=>v+'초'}},
+          y:{ticks:{color:'#333'}},
+        },
+      },
+    });
+  }
+
+  // 일별 세션 수 라인 차트
+  destroyChart('sessDaily');
+  const dailyCtx = document.getElementById('sess-daily-chart');
+  const daily = data?.daily || [];
+  if(dailyCtx && daily.length > 0){
+    charts['sessDaily'] = new Chart(dailyCtx,{
+      type:'line',
+      data:{
+        labels: daily.map(r=>dayLabel(r.day)),
+        datasets:[{
+          label:'세션 수',
+          data: daily.map(r=>r.sessions),
+          borderColor:'#8EB8E0',backgroundColor:'rgba(142,184,224,0.15)',
+          tension:0.3,pointRadius:2,fill:true,
+        }],
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false}},
+        scales:{
+          x:{ticks:{maxTicksLimit:10}},
+          y:{beginAtZero:true,ticks:{stepSize:1}},
+        },
+      },
+    });
+  }
+}
+
+async function reloadSession(){
+  try{const d=await apiFetch(`/api/analytics?type=session&days=${currentSessionDays}`);renderSession(d)}catch{}
 }
 
 function renderGeo(data){
