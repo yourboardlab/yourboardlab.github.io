@@ -306,9 +306,9 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
     </div>
     <div class="cards-row cards-4">
       <div class="stat-card">
-        <div class="stat-label"><span class="stat-dot" style="background:var(--teal)"></span>DAU</div>
+        <div class="stat-label"><span class="stat-dot" style="background:var(--teal)"></span>DAU <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:9px">(일간 활성 유저)</span></div>
         <div class="stat-value" id="s-dau">—</div>
-        <div class="stat-sub">오늘 활성 유저</div>
+        <div class="stat-sub">오늘 앱을 실제로 사용한 유저 수</div>
       </div>
       <div class="stat-card">
         <div class="stat-label"><span class="stat-dot" style="background:var(--coral)"></span>신규 계정</div>
@@ -318,12 +318,12 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
       <div class="stat-card">
         <div class="stat-label"><span class="stat-dot" style="background:var(--green)"></span>출석 체크인</div>
         <div class="stat-value" id="s-checkin">—</div>
-        <div class="stat-sub">BENTO_CHECKIN</div>
+        <div class="stat-sub">앱에서 오늘 하루를 기록한 횟수</div>
       </div>
       <div class="stat-card">
         <div class="stat-label"><span class="stat-dot" style="background:var(--blue)"></span>일정 공유</div>
         <div class="stat-value" id="s-share">—</div>
-        <div class="stat-sub">SEND + RECEIVE</div>
+        <div class="stat-sub">도시락 일정 공유 횟수</div>
       </div>
     </div>
 
@@ -333,14 +333,14 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
     </div>
     <div class="cards-row cards-3" style="margin-bottom:16px">
       <div class="stat-card">
-        <div class="stat-label"><span class="stat-dot" style="background:var(--purple)"></span>총 이벤트</div>
+        <div class="stat-label"><span class="stat-dot" style="background:var(--purple)"></span>총 이벤트 <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:9px">(앱 전체 활동)</span></div>
         <div class="stat-value" id="at-total">—</div>
-        <div class="stat-sub">전체 기간</div>
+        <div class="stat-sub">서버에 기록된 모든 활동 수</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label"><span class="stat-dot" style="background:var(--peach)"></span>유니크 유저</div>
+        <div class="stat-label"><span class="stat-dot" style="background:var(--peach)"></span>유니크 유저 <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:9px">(도시락 앱 유저)</span></div>
         <div class="stat-value" id="at-users">—</div>
-        <div class="stat-sub">전체 유저 (해시)</div>
+        <div class="stat-sub">익명 해시로 구분된 개별 유저</div>
       </div>
       <div class="stat-card">
         <div class="stat-label"><span class="stat-dot" style="background:var(--green)"></span>기록 시작일</div>
@@ -354,7 +354,7 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
           <tr>
             <th>이벤트 타입</th>
             <th>총 횟수</th>
-            <th>유니크 유저</th>
+            <th>유니크 유저 (기기별)</th>
             <th>최초</th>
             <th>최근</th>
           </tr>
@@ -378,7 +378,7 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
     <div class="chart-grid-2">
       <div class="chart-card">
         <div class="chart-card-head">
-          <div class="chart-title">이벤트 유형별 월별 추이 <span>stacked bar</span></div>
+          <div class="chart-title">이벤트 유형별 월별 추이 <span>월별 누적 막대</span></div>
         </div>
         <div class="chart-wrap-lg"><canvas id="monthly-chart"></canvas></div>
       </div>
@@ -403,13 +403,13 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
     <div class="chart-grid-eq">
       <div class="chart-card">
         <div class="chart-card-head">
-          <div class="chart-title">이벤트 타입별 <span>line</span></div>
+          <div class="chart-title">이벤트 타입별 일별 추이 <span>라인 차트</span></div>
         </div>
         <div class="chart-wrap-lg"><canvas id="daily-chart"></canvas></div>
       </div>
       <div class="chart-card">
         <div class="chart-card-head">
-          <div class="chart-title">DAU 추이 <span>daily active users</span></div>
+          <div class="chart-title">DAU 추이 <span>일간 활성 유저 · 하루 방문 유저 수</span></div>
         </div>
         <div class="chart-wrap-lg"><canvas id="dau-chart"></canvas></div>
       </div>
@@ -423,7 +423,7 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
     <div class="table-card">
       <div class="table-scroll">
         <table class="ev-table">
-          <thead><tr><th>Time</th><th>Event</th><th>User Hash</th><th>Metadata</th></tr></thead>
+          <thead><tr><th>시각</th><th>이벤트 (행동 유형)</th><th>유저 ID (익명)</th><th>추가 정보</th></tr></thead>
           <tbody id="ev-tbody"><tr class="loading-row"><td colspan="4">로딩 중…</td></tr></tbody>
         </table>
       </div>
@@ -446,6 +446,15 @@ const EV = {
   SHARE_RECEIVE:        {bg:'rgba(137,207,201,.2)', bd:'#89CFC9', tx:'#89CFC9'},
 };
 function ev(t){return EV[t]||{bg:'rgba(180,170,160,.2)',bd:'#B4AAA0',tx:'#B4AAA0'}}
+const EV_KO = {
+  BENTO_CHECKIN:        '출석 체크인',
+  BENTO_ACCOUNT_CREATE: '계정 생성',
+  EMOTICON_PURCHASE:    '이모티콘 구매',
+  AUTH_VERIFY_REQUEST:  '이메일 인증 요청',
+  SHARE_SEND:           '일정 공유 전송',
+  SHARE_RECEIVE:        '일정 공유 수신',
+};
+function evLabel(t){return EV_KO[t]||t}
 
 const CHART_DEFAULTS = {
   tooltip:{backgroundColor:'#1C1915',borderColor:'#2E2B27',borderWidth:1,titleColor:'#B5A99A',bodyColor:'#F4EFE6',padding:10},
@@ -711,7 +720,7 @@ function renderAllTime(d){
   if(!d.byType.length){tbody.innerHTML='<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--ink-mute)">아직 기록된 이벤트가 없습니다.</td></tr>';return}
   tbody.innerHTML=d.byType.map(r=>{
     const style=ev(r.eventType);
-    const badge=`<span class="ev-badge" style="background:${style.bg};color:${style.tx};border:1px solid ${style.bd}20">${r.eventType}</span>`;
+    const badge=`<span class="ev-badge" style="background:${style.bg};color:${style.tx};border:1px solid ${style.bd}20">${evLabel(r.eventType)}</span><br><span style="font-family:var(--mono);font-size:10px;color:var(--ink-mute);padding-left:2px">${r.eventType}</span>`;
     return`<tr><td>${badge}</td><td>${fmtN(r.total)}</td><td>${fmtN(r.uniqueUsers)}</td><td>${r.firstSeen?String(r.firstSeen).slice(0,10):'—'}</td><td>${r.lastSeen?String(r.lastSeen).slice(0,10):'—'}</td></tr>`;
   }).join('');
 }
@@ -728,7 +737,7 @@ function renderMonthly(data){
   const datasets=types.map(type=>{
     const s=ev(type);
     return{
-      label:type,
+      label:evLabel(type),
       data:months.map(m=>{const r=data.rows.find(x=>x.month===m&&x.eventType===type);return r?r.count:0}),
       backgroundColor:s.bg.replace('.2','.7'),
       borderColor:s.bd,
@@ -785,7 +794,7 @@ function renderDaily(data){
   const datasets=types.map(type=>{
     const s=ev(type);
     return{
-      label:type,
+      label:evLabel(type),
       data:days.map(d=>{const r=data.rows.find(x=>String(x.day).slice(0,10)===d&&x.eventType===type);return r?r.count:0}),
       borderColor:s.bd,backgroundColor:s.bg,
       borderWidth:2,fill:true,tension:.3,pointRadius:days.length>60?0:3,pointHoverRadius:5,
@@ -855,7 +864,7 @@ function renderLog(data){
     const s=ev(e.eventType);
     const dt=new Date(e.createdAt);
     const time=dt.toLocaleString('ko-KR',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
-    const badge=`<span class="ev-badge" style="background:${s.bg};color:${s.tx};border:1px solid ${s.bd}20">${e.eventType}</span>`;
+    const badge=`<span class="ev-badge" style="background:${s.bg};color:${s.tx};border:1px solid ${s.bd}20">${evLabel(e.eventType)}</span>`;
     const hash=e.userHash?`<span style="font-family:var(--mono);font-size:11px;color:var(--ink-mute)">${e.userHash.slice(0,8)}…</span>`:'<span style="color:var(--ink-mute)">—</span>';
     const meta=e.metadata?`<span style="font-family:var(--mono);font-size:11px;color:var(--ink-mute)">${JSON.stringify(e.metadata).slice(0,60)}</span>`:'<span style="color:var(--ink-mute)">—</span>';
     return`<tr><td style="font-family:var(--mono);font-size:11px">${time}</td><td>${badge}</td><td>${hash}</td><td>${meta}</td></tr>`;
