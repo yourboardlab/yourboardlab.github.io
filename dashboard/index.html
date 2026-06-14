@@ -503,6 +503,12 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
         <div class="chart-wrap"><canvas id="sess-daily-chart"></canvas></div>
       </div>
     </div>
+    <div class="chart-card" style="margin-top:16px">
+      <div class="chart-card-head">
+        <div class="chart-title">버튼 클릭 순위 <span>많이 쓴 기능 top 15</span></div>
+      </div>
+      <div class="chart-wrap" style="height:320px"><canvas id="sess-btn-chart"></canvas></div>
+    </div>
 
     <!-- § 7. 최근 이벤트 -->
     <div class="sec-head">
@@ -1043,6 +1049,37 @@ function renderSession(data){
         scales:{
           x:{ticks:{maxTicksLimit:10}},
           y:{beginAtZero:true,ticks:{stepSize:1}},
+        },
+      },
+    });
+  }
+
+  // 버튼 클릭 순위 차트
+  destroyChart('sessBtn');
+  const btnCtx = document.getElementById('sess-btn-chart');
+  const btns = (data?.buttons || []).slice(0, 15);
+  if(btnCtx && btns.length > 0){
+    const palette = ['#9DC9A0','#8EB8E0','#C1A9D9','#F4A48C','#F7CE76',
+                     '#7EC8C8','#D98FA9','#A8C5DA','#B5D99C','#E8B87A',
+                     '#9BB8D3','#C9A8E0','#8FD4B5','#F0A07A','#AAC5A0'];
+    charts['sessBtn'] = new Chart(btnCtx,{
+      type:'bar',
+      data:{
+        labels: btns.map(r=>r.btn),
+        datasets:[{
+          label:'클릭 수',
+          data: btns.map(r=>r.clicks),
+          backgroundColor: btns.map((_,i)=>palette[i%palette.length]),
+          borderRadius:4,
+        }],
+      },
+      options:{
+        indexAxis:'y',
+        responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false}},
+        scales:{
+          x:{beginAtZero:true,ticks:{callback:v=>fmtN(v)}},
+          y:{ticks:{font:{size:11}}},
         },
       },
     });
