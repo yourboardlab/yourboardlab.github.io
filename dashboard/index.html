@@ -558,6 +558,61 @@ const EV_KO = {
 };
 function evLabel(t){return EV_KO[t]||t}
 
+const BTN_KO = {
+  // ── 공통 헤더 ──────────────────────────────────────────────
+  menuBtn:                      '메뉴 열기',
+  headerGoTodayBtn:             '오늘로 이동',
+  shareScheduleBtn:             '일정 공유',
+  // ── 달력 탭 ────────────────────────────────────────────────
+  prevMonthBtn:                 '달력 이전 달',
+  nextMonthBtn:                 '달력 다음 달',
+  calendarCell:                 '날짜 선택',
+  category_memo:                '오늘은 카테고리',
+  category_ledger:              '돈 기록 카테고리',
+  category_checklist:           '체크리스트 카테고리',
+  category_score:               '기록 카테고리',
+  moodBtn:                      '기분 선택',
+  itemRename:                   '항목 이름 변경',
+  itemRemove:                   '항목 삭제',
+  // ── 차트 탭 ────────────────────────────────────────────────
+  chartPrevMonthBtn:            '차트 이전 달',
+  chartNextMonthBtn:            '차트 다음 달',
+  // ── 설정 탭 ────────────────────────────────────────────────
+  rotationToggle:               '화면 회전 토글',
+  calendarMemoOnCellsToggle:    '달력 일정 표시 토글',
+  loginToggle:                  '로그인 기능 토글',
+  lunchboxStayLoggedInToggle:   '도시락 로그인 유지 토글',
+  accordionMoodConcept:         '기분 캐릭터 아코디언',
+  accordionTheme:               '색상 테마 아코디언',
+  accordionExport:              '데이터 내보내기 아코디언',
+  accordionImport:              '데이터 불러오기 아코디언',
+  accordionLunchbox:            '도시락 설정 아코디언',
+  exportDataBtn:                '데이터 내보내기 실행',
+  importDataBtn:                '데이터 불러오기 실행',
+  lunchboxSessionLogoutBtn:     '도시락 로그아웃',
+  // ── 기분 캐릭터 선택 ────────────────────────────────────────
+  concept_gomit:                '캐릭터 선택: 고밋',
+  concept_nayang:               '캐릭터 선택: 나양',
+  concept_mongoo:               '캐릭터 선택: 몽구',
+  concept_tolki:                '캐릭터 선택: 톨키',
+  concept_puddi:                '캐릭터 선택: 푸디',
+  concept_mallang:              '캐릭터 선택: 말랑',
+  // ── 색상 테마 선택 ──────────────────────────────────────────
+  theme_midnight:               '테마: 미드나잇',
+  theme_paper:                  '테마: 페이퍼',
+  theme_mint:                   '테마: 민트',
+  theme_peach:                  '테마: 피치',
+  theme_lavender:               '테마: 라벤더',
+  theme_sky:                    '테마: 스카이',
+  theme_rose:                   '테마: 로즈',
+  theme_sand:                   '테마: 샌드',
+  // ── 도시락 탭 ──────────────────────────────────────────────
+  lunchboxAttendanceBtn:        '출석 체크',
+  lunchboxRechargeOpenBtn:      '코인 충전 열기',
+  lunchboxShopItem:             '아이콘 팩 클릭',
+};
+function btnLabel(id){return BTN_KO[id]||id}
+
 const CHART_DEFAULTS = {
   tooltip:{backgroundColor:'#1C1915',borderColor:'#2E2B27',borderWidth:1,titleColor:'#B5A99A',bodyColor:'#F4EFE6',padding:10},
   legend:{labels:{color:'#6B6157',font:{size:11,family:'JetBrains Mono'},padding:12,boxWidth:10,boxHeight:10}},
@@ -1065,7 +1120,7 @@ function renderSession(data){
     charts['sessBtn'] = new Chart(btnCtx,{
       type:'bar',
       data:{
-        labels: btns.map(r=>r.btn),
+        labels: btns.map(r=>btnLabel(r.btn)),
         datasets:[{
           label:'클릭 수',
           data: btns.map(r=>r.clicks),
