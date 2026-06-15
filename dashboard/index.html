@@ -284,6 +284,10 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
       <span class="header-badge">ADMIN</span>
     </div>
     <div class="header-right">
+      <button class="hbtn" id="export-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        내보내기
+      </button>
       <button class="hbtn" id="refresh-btn">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
         새로고침
@@ -775,6 +779,118 @@ document.getElementById('rec-verify-btn').addEventListener('click',async()=>{
 function doLogout(){clearToken();sessionToken=null;goLogin()}
 document.getElementById('logout-btn').addEventListener('click',doLogout);
 
+// ─── Export ───────────────────────────────────────────────────────────────────
+function csvRow(...cells){ return cells.map(c=>{ const s=String(c??''); return s.includes(',')||s.includes('"')||s.includes('\n')?`"${s.replace(/"/g,'""')}"`:s; }).join(','); }
+function csvSection(title, headers, rows){
+  const lines=[`## ${title}`, csvRow(...headers)];
+  rows.forEach(r=>lines.push(csvRow(...r)));
+  lines.push('');
+  return lines.join('\n');
+}
+function fmtDurExport(ms){ if(!ms) return '0초'; const s=Math.round(ms/1000),m=Math.floor(s/60),sec=s%60; return m>0?`${m}분 ${sec}초`:`${sec}초`; }
+
+function buildExportCsv(c){
+  const dt = c.loadedAt.toLocaleString('ko-KR');
+  const lines = [`Yomi Analytics Export,생성일시,${dt}`, ''];
+
+  // 1. 30일 개요
+  const s = c.summary;
+  lines.push(csvSection('30일 개요',
+    ['항목','값'],
+    [
+      ['DAU (일평균 활성 사용자)', s.dau],
+      ['신규 가입 (30일)', s.newAccounts30d],
+      ['일정 공유 (30일)', s.shareEvents30d],
+      ['출석 체크 누적', s.totals?.find(t=>t.eventType==='BENTO_CHECKIN')?.count||0],
+    ]
+  ));
+
+  // 2. 이벤트 누적 (all-time)
+  lines.push(csvSection('이벤트 누적 (전체)',
+    ['이벤트','총 발생','고유 사용자','최초 발생','최근 발생'],
+    (c.alltime.byType||[]).map(r=>[r.eventType, r.total, r.uniqueUsers,
+      r.firstSeen?String(r.firstSeen).slice(0,10):'', r.lastSeen?String(r.lastSeen).slice(0,10):''])
+  ));
+
+  // 3. 월별 추이
+  const mRows=[];
+  const mMonths=[...new Set((c.monthly.rows||[]).map(r=>r.month))].sort();
+  const mTypes=[...new Set((c.monthly.rows||[]).map(r=>r.eventType))].sort();
+  mMonths.forEach(mo=>{
+    mTypes.forEach(et=>{
+      const row=(c.monthly.rows||[]).find(r=>r.month===mo&&r.eventType===et);
+      if(row) mRows.push([mo, et, row.total, row.uniqueUsers]);
+    });
+  });
+  lines.push(csvSection('월별 추이', ['월','이벤트','총 발생','고유 사용자'], mRows));
+
+  // 4. 일별 활성 사용자 (DAU)
+  lines.push(csvSection('일별 DAU',
+    ['날짜','DAU'],
+    (c.dau.daily||[]).map(r=>[r.date, r.dau])
+  ));
+
+  // 5. 일별 이벤트
+  lines.push(csvSection('일별 이벤트',
+    ['날짜','이벤트','발생 수'],
+    (c.daily.rows||[]).map(r=>[r.date, r.eventType, r.count])
+  ));
+
+  // 6. 세션 분석
+  const ss = c.session?.summary || {};
+  lines.push(csvSection('세션 분석 — 요약',
+    ['항목','값'],
+    [
+      ['총 세션 수', ss.sessions||0],
+      ['평균 세션 시간', fmtDurExport(ss.avgDurationMs)],
+      ['가장 많이 머문 탭', ss.topTab||''],
+    ]
+  ));
+  lines.push(csvSection('세션 분석 — 탭 체류 (ms)',
+    ['탭','평균 체류 (ms)'],
+    Object.entries(ss.avgTabDwell||{}).map(([k,v])=>[k,v])
+  ));
+  lines.push(csvSection('세션 분석 — 버튼 클릭 순위',
+    ['버튼 ID','한국어 레이블','총 클릭'],
+    (c.session?.buttons||[]).map(r=>[r.btn, btnLabel(r.btn), r.clicks])
+  ));
+
+  // 7. 지역 분석
+  lines.push(csvSection('지역 분석 — 국가',
+    ['국가 코드','총 이벤트','고유 사용자'],
+    (c.geo.countries||[]).map(r=>[r.country, r.total, r.uniqueUsers])
+  ));
+  lines.push(csvSection('지역 분석 — 도시',
+    ['도시','국가','총 이벤트','고유 사용자'],
+    (c.geo.cities||[]).map(r=>[r.city, r.country, r.total, r.uniqueUsers])
+  ));
+
+  // 8. 최근 이벤트 로그
+  lines.push(csvSection('최근 이벤트 로그 (최대 100건)',
+    ['시각','이벤트','사용자','국가','도시'],
+    (c.recent.events||[]).map(r=>[
+      r.createdAt?String(r.createdAt).slice(0,19).replace('T',' '):'',
+      r.eventType, r.userHash||'', r.country||'', r.city||''
+    ])
+  ));
+
+  return lines.join('\n');
+}
+
+function downloadFile(content, filename, mime){
+  const blob = new Blob(['﻿'+content], {type: mime});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href=url; a.download=filename; a.click();
+  setTimeout(()=>URL.revokeObjectURL(url), 1000);
+}
+
+document.getElementById('export-btn').addEventListener('click',()=>{
+  if(!_cache){ alert('먼저 데이터를 로드해주세요.'); return; }
+  const ymd = _cache.loadedAt.toISOString().slice(0,10);
+  downloadFile(buildExportCsv(_cache), `yomi_analytics_${ymd}.csv`, 'text/csv;charset=utf-8');
+});
+
 // ─── Idle auto-logout (1분) ───────────────────────────────────────────────────
 const IDLE_MS = 60_000;
 let _idleTimer = null;
@@ -844,6 +960,8 @@ function fmtDuration(ms){
 }
 
 // ─── Load all ─────────────────────────────────────────────────────────────────
+let _cache = null;
+
 async function loadAll(){
   document.getElementById('error-banner').classList.remove('visible');
   try{
@@ -857,6 +975,7 @@ async function loadAll(){
       apiFetch(`/api/analytics?type=session&days=${currentSessionDays}`),
       apiFetch('/api/analytics?type=recent&limit=100'),
     ]);
+    _cache = { summary, alltime, monthly, daily, dau, geo, session, recent, loadedAt: new Date() };
     renderSummary(summary);
     renderAllTime(alltime);
     renderMonthly(monthly);
