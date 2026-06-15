@@ -13,7 +13,7 @@
 <style>
 :root {
   --bg:#13110F; --bg2:#1C1915; --bg3:#252220; --line:#2E2B27;
-  --ink:#F4EFE6; --ink-soft:#B5A99A; --ink-mute:#6B6157;
+  --ink:#F7F3EE; --ink-soft:#C8BEB4; --ink-mute:#9A8E84;
   --green:#9DC9A0; --blue:#8EB8E0; --purple:#C1A9D9;
   --peach:#F0BF94; --teal:#89CFC9; --coral:#F4A48C; --red:#F46464;
   --r:14px;
@@ -22,7 +22,7 @@
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
-body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
 
 /* ── Login ── */
 #login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
@@ -94,7 +94,7 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
 
 /* ── Section headers ── */
 .sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;margin-top:32px}
-.sec-label{font-family:var(--mono);font-size:10px;color:var(--ink-mute);letter-spacing:.1em;text-transform:uppercase}
+.sec-label{font-family:var(--mono);font-size:11px;color:var(--ink-mute);letter-spacing:.08em;text-transform:uppercase}
 .range-tabs{display:flex;gap:4px}
 .rtab{background:none;border:1px solid var(--line);border-radius:6px;color:var(--ink-mute);font-size:11px;font-family:var(--mono);padding:4px 10px;cursor:pointer;transition:all .15s;letter-spacing:.04em}
 .rtab:hover{color:var(--ink);border-color:var(--ink-mute)}
@@ -107,10 +107,10 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
 @media(min-width:640px){.cards-4{grid-template-columns:repeat(4,1fr)}}
 @media(min-width:480px){.cards-3{grid-template-columns:repeat(3,1fr)}}
 .stat-card{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);padding:18px 18px 16px}
-.stat-label{font-family:var(--mono);font-size:10px;color:var(--ink-mute);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.stat-label{font-family:var(--mono);font-size:11px;color:var(--ink-mute);letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:6px}
 .stat-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
-.stat-value{font-size:30px;font-weight:700;letter-spacing:-.03em;line-height:1;margin-bottom:4px}
-.stat-sub{font-size:12px;color:var(--ink-mute)}
+.stat-value{font-size:30px;font-weight:700;letter-spacing:-.03em;line-height:1;margin-bottom:6px}
+.stat-sub{font-size:13px;color:var(--ink-mute)}
 
 /* ── Charts ── */
 .chart-grid-2{display:grid;grid-template-columns:1fr;gap:16px}
@@ -119,18 +119,18 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
 @media(min-width:900px){.chart-grid-eq{grid-template-columns:1fr 1fr}}
 .chart-card{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);padding:20px 22px 18px}
 .chart-card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-.chart-title{font-size:13px;font-weight:600;color:var(--ink-soft);display:flex;align-items:center;gap:8px}
-.chart-title span{font-family:var(--mono);font-size:10px;color:var(--ink-mute);font-weight:400;letter-spacing:.06em;text-transform:uppercase}
+.chart-title{font-size:14px;font-weight:600;color:var(--ink);display:flex;align-items:center;gap:8px}
+.chart-title span{font-family:var(--mono);font-size:11px;color:var(--ink-mute);font-weight:400;letter-spacing:.05em;text-transform:uppercase}
 .chart-wrap{position:relative;height:220px}
 .chart-wrap-lg{position:relative;height:280px}
 .empty-chart{display:flex;align-items:center;justify-content:center;height:100%;color:var(--ink-mute);font-size:13px;font-family:var(--mono)}
 
 /* ── All-time table ── */
 .alltime-table{width:100%;border-collapse:collapse}
-.alltime-table th{font-family:var(--mono);font-size:10px;color:var(--ink-mute);letter-spacing:.08em;text-transform:uppercase;text-align:left;padding:10px 16px;border-bottom:1px solid var(--line);white-space:nowrap}
+.alltime-table th{font-family:var(--mono);font-size:11px;color:var(--ink-mute);letter-spacing:.06em;text-transform:uppercase;text-align:left;padding:11px 16px;border-bottom:1px solid var(--line);white-space:nowrap}
 .alltime-table th:not(:first-child){text-align:right}
-.alltime-table td{padding:10px 16px;font-size:13px;color:var(--ink-soft);border-bottom:1px solid rgba(46,43,39,.5);white-space:nowrap;vertical-align:middle}
-.alltime-table td:not(:first-child){text-align:right;font-family:var(--mono);font-size:12px}
+.alltime-table td{padding:11px 16px;font-size:14px;color:var(--ink-soft);border-bottom:1px solid rgba(46,43,39,.5);white-space:nowrap;vertical-align:middle}
+.alltime-table td:not(:first-child){text-align:right;font-family:var(--mono);font-size:13px}
 .alltime-table tbody tr:hover{background:rgba(255,255,255,.02)}
 .alltime-table tbody tr:last-child td{border-bottom:none}
 
@@ -144,10 +144,10 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
 .table-head span{font-family:var(--mono);font-size:10px;color:var(--ink-mute);letter-spacing:.06em;text-transform:uppercase}
 .table-scroll{overflow-x:auto}
 .ev-table{width:100%;border-collapse:collapse}
-.ev-table thead th{font-family:var(--mono);font-size:10px;color:var(--ink-mute);letter-spacing:.08em;text-transform:uppercase;text-align:left;padding:10px 20px;border-bottom:1px solid var(--line);white-space:nowrap}
+.ev-table thead th{font-family:var(--mono);font-size:11px;color:var(--ink-mute);letter-spacing:.06em;text-transform:uppercase;text-align:left;padding:11px 20px;border-bottom:1px solid var(--line);white-space:nowrap}
 .ev-table tbody tr{transition:background .15s}
-.ev-table tbody tr:hover{background:rgba(255,255,255,.02)}
-.ev-table tbody td{padding:10px 20px;font-size:13px;color:var(--ink-soft);border-bottom:1px solid rgba(46,43,39,.5);white-space:nowrap;vertical-align:middle}
+.ev-table tbody tr:hover{background:rgba(255,255,255,.03)}
+.ev-table tbody td{padding:11px 20px;font-size:14px;color:var(--ink-soft);border-bottom:1px solid rgba(46,43,39,.5);white-space:nowrap;vertical-align:middle}
 .ev-table tbody tr:last-child td{border-bottom:none}
 .loading-row td{text-align:center;padding:32px!important;color:var(--ink-mute);font-size:13px}
 
@@ -505,9 +505,9 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
     </div>
     <div class="chart-card" style="margin-top:16px">
       <div class="chart-card-head">
-        <div class="chart-title">버튼 클릭 순위 <span>많이 쓴 기능 top 15</span></div>
+        <div class="chart-title">버튼 클릭 순위 <span>많이 쓴 기능 top 20</span></div>
       </div>
-      <div class="chart-wrap" style="height:320px"><canvas id="sess-btn-chart"></canvas></div>
+      <div class="chart-wrap" style="height:380px"><canvas id="sess-btn-chart"></canvas></div>
     </div>
 
     <!-- § 7. 최근 이벤트 -->
@@ -1112,11 +1112,12 @@ function renderSession(data){
   // 버튼 클릭 순위 차트
   destroyChart('sessBtn');
   const btnCtx = document.getElementById('sess-btn-chart');
-  const btns = (data?.buttons || []).slice(0, 15);
+  const btns = (data?.buttons || []).slice(0, 20);
   if(btnCtx && btns.length > 0){
     const palette = ['#9DC9A0','#8EB8E0','#C1A9D9','#F4A48C','#F7CE76',
                      '#7EC8C8','#D98FA9','#A8C5DA','#B5D99C','#E8B87A',
-                     '#9BB8D3','#C9A8E0','#8FD4B5','#F0A07A','#AAC5A0'];
+                     '#9BB8D3','#C9A8E0','#8FD4B5','#F0A07A','#AAC5A0',
+                     '#9DC9A0','#8EB8E0','#C1A9D9','#F4A48C','#F7CE76'];
     charts['sessBtn'] = new Chart(btnCtx,{
       type:'bar',
       data:{
@@ -1129,12 +1130,22 @@ function renderSession(data){
         }],
       },
       options:{
-        indexAxis:'y',
         responsive:true,maintainAspectRatio:false,
-        plugins:{legend:{display:false}},
+        plugins:{legend:{display:false},tooltip:{callbacks:{title:items=>items[0].label}}},
         scales:{
-          x:{beginAtZero:true,ticks:{callback:v=>fmtN(v)}},
-          y:{ticks:{font:{size:11}}},
+          x:{
+            ticks:{
+              maxRotation:90,minRotation:60,
+              font:{size:11},
+              color:'#C8BEB4',
+            },
+            grid:{color:'rgba(46,43,39,.5)'},
+          },
+          y:{
+            beginAtZero:true,
+            ticks:{callback:v=>fmtN(v),font:{size:11},color:'#9A8E84'},
+            grid:{color:'rgba(46,43,39,.5)'},
+          },
         },
       },
     });
