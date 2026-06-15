@@ -156,8 +156,13 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
 </head>
 <body>
 
+<!-- ══ INIT LOADING ══ -->
+<div id="init-loading" style="position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:999">
+  <div style="font-family:var(--mono);font-size:13px;color:var(--ink-mute);letter-spacing:.05em">로딩 중…</div>
+</div>
+
 <!-- ══ LOGIN ══ -->
-<div id="login-screen">
+<div id="login-screen" style="display:none">
   <div class="login-card">
     <div class="login-logo"><div class="mark"></div><span>yourboardlab</span></div>
 
@@ -752,17 +757,29 @@ async function apiFetch(path){
 // ─── Screen switch ────────────────────────────────────────────────────────────
 const $login = document.getElementById('login-screen');
 const $dash  = document.getElementById('dashboard');
-function goLogin(view){$dash.style.display='none';$login.style.display='flex';showView(view||'view-login')}
+function goLogin(view){
+  const $l=document.getElementById('init-loading');if($l)$l.style.display='none';
+  $dash.style.display='none';$login.style.display='flex';showView(view||'view-login');
+}
 function goDash(){$login.style.display='none';$dash.style.display='block';loadAll();_resetIdle()}
 
 // ─── Init ─────────────────────────────────────────────────────────────────────
 (async function init(){
+  const $loading = document.getElementById('init-loading');
+  const hideLoading = () => { if($loading) $loading.style.display='none'; };
+
   const saved=loadToken();
   if(saved){
     sessionToken=saved;
-    try{await apiFetch('/api/analytics?type=summary');goDash();return}
+    try{
+      await apiFetch('/api/analytics?type=summary');
+      hideLoading();
+      goDash();
+      return;
+    }
     catch(e){if(e.message!=='expired'){clearToken();sessionToken=null}}
   }
+  hideLoading();
   try{
     const s=await checkStatus();
     goLogin(s&&!s.setup?'view-setup':'view-login');
