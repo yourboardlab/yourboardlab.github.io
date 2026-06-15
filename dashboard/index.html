@@ -679,7 +679,7 @@ async function apiFetch(path){
 const $login = document.getElementById('login-screen');
 const $dash  = document.getElementById('dashboard');
 function goLogin(view){$dash.style.display='none';$login.style.display='flex';showView(view||'view-login')}
-function goDash(){$login.style.display='none';$dash.style.display='block';loadAll()}
+function goDash(){$login.style.display='none';$dash.style.display='block';loadAll();_resetIdle()}
 
 // ─── Init ─────────────────────────────────────────────────────────────────────
 (async function init(){
@@ -772,7 +772,19 @@ document.getElementById('rec-verify-btn').addEventListener('click',async()=>{
 });
 
 // ─── Logout ───────────────────────────────────────────────────────────────────
-document.getElementById('logout-btn').addEventListener('click',()=>{clearToken();sessionToken=null;goLogin()});
+function doLogout(){clearToken();sessionToken=null;goLogin()}
+document.getElementById('logout-btn').addEventListener('click',doLogout);
+
+// ─── Idle auto-logout (1분) ───────────────────────────────────────────────────
+const IDLE_MS = 60_000;
+let _idleTimer = null;
+function _resetIdle(){
+  clearTimeout(_idleTimer);
+  if(sessionToken) _idleTimer = setTimeout(doLogout, IDLE_MS);
+}
+['mousemove','mousedown','keydown','touchstart','scroll','click'].forEach(ev=>
+  document.addEventListener(ev, _resetIdle, {passive:true})
+);
 
 // ─── Settings modal ───────────────────────────────────────────────────────────
 document.getElementById('settings-btn').addEventListener('click',()=>{
