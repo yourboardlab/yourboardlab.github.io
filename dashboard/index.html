@@ -514,7 +514,40 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
       <div class="chart-wrap" style="height:380px"><canvas id="sess-btn-chart"></canvas></div>
     </div>
 
-    <!-- § 7. 최근 이벤트 -->
+    <!-- § 7. 기분 & 캐릭터 분석 -->
+    <div class="sec-head" style="margin-top:40px">
+      <div class="sec-label">— 기분 &amp; 캐릭터 분석</div>
+    </div>
+    <div class="chart-grid-eq" style="margin-bottom:16px">
+      <div class="chart-card">
+        <div class="chart-card-head">
+          <div class="chart-title">달력 기분 선택 <span>감정별 클릭 횟수</span></div>
+        </div>
+        <div class="chart-wrap" style="height:260px"><canvas id="mood-pick-chart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-card-head">
+          <div class="chart-title">도시락 구매 관심 <span>셋트별 열람·구매시도</span></div>
+        </div>
+        <div class="chart-wrap" style="height:260px"><canvas id="mood-shop-chart"></canvas></div>
+      </div>
+    </div>
+    <div class="chart-grid-eq" style="margin-bottom:16px">
+      <div class="chart-card">
+        <div class="chart-card-head">
+          <div class="chart-title">상점 감정 미리보기 <span>어느 감정을 많이 클릭했나</span></div>
+        </div>
+        <div class="chart-wrap" style="height:240px"><canvas id="mood-preview-chart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-card-head">
+          <div class="chart-title">상점 보기 방식 선호 <span>한줄·두줄·네줄</span></div>
+        </div>
+        <div class="chart-wrap" style="height:240px"><canvas id="mood-view-chart"></canvas></div>
+      </div>
+    </div>
+
+    <!-- § 8. 최근 이벤트 -->
     <div class="sec-head">
       <div class="sec-label">— 최근 이벤트 로그</div>
       <span id="table-count" style="font-family:var(--mono);font-size:10px;color:var(--ink-mute);letter-spacing:.06em;text-transform:uppercase">—</span>
@@ -617,6 +650,40 @@ const BTN_KO = {
   lunchboxAttendanceBtn:        '출석 체크',
   lunchboxRechargeOpenBtn:      '코인 충전 열기',
   lunchboxSessionLogoutBtn:     '도시락 로그아웃',
+  // ── 도시락 상점 — 셋트 열람 ─────────────────────────────────
+  'shop_pack_mood-nayang':      '도시락-나양 셋트 열기',
+  'shop_pack_mood-mongoo':      '도시락-몽구 셋트 열기',
+  'shop_pack_mood-tolki':       '도시락-톨키 셋트 열기',
+  'shop_pack_mood-puddi':       '도시락-푸디 셋트 열기',
+  'shop_pack_mood-mallang':     '도시락-말랑 셋트 열기',
+  // ── 도시락 상점 — 구매 시도 ─────────────────────────────────
+  'shop_buy_mood-nayang':       '도시락-나양 구매버튼',
+  'shop_buy_mood-mongoo':       '도시락-몽구 구매버튼',
+  'shop_buy_mood-tolki':        '도시락-톨키 구매버튼',
+  'shop_buy_mood-puddi':        '도시락-푸디 구매버튼',
+  'shop_buy_mood-mallang':      '도시락-말랑 구매버튼',
+  // ── 도시락 상점 — 감정 미리보기 ─────────────────────────────
+  shop_mood_preview_happy:      '상점-미리보기_행복',
+  shop_mood_preview_sad:        '상점-미리보기_슬픔',
+  shop_mood_preview_angry:      '상점-미리보기_화남',
+  shop_mood_preview_love:       '상점-미리보기_사랑',
+  shop_mood_preview_surprised:  '상점-미리보기_놀람',
+  shop_mood_preview_sleepy:     '상점-미리보기_졸림',
+  shop_mood_preview_laughing:   '상점-미리보기_웃음',
+  shop_mood_preview_shy:        '상점-미리보기_수줍음',
+  // ── 도시락 상점 — 보기 방식 ─────────────────────────────────
+  shop_view_wide:               '도시락-한줄 보기',
+  shop_view_compact:            '도시락-두줄 보기',
+  shop_view_dense:              '도시락-네줄 보기',
+  // ── 달력 — 기분 감정 선택 ───────────────────────────────────
+  mood_pick_happy:              '달력-기분_행복',
+  mood_pick_sad:                '달력-기분_슬픔',
+  mood_pick_angry:              '달력-기분_화남',
+  mood_pick_love:               '달력-기분_사랑',
+  mood_pick_surprised:          '달력-기분_놀람',
+  mood_pick_sleepy:             '달력-기분_졸림',
+  mood_pick_laughing:           '달력-기분_웃음',
+  mood_pick_shy:                '달력-기분_수줍음',
 };
 function btnLabel(id){return BTN_KO[id]||id}
 
@@ -984,6 +1051,7 @@ async function loadAll(){
     renderDau(dau);
     renderGeo(geo);
     renderSession(session);
+    renderMoodCharts(session);
     renderLog(recent);
     document.getElementById('last-updated').textContent=`Last updated: ${new Date().toLocaleString('ko-KR')}`;
   }catch(e){
@@ -1287,7 +1355,91 @@ function renderSession(data){
 }
 
 async function reloadSession(){
-  try{const d=await apiFetch(`/api/analytics?type=session&days=${currentSessionDays}`);renderSession(d)}catch{}
+  try{const d=await apiFetch(`/api/analytics?type=session&days=${currentSessionDays}`);renderSession(d);renderMoodCharts(d)}catch{}
+}
+
+function renderMoodCharts(data){
+  const allBtns = data?.buttons || [];
+  const MOOD_IDS = ['happy','sad','angry','love','surprised','sleepy','laughing','shy'];
+  const MOOD_KO  = {happy:'행복',sad:'슬픔',angry:'화남',love:'사랑',surprised:'놀람',sleepy:'졸림',laughing:'웃음',shy:'수줍음'};
+  const PACK_IDS = ['mood-nayang','mood-mongoo','mood-tolki','mood-puddi','mood-mallang'];
+  const PACK_KO  = {'mood-nayang':'나양','mood-mongoo':'몽구','mood-tolki':'톨키','mood-puddi':'푸디','mood-mallang':'말랑'};
+  const CHART_DEFAULTS = {responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+    scales:{x:{ticks:{font:{size:11},color:'#C8BEB4'},grid:{color:'rgba(46,43,39,.4)'}},
+            y:{beginAtZero:true,ticks:{callback:v=>fmtN(v),font:{size:11},color:'#9A8E84'},grid:{color:'rgba(46,43,39,.4)'}}}};
+
+  const btnMap = Object.fromEntries(allBtns.map(b=>[b.btn, b.clicks]));
+
+  // ① 달력 기분 선택
+  destroyChart('moodPick');
+  const pickCtx = document.getElementById('mood-pick-chart');
+  if(pickCtx){
+    const picks = MOOD_IDS.map(id=>({ id, label: MOOD_KO[id]||id, clicks: btnMap['mood_pick_'+id]||0 })).filter(r=>r.clicks>0);
+    if(picks.length){
+      charts['moodPick'] = new Chart(pickCtx,{type:'bar',
+        data:{labels:picks.map(r=>r.label),datasets:[{label:'선택 횟수',data:picks.map(r=>r.clicks),
+          backgroundColor:['#F4A48C','#8EB8E0','#F46464','#F2A6B0','#C1A9D9','#9BB8D3','#F7CE76','#D98FA9'],borderRadius:6}]},
+        options:CHART_DEFAULTS});
+    } else {
+      pickCtx.getContext('2d'); pickCtx.parentElement.innerHTML='<p style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--ink-mute);font-size:13px;font-family:var(--mono)">데이터 없음</p>';
+    }
+  }
+
+  // ② 도시락 셋트 열람 vs 구매시도
+  destroyChart('moodShop');
+  const shopCtx = document.getElementById('mood-shop-chart');
+  if(shopCtx){
+    const packs = PACK_IDS.map(id=>({
+      label: PACK_KO[id]||id,
+      views: btnMap['shop_pack_'+id]||0,
+      buys:  btnMap['shop_buy_'+id]||0,
+    })).filter(r=>r.views>0||r.buys>0);
+    if(packs.length){
+      charts['moodShop'] = new Chart(shopCtx,{type:'bar',
+        data:{labels:packs.map(r=>r.label),datasets:[
+          {label:'열람',data:packs.map(r=>r.views),backgroundColor:'rgba(142,184,224,0.7)',borderRadius:4},
+          {label:'구매버튼',data:packs.map(r=>r.buys),backgroundColor:'rgba(244,164,140,0.9)',borderRadius:4},
+        ]},
+        options:{...CHART_DEFAULTS,plugins:{legend:{display:true,labels:{color:'#C8BEB4',font:{size:11}}}}}});
+    } else {
+      shopCtx.getContext('2d'); shopCtx.parentElement.innerHTML='<p style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--ink-mute);font-size:13px;font-family:var(--mono)">데이터 없음</p>';
+    }
+  }
+
+  // ③ 상점 감정 미리보기
+  destroyChart('moodPreview');
+  const prevCtx = document.getElementById('mood-preview-chart');
+  if(prevCtx){
+    const prevs = MOOD_IDS.map(id=>({ id, label: MOOD_KO[id]||id, clicks: btnMap['shop_mood_preview_'+id]||0 })).filter(r=>r.clicks>0);
+    if(prevs.length){
+      charts['moodPreview'] = new Chart(prevCtx,{type:'bar',
+        data:{labels:prevs.map(r=>r.label),datasets:[{label:'클릭',data:prevs.map(r=>r.clicks),
+          backgroundColor:'rgba(193,169,217,0.8)',borderRadius:6}]},
+        options:CHART_DEFAULTS});
+    } else {
+      prevCtx.getContext('2d'); prevCtx.parentElement.innerHTML='<p style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--ink-mute);font-size:13px;font-family:var(--mono)">데이터 없음</p>';
+    }
+  }
+
+  // ④ 보기 방식 선호 (도넛)
+  destroyChart('moodView');
+  const viewCtx = document.getElementById('mood-view-chart');
+  if(viewCtx){
+    const views = [
+      {label:'한줄 보기', clicks: btnMap['shop_view_wide']||0},
+      {label:'두줄 보기', clicks: btnMap['shop_view_compact']||0},
+      {label:'네줄 보기', clicks: btnMap['shop_view_dense']||0},
+    ].filter(r=>r.clicks>0);
+    if(views.length){
+      charts['moodView'] = new Chart(viewCtx,{type:'doughnut',
+        data:{labels:views.map(r=>r.label),datasets:[{data:views.map(r=>r.clicks),
+          backgroundColor:['#9DC9A0','#8EB8E0','#C1A9D9'],borderWidth:0}]},
+        options:{responsive:true,maintainAspectRatio:false,cutout:'62%',
+          plugins:{legend:{display:true,position:'bottom',labels:{color:'#C8BEB4',font:{size:12},padding:16}}}}});
+    } else {
+      viewCtx.getContext('2d'); viewCtx.parentElement.innerHTML='<p style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--ink-mute);font-size:13px;font-family:var(--mono)">데이터 없음</p>';
+    }
+  }
 }
 
 function renderGeo(data){
