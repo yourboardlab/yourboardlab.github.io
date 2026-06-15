@@ -445,7 +445,7 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
         <div class="stat-sub">이벤트가 기록된 도시</div>
       </div>
     </div>
-    <div class="chart-grid-2">
+    <div class="chart-grid-eq">
       <div class="chart-card">
         <div class="chart-card-head">
           <div class="chart-title">국가별 이벤트 수 <span>가로 막대</span></div>
@@ -469,7 +469,7 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
 
     <!-- § 6. 세션 분석 -->
     <div class="sec-head">
-      <div class="sec-label">— 세션 분석 <span style="font-weight:400;font-size:10px;letter-spacing:0;text-transform:none;color:var(--ink-mute)">(앱 실행 시간 · 탭 체류)</span></div>
+      <div class="sec-label">— 세션 분석 <span style="font-weight:400;font-size:13px;letter-spacing:0;text-transform:none;color:var(--ink-soft)">(앱 실행 시간 · 탭 체류)</span></div>
       <div class="range-tabs" id="session-tabs">
         <button class="rtab active" data-days="14">14일</button>
         <button class="rtab" data-days="30">30일</button>
@@ -692,10 +692,10 @@ function btnLabel(id){return BTN_KO[id]||id}
 
 const CHART_DEFAULTS = {
   tooltip:{backgroundColor:'#1C1915',borderColor:'#2E2B27',borderWidth:1,titleColor:'#B5A99A',bodyColor:'#F4EFE6',padding:10},
-  legend:{labels:{color:'#6B6157',font:{size:11,family:'JetBrains Mono'},padding:12,boxWidth:10,boxHeight:10}},
+  legend:{labels:{color:'#9A8E84',font:{size:11,family:'JetBrains Mono'},padding:12,boxWidth:10,boxHeight:10}},
   scales:{
-    x:{grid:{color:'rgba(46,43,39,.6)'},ticks:{color:'#6B6157',font:{size:11}}},
-    y:{grid:{color:'rgba(46,43,39,.6)'},ticks:{color:'#6B6157',font:{size:11}},beginAtZero:true},
+    x:{grid:{color:'rgba(46,43,39,.6)'},ticks:{color:'#9A8E84',font:{size:11}}},
+    y:{grid:{color:'rgba(46,43,39,.6)'},ticks:{color:'#9A8E84',font:{size:11}},beginAtZero:true},
   },
 };
 
@@ -1023,6 +1023,18 @@ function destroyChart(key){if(charts[key]){charts[key].destroy();delete charts[k
 function dayLabel(d){const dt=new Date(String(d).slice(0,10)+'T00:00:00');return`${dt.getMonth()+1}/${dt.getDate()}`}
 function monthLabel(m){const[y,mo]=String(m).split('-');return`${y}.${mo}`}
 function fmtN(n){return Number(n||0).toLocaleString()}
+function fmtAxisTick(v){
+  const n=Math.abs(v);
+  if(n>=100000000) return(v/100000000).toFixed(1).replace(/\.0$/,'')+'억';
+  if(n>=10000)     return(v/10000).toFixed(1).replace(/\.0$/,'')+'만';
+  if(n>=1000)      return(v/1000).toFixed(1).replace(/\.0$/,'')+'K';
+  return String(v);
+}
+function fmtSecondsAxis(v){
+  if(v>=3600) return Math.round(v/3600)+'시간';
+  if(v>=60)   return Math.round(v/60)+'분';
+  return v+'초';
+}
 function fmtDuration(ms){
   if(!ms||ms<1000)return '—';
   const s=Math.round(ms/1000);const m=Math.floor(s/60);const sec=s%60;
@@ -1131,8 +1143,8 @@ function renderMonthly(data){
         tooltip:CHART_DEFAULTS.tooltip,
       },
       scales:{
-        x:{stacked:true,grid:{color:'rgba(46,43,39,.6)'},ticks:{color:'#6B6157',font:{size:11}}},
-        y:{stacked:true,grid:{color:'rgba(46,43,39,.6)'},ticks:{color:'#6B6157',font:{size:11}},beginAtZero:true},
+        x:{stacked:true,grid:{color:'rgba(46,43,39,.6)'},ticks:{color:'#9A8E84',font:{size:11}}},
+        y:{stacked:true,grid:{color:'rgba(46,43,39,.6)'},ticks:{color:'#9A8E84',font:{size:11},callback:fmtAxisTick},beginAtZero:true},
       },
     },
   });
@@ -1186,8 +1198,8 @@ function renderDaily(data){
         tooltip:CHART_DEFAULTS.tooltip,
       },
       scales:{
-        x:{grid:{color:'rgba(46,43,39,.6)'},ticks:{color:'#6B6157',font:{size:11},maxTicksLimit:12}},
-        y:{grid:{color:'rgba(46,43,39,.6)'},ticks:{color:'#6B6157',font:{size:11},stepSize:1},beginAtZero:true},
+        x:{grid:{color:'rgba(46,43,39,.6)'},ticks:{color:'#9A8E84',font:{size:11},maxTicksLimit:12}},
+        y:{grid:{color:'rgba(46,43,39,.6)'},ticks:{color:'#9A8E84',font:{size:11},callback:fmtAxisTick,precision:0},beginAtZero:true},
       },
     },
   });
@@ -1224,8 +1236,8 @@ function renderDau(data){
         tooltip:CHART_DEFAULTS.tooltip,
       },
       scales:{
-        x:{grid:{color:'rgba(46,43,39,.6)'},ticks:{color:'#6B6157',font:{size:11},maxTicksLimit:12}},
-        y:{grid:{color:'rgba(46,43,39,.6)'},ticks:{color:'#6B6157',font:{size:11}},beginAtZero:true},
+        x:{grid:{color:'rgba(46,43,39,.6)'},ticks:{color:'#9A8E84',font:{size:11},maxTicksLimit:12}},
+        y:{grid:{color:'rgba(46,43,39,.6)'},ticks:{color:'#9A8E84',font:{size:11},callback:fmtAxisTick,precision:0},beginAtZero:true},
       },
     },
   });
@@ -1280,8 +1292,8 @@ function renderSession(data){
         responsive:true,maintainAspectRatio:false,
         plugins:{legend:{display:false}},
         scales:{
-          x:{beginAtZero:true,ticks:{callback:v=>v+'초'}},
-          y:{ticks:{color:'#333'}},
+          x:{beginAtZero:true,grid:{color:'rgba(255,255,255,.08)'},ticks:{callback:fmtSecondsAxis,color:'#B5A99A',font:{size:11}}},
+          y:{grid:{display:false},ticks:{color:'#C8BEB4',font:{size:12}}},
         },
       },
     });
@@ -1307,8 +1319,8 @@ function renderSession(data){
         responsive:true,maintainAspectRatio:false,
         plugins:{legend:{display:false}},
         scales:{
-          x:{ticks:{maxTicksLimit:10}},
-          y:{beginAtZero:true,ticks:{stepSize:1}},
+          x:{ticks:{maxTicksLimit:10,color:'#B5A99A',font:{size:11}}},
+          y:{beginAtZero:true,ticks:{callback:fmtAxisTick,precision:0,color:'#B5A99A',font:{size:11}},grid:{color:'rgba(255,255,255,.08)'}},
         },
       },
     });
@@ -1348,7 +1360,7 @@ function renderSession(data){
           },
           y:{
             beginAtZero:true,
-            ticks:{callback:v=>fmtN(v),font:{size:11},color:'#9A8E84'},
+            ticks:{callback:fmtAxisTick,precision:0,font:{size:11},color:'#C8BEB4'},
             grid:{color:'rgba(46,43,39,.5)'},
           },
         },
@@ -1369,7 +1381,7 @@ function renderMoodCharts(data){
   const PACK_KO  = {'mood-nayang':'나양','mood-mongoo':'몽구','mood-tolki':'톨키','mood-puddi':'푸디','mood-mallang':'말랑'};
   const CHART_DEFAULTS = {responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
     scales:{x:{ticks:{font:{size:11},color:'#C8BEB4'},grid:{color:'rgba(46,43,39,.4)'}},
-            y:{beginAtZero:true,ticks:{callback:v=>fmtN(v),font:{size:11},color:'#9A8E84'},grid:{color:'rgba(46,43,39,.4)'}}}};
+            y:{beginAtZero:true,ticks:{callback:fmtAxisTick,precision:0,font:{size:11},color:'#C8BEB4'},grid:{color:'rgba(46,43,39,.4)'}}}};
 
   const btnMap = Object.fromEntries(allBtns.map(b=>[b.btn, b.clicks]));
 
@@ -1486,8 +1498,8 @@ function renderGeo(data){
           tooltip: CHART_DEFAULTS.tooltip,
         },
         scales: {
-          x: { grid:{color:'rgba(46,43,39,.6)'}, ticks:{color:'#6B6157',font:{size:11}}, beginAtZero:true },
-          y: { grid:{display:false}, ticks:{color:'#B5A99A',font:{size:12}}, },
+          x: { grid:{color:'rgba(46,43,39,.6)'}, ticks:{color:'#9A8E84',font:{size:11},callback:fmtAxisTick}, beginAtZero:true },
+          y: { grid:{display:false}, ticks:{color:'#C8BEB4',font:{size:12}}, },
         },
       },
     });
