@@ -552,7 +552,37 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
       </div>
     </div>
 
-    <!-- § 8. 최근 이벤트 -->
+    <!-- § 8. 알림 설정 분석 -->
+    <div class="sec-head" style="margin-top:40px">
+      <div class="sec-label">— 알림 설정 분석</div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-head">
+        <div class="chart-title">알림 설정 버튼 클릭 <span>기능별 사용 빈도</span></div>
+      </div>
+      <div class="chart-wrap" style="height:200px"><canvas id="notif-chart"></canvas></div>
+    </div>
+
+    <!-- § 9. 도시락 기본 활동 -->
+    <div class="sec-head" style="margin-top:40px">
+      <div class="sec-label">— 도시락 기본 활동</div>
+    </div>
+    <div class="chart-grid-eq" style="margin-bottom:16px">
+      <div class="chart-card">
+        <div class="chart-card-head">
+          <div class="chart-title">도시락 탭 활동 <span>출석·충전·탈퇴 클릭 수</span></div>
+        </div>
+        <div class="chart-wrap" style="height:200px"><canvas id="lunchbox-activity-chart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-card-head">
+          <div class="chart-title">설정 기타 동작 <span>내보내기·불러오기·토글 클릭 수</span></div>
+        </div>
+        <div class="chart-wrap" style="height:200px"><canvas id="settings-actions-chart"></canvas></div>
+      </div>
+    </div>
+
+    <!-- § 10. 최근 이벤트 -->
     <div class="sec-head">
       <div class="sec-label">— 최근 이벤트 로그</div>
       <span id="table-count" style="font-family:var(--mono);font-size:10px;color:var(--ink-mute);letter-spacing:.06em;text-transform:uppercase">—</span>
@@ -619,7 +649,7 @@ const BTN_KO = {
   category_memo:                '달력-오늘은',
   category_ledger:              '달력-썼니',
   category_checklist:           '달력-했니',
-  category_score:               '달력-스코어',
+  category_score:               '달력-기록',
   // ── 차트 탭 ────────────────────────────────────────────────
   chartPrevMonthBtn:            '차트 이전 달',
   chartNextMonthBtn:            '차트 다음 달',
@@ -630,6 +660,8 @@ const BTN_KO = {
   accordion_dailyNotif:         '설정-알림',
   notif_memo_toggle:            '설정-알림-오늘은',
   notif_check_toggle:           '설정-알림-했니',
+  notif_memo_time_change:       '설정-알림-오늘은-시간변경',
+  notif_check_time_change:      '설정-알림-했니-시간변경',
   accordion_export:             '설정-내보내기',
   accordion_import:             '설정-불러오기',
   accordion_lunchbox:           '설정-도시락',
@@ -654,10 +686,13 @@ const BTN_KO = {
   importDataBtn:                '데이터 불러오기 실행',
   rotationToggle:               '화면 회전 토글',
   calendarMemoOnCellsToggle:    '달력 일정 표시 토글',
+  // ── 설정 탭 — 도시락 패널 ──────────────────────────────────
+  lunchboxAppLoginToggle:       '설정-앱 로그인 토글',
+  lunchboxAccessToggle:         '설정-도시락 접근 로그인 토글',
+  lunchboxWithdrawBtn:          '도시락 탈퇴',
   // ── 도시락 탭 ──────────────────────────────────────────────
   lunchboxAttendanceBtn:        '출석 체크',
   lunchboxRechargeOpenBtn:      '코인 충전 열기',
-  lunchboxSessionLogoutBtn:     '도시락 로그아웃',
   // ── 도시락 상점 — 셋트 열람 ─────────────────────────────────
   'shop_pack_mood-nayang':      '도시락-나양 셋트 열기',
   'shop_pack_mood-mongoo':      '도시락-몽구 셋트 열기',
@@ -1084,6 +1119,9 @@ async function loadAll(){
     renderGeo(geo);
     renderSession(session);
     renderMoodCharts(session);
+    renderNotifCharts(session);
+    renderLunchboxActivity(session);
+    renderSettingsActions(session);
     renderLog(recent);
     document.getElementById('last-updated').textContent=`Last updated: ${new Date().toLocaleString('ko-KR')}`;
   }catch(e){
@@ -1387,7 +1425,7 @@ function renderSession(data){
 }
 
 async function reloadSession(){
-  try{const d=await apiFetch(`/api/analytics?type=session&days=${currentSessionDays}`);renderSession(d);renderMoodCharts(d)}catch{}
+  try{const d=await apiFetch(`/api/analytics?type=session&days=${currentSessionDays}`);renderSession(d);renderMoodCharts(d);renderNotifCharts(d);renderLunchboxActivity(d);renderSettingsActions(d)}catch{}
 }
 
 function renderMoodCharts(data){
@@ -1472,6 +1510,128 @@ function renderMoodCharts(data){
       viewCtx.getContext('2d'); viewCtx.parentElement.innerHTML='<p style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--ink-mute);font-size:13px;font-family:var(--mono)">데이터 없음</p>';
     }
   }
+}
+
+function renderNotifCharts(data){
+  const btnMap = Object.fromEntries((data?.buttons||[]).map(b=>[b.btn,b.clicks]));
+  const items = [
+    {id:'accordion_dailyNotif',  label:'알림 설정 열기'},
+    {id:'notif_memo_toggle',     label:'오늘은 토글'},
+    {id:'notif_check_toggle',    label:'했니 토글'},
+    {id:'notif_memo_time_change',label:'오늘은 시간변경'},
+    {id:'notif_check_time_change',label:'했니 시간변경'},
+  ].map(r=>({...r, clicks: btnMap[r.id]||0}));
+
+  destroyChart('notif');
+  const ctx = document.getElementById('notif-chart');
+  if(!ctx) return;
+  const hasData = items.some(r=>r.clicks>0);
+  if(!hasData){
+    ctx.getContext('2d');
+    ctx.parentElement.innerHTML='<p style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--ink-mute);font-size:13px;font-family:var(--mono)">데이터 없음</p>';
+    return;
+  }
+  charts['notif'] = new Chart(ctx,{
+    type:'bar',
+    data:{
+      labels: items.map(r=>r.label),
+      datasets:[{
+        label:'클릭 수',
+        data: items.map(r=>r.clicks),
+        backgroundColor:['#89CFC9','#9DC9A0','#F0BF94','#8EB8E0','#C1A9D9'],
+        borderRadius:5,
+      }],
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{title:i=>i[0].label}}},
+      scales:{
+        x:{grid:{color:'rgba(46,43,39,.5)'},ticks:{color:'#C8BEB4',font:{size:12}}},
+        y:{beginAtZero:true,grid:{color:'rgba(46,43,39,.5)'},ticks:{callback:fmtAxisTick,precision:0,color:'#C8BEB4',font:{size:11}}},
+      },
+    },
+  });
+}
+
+function renderLunchboxActivity(data){
+  const btnMap = Object.fromEntries((data?.buttons||[]).map(b=>[b.btn,b.clicks]));
+  const items = [
+    {id:'lunchboxAttendanceBtn',   label:'출석 체크'},
+    {id:'lunchboxRechargeOpenBtn', label:'코인 충전 열기'},
+    {id:'lunchboxWithdrawBtn',     label:'도시락 탈퇴'},
+  ].map(r=>({...r, clicks: btnMap[r.id]||0}));
+
+  destroyChart('lunchboxActivity');
+  const ctx = document.getElementById('lunchbox-activity-chart');
+  if(!ctx) return;
+  const hasData = items.some(r=>r.clicks>0);
+  if(!hasData){
+    ctx.getContext('2d');
+    ctx.parentElement.innerHTML='<p style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--ink-mute);font-size:13px;font-family:var(--mono)">데이터 없음</p>';
+    return;
+  }
+  charts['lunchboxActivity'] = new Chart(ctx,{
+    type:'bar',
+    data:{
+      labels: items.map(r=>r.label),
+      datasets:[{
+        label:'클릭 수',
+        data: items.map(r=>r.clicks),
+        backgroundColor:['#9DC9A0','#F7CE76','#F4A48C'],
+        borderRadius:5,
+      }],
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{title:i=>i[0].label}}},
+      scales:{
+        x:{grid:{color:'rgba(46,43,39,.5)'},ticks:{color:'#C8BEB4',font:{size:12}}},
+        y:{beginAtZero:true,grid:{color:'rgba(46,43,39,.5)'},ticks:{callback:fmtAxisTick,precision:0,color:'#C8BEB4',font:{size:11}}},
+      },
+    },
+  });
+}
+
+function renderSettingsActions(data){
+  const btnMap = Object.fromEntries((data?.buttons||[]).map(b=>[b.btn,b.clicks]));
+  const items = [
+    {id:'exportDataBtn',            label:'내보내기 실행'},
+    {id:'importDataBtn',            label:'불러오기 실행'},
+    {id:'rotationToggle',           label:'화면 회전 토글'},
+    {id:'calendarMemoOnCellsToggle',label:'달력 일정 표시'},
+    {id:'lunchboxAppLoginToggle',   label:'앱 로그인 토글'},
+    {id:'lunchboxAccessToggle',     label:'도시락 접근 토글'},
+  ].map(r=>({...r, clicks: btnMap[r.id]||0}));
+
+  destroyChart('settingsActions');
+  const ctx = document.getElementById('settings-actions-chart');
+  if(!ctx) return;
+  const hasData = items.some(r=>r.clicks>0);
+  if(!hasData){
+    ctx.getContext('2d');
+    ctx.parentElement.innerHTML='<p style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--ink-mute);font-size:13px;font-family:var(--mono)">데이터 없음</p>';
+    return;
+  }
+  charts['settingsActions'] = new Chart(ctx,{
+    type:'bar',
+    data:{
+      labels: items.map(r=>r.label),
+      datasets:[{
+        label:'클릭 수',
+        data: items.map(r=>r.clicks),
+        backgroundColor:['#89CFC9','#8EB8E0','#C1A9D9','#F0BF94','#A8D8A8','#F4A48C'],
+        borderRadius:5,
+      }],
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{title:i=>i[0].label}}},
+      scales:{
+        x:{grid:{color:'rgba(46,43,39,.5)'},ticks:{color:'#C8BEB4',font:{size:12}}},
+        y:{beginAtZero:true,grid:{color:'rgba(46,43,39,.5)'},ticks:{callback:fmtAxisTick,precision:0,color:'#C8BEB4',font:{size:11}}},
+      },
+    },
+  });
 }
 
 function renderGeo(data){
