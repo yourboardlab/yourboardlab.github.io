@@ -532,7 +532,7 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
       </div>
       <div class="chart-card">
         <div class="chart-card-head">
-          <div class="chart-title">도시락 구매 관심 <span>셋트별 열람·구매시도</span></div>
+          <div class="chart-title">도시락 구매 관심 <span>셋트별 열람·구매시도·구매완료</span></div>
         </div>
         <div class="chart-wrap" style="height:260px"><canvas id="mood-shop-chart"></canvas></div>
       </div>
@@ -540,7 +540,7 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
     <div class="chart-grid-eq" style="margin-bottom:16px">
       <div class="chart-card">
         <div class="chart-card-head">
-          <div class="chart-title">상점 감정 미리보기 <span>어느 감정을 많이 클릭했나</span></div>
+          <div class="chart-title">상점 캐릭터 미리보기 <span>어느 캐릭터 이모티콘을 클릭했나</span></div>
         </div>
         <div class="chart-wrap" style="height:240px"><canvas id="mood-preview-chart"></canvas></div>
       </div>
@@ -686,6 +686,8 @@ const BTN_KO = {
   importDataBtn:                '데이터 불러오기 실행',
   rotationToggle:               '화면 회전 토글',
   calendarMemoOnCellsToggle:    '달력 일정 표시 토글',
+  widgetMemoOnCellsToggle:      '위젯 일정 표시 토글',
+  lunchboxSyncBtn:              '도시락 서버 동기화',
   // ── 설정 탭 — 도시락 패널 ──────────────────────────────────
   lunchboxAppLoginToggle:       '설정-앱 로그인 토글',
   lunchboxAccessToggle:         '설정-도시락 접근 로그인 토글',
@@ -705,6 +707,18 @@ const BTN_KO = {
   'shop_buy_mood-tolki':        '도시락-톨키 구매버튼',
   'shop_buy_mood-puddi':        '도시락-푸디 구매버튼',
   'shop_buy_mood-mallang':      '도시락-말랑 구매버튼',
+  // ── 도시락 상점 — 구매 완료 ─────────────────────────────────
+  'shop_purchase_success_mood-nayang':  '도시락-나양 구매완료',
+  'shop_purchase_success_mood-mongoo':  '도시락-몽구 구매완료',
+  'shop_purchase_success_mood-tolki':   '도시락-톨키 구매완료',
+  'shop_purchase_success_mood-puddi':   '도시락-푸디 구매완료',
+  'shop_purchase_success_mood-mallang': '도시락-말랑 구매완료',
+  // ── 도시락 상점 — 캐릭터 미리보기 ───────────────────────────
+  shop_character_preview_nayang:  '상점-캐릭터미리보기_나양',
+  shop_character_preview_mongoo:  '상점-캐릭터미리보기_몽구',
+  shop_character_preview_tolki:   '상점-캐릭터미리보기_톨키',
+  shop_character_preview_puddi:   '상점-캐릭터미리보기_푸디',
+  shop_character_preview_mallang: '상점-캐릭터미리보기_말랑',
   // ── 도시락 상점 — 감정 미리보기 ─────────────────────────────
   shop_mood_preview_happy:      '상점-미리보기_행복',
   shop_mood_preview_sad:        '상점-미리보기_슬픔',
@@ -727,6 +741,12 @@ const BTN_KO = {
   mood_pick_sleepy:             '달력-기분_졸림',
   mood_pick_laughing:           '달력-기분_웃음',
   mood_pick_shy:                '달력-기분_수줍음',
+  // ── 캐릭터 다운로드 재시도 ───────────────────────────────────
+  retry_character_nayang:       '캐릭터-나양 재다운로드',
+  retry_character_mongoo:       '캐릭터-몽구 재다운로드',
+  retry_character_tolki:        '캐릭터-톨키 재다운로드',
+  retry_character_puddi:        '캐릭터-푸디 재다운로드',
+  retry_character_mallang:      '캐릭터-말랑 재다운로드',
 };
 function btnLabel(id){return BTN_KO[id]||id}
 
@@ -1434,6 +1454,8 @@ function renderMoodCharts(data){
   const MOOD_KO  = {happy:'행복',sad:'슬픔',angry:'화남',love:'사랑',surprised:'놀람',sleepy:'졸림',laughing:'웃음',shy:'수줍음'};
   const PACK_IDS = ['mood-nayang','mood-mongoo','mood-tolki','mood-puddi','mood-mallang'];
   const PACK_KO  = {'mood-nayang':'나양','mood-mongoo':'몽구','mood-tolki':'톨키','mood-puddi':'푸디','mood-mallang':'말랑'};
+  const CHAR_IDS = ['nayang','mongoo','tolki','puddi','mallang'];
+  const CHAR_KO  = {nayang:'나양',mongoo:'몽구',tolki:'톨키',puddi:'푸디',mallang:'말랑'};
   const CHART_DEFAULTS = {responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
     scales:{x:{ticks:{font:{size:11},color:'#C8BEB4'},grid:{color:'rgba(46,43,39,.4)'}},
             y:{beginAtZero:true,ticks:{callback:fmtAxisTick,precision:0,font:{size:11},color:'#C8BEB4'},grid:{color:'rgba(46,43,39,.4)'}}}};
@@ -1455,7 +1477,7 @@ function renderMoodCharts(data){
     }
   }
 
-  // ② 도시락 셋트 열람 vs 구매시도
+  // ② 도시락 셋트 열람 vs 구매시도 vs 구매완료
   destroyChart('moodShop');
   const shopCtx = document.getElementById('mood-shop-chart');
   if(shopCtx){
@@ -1463,12 +1485,14 @@ function renderMoodCharts(data){
       label: PACK_KO[id]||id,
       views: btnMap['shop_pack_'+id]||0,
       buys:  btnMap['shop_buy_'+id]||0,
-    })).filter(r=>r.views>0||r.buys>0);
+      done:  btnMap['shop_purchase_success_'+id]||0,
+    })).filter(r=>r.views>0||r.buys>0||r.done>0);
     if(packs.length){
       charts['moodShop'] = new Chart(shopCtx,{type:'bar',
         data:{labels:packs.map(r=>r.label),datasets:[
           {label:'열람',data:packs.map(r=>r.views),backgroundColor:'rgba(142,184,224,0.7)',borderRadius:4},
           {label:'구매버튼',data:packs.map(r=>r.buys),backgroundColor:'rgba(244,164,140,0.9)',borderRadius:4},
+          {label:'구매완료',data:packs.map(r=>r.done),backgroundColor:'rgba(157,201,160,0.95)',borderRadius:4},
         ]},
         options:{...CHART_DEFAULTS,plugins:{legend:{display:true,labels:{color:'#C8BEB4',font:{size:11}}}}}});
     } else {
@@ -1476,15 +1500,15 @@ function renderMoodCharts(data){
     }
   }
 
-  // ③ 상점 감정 미리보기
+  // ③ 상점 캐릭터 미리보기 (이모티콘 클릭)
   destroyChart('moodPreview');
   const prevCtx = document.getElementById('mood-preview-chart');
   if(prevCtx){
-    const prevs = MOOD_IDS.map(id=>({ id, label: MOOD_KO[id]||id, clicks: btnMap['shop_mood_preview_'+id]||0 })).filter(r=>r.clicks>0);
+    const prevs = CHAR_IDS.map(id=>({ id, label: CHAR_KO[id]||id, clicks: btnMap['shop_character_preview_'+id]||0 })).filter(r=>r.clicks>0);
     if(prevs.length){
       charts['moodPreview'] = new Chart(prevCtx,{type:'bar',
         data:{labels:prevs.map(r=>r.label),datasets:[{label:'클릭',data:prevs.map(r=>r.clicks),
-          backgroundColor:'rgba(193,169,217,0.8)',borderRadius:6}]},
+          backgroundColor:['#F4A48C','#8EB8E0','#C1A9D9','#F7CE76','#9DC9A0'],borderRadius:6}]},
         options:CHART_DEFAULTS});
     } else {
       prevCtx.getContext('2d'); prevCtx.parentElement.innerHTML='<p style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--ink-mute);font-size:13px;font-family:var(--mono)">데이터 없음</p>';
@@ -1558,6 +1582,7 @@ function renderLunchboxActivity(data){
   const items = [
     {id:'lunchboxAttendanceBtn',   label:'출석 체크'},
     {id:'lunchboxRechargeOpenBtn', label:'코인 충전 열기'},
+    {id:'lunchboxSyncBtn',         label:'서버 동기화'},
     {id:'lunchboxWithdrawBtn',     label:'도시락 탈퇴'},
   ].map(r=>({...r, clicks: btnMap[r.id]||0}));
 
@@ -1577,7 +1602,7 @@ function renderLunchboxActivity(data){
       datasets:[{
         label:'클릭 수',
         data: items.map(r=>r.clicks),
-        backgroundColor:['#9DC9A0','#F7CE76','#F4A48C'],
+        backgroundColor:['#9DC9A0','#F7CE76','#8EB8E0','#F4A48C'],
         borderRadius:5,
       }],
     },
@@ -1599,6 +1624,7 @@ function renderSettingsActions(data){
     {id:'importDataBtn',            label:'불러오기 실행'},
     {id:'rotationToggle',           label:'화면 회전 토글'},
     {id:'calendarMemoOnCellsToggle',label:'달력 일정 표시'},
+    {id:'widgetMemoOnCellsToggle',  label:'위젯 일정 표시'},
     {id:'lunchboxAppLoginToggle',   label:'앱 로그인 토글'},
     {id:'lunchboxAccessToggle',     label:'도시락 접근 토글'},
   ].map(r=>({...r, clicks: btnMap[r.id]||0}));
@@ -1619,7 +1645,7 @@ function renderSettingsActions(data){
       datasets:[{
         label:'클릭 수',
         data: items.map(r=>r.clicks),
-        backgroundColor:['#89CFC9','#8EB8E0','#C1A9D9','#F0BF94','#A8D8A8','#F4A48C'],
+        backgroundColor:['#89CFC9','#8EB8E0','#C1A9D9','#F0BF94','#A8D8A8','#F7CE76','#F4A48C'],
         borderRadius:5,
       }],
     },
