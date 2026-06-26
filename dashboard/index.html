@@ -540,10 +540,18 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
     <div class="chart-grid-eq" style="margin-bottom:16px">
       <div class="chart-card">
         <div class="chart-card-head">
-          <div class="chart-title">상점 캐릭터 미리보기 <span>어느 캐릭터 이모티콘을 클릭했나</span></div>
+          <div class="chart-title">상점 클릭 관심 순위 <span>미리보기+셋트열기 합산 · 1위부터</span></div>
         </div>
-        <div class="chart-wrap" style="height:240px"><canvas id="mood-preview-chart"></canvas></div>
+        <div class="chart-wrap" style="height:280px"><canvas id="shop-click-rank-chart"></canvas></div>
       </div>
+      <div class="chart-card">
+        <div class="chart-card-head">
+          <div class="chart-title">상점 구매 완료 순위 <span>실제 코인 차감 성공 · 1위부터</span></div>
+        </div>
+        <div class="chart-wrap" style="height:280px"><canvas id="shop-purchase-rank-chart"></canvas></div>
+      </div>
+    </div>
+    <div class="chart-grid-eq" style="margin-bottom:16px">
       <div class="chart-card">
         <div class="chart-card-head">
           <div class="chart-title">상점 보기 방식 선호 <span>한줄·두줄·네줄</span></div>
@@ -1448,8 +1456,75 @@ async function reloadSession(){
   try{const d=await apiFetch(`/api/analytics?type=session&days=${currentSessionDays}`);renderSession(d);renderMoodCharts(d);renderNotifCharts(d);renderLunchboxActivity(d);renderSettingsActions(d)}catch{}
 }
 
+function buildShopBtnMap(data){
+  const map = {};
+  for (const b of (data?.shopButtons || [])) map[b.btn] = Number(b.clicks) || 0;
+  for (const b of (data?.buttons || [])) {
+    if (b.btn && String(b.btn).startsWith('shop_')) map[b.btn] = Number(b.clicks) || 0;
+  }
+  return map;
+}
+
+function renderShopRankBarChart(chartKey, canvasId, rows, valueKey, barLabel, tooltipLines){
+  destroyChart(chartKey);
+  const host = document.getElementById(canvasId);
+  if (!host) return;
+  const ranked = rows.slice().sort((a, b) => b[valueKey] - a[valueKey]);
+  const hasData = ranked.some(r => r[valueKey] > 0);
+  if (!hasData) {
+    host.getContext('2d');
+    host.parentElement.innerHTML = '<p style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--ink-mute);font-size:13px;font-family:var(--mono)">데이터 없음</p>';
+    return;
+  }
+  const rankColors = ['#F7CE76','#C1A9D9','#8EB8E0','#9DC9A0','#F4A48C'];
+  const labels = ranked.map((r, i) => `${i + 1}위 ${r.label}`);
+  charts[chartKey] = new Chart(host, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        label: barLabel,
+        data: ranked.map(r => r[valueKey]),
+        backgroundColor: ranked.map((_, i) => rankColors[i % rankColors.length]),
+        borderRadius: 5,
+      }],
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            title: items => items[0].label,
+            label: ctx => {
+              const row = ranked[ctx.dataIndex];
+              const lines = [`${barLabel}: ${fmtN(row[valueKey])}`];
+              if (typeof tooltipLines === 'function') tooltipLines(row, lines);
+              return lines;
+            },
+          },
+        },
+      },
+      scales: {
+        x: {
+          beginAtZero: true,
+          ticks: { callback: fmtAxisTick, precision: 0, color: '#C8BEB4', font: { size: 11 } },
+          grid: { color: 'rgba(46,43,39,.4)' },
+        },
+        y: {
+          ticks: { color: '#C8BEB4', font: { size: 12 } },
+          grid: { display: false },
+        },
+      },
+    },
+  });
+}
+
 function renderMoodCharts(data){
   const allBtns = data?.buttons || [];
+  const shopMap = buildShopBtnMap(data);
   const MOOD_IDS = ['happy','sad','angry','love','surprised','sleepy','laughing','shy'];
   const MOOD_KO  = {happy:'행복',sad:'슬픔',angry:'화남',love:'사랑',surprised:'놀람',sleepy:'졸림',laughing:'웃음',shy:'수줍음'};
   const PACK_IDS = ['mood-nayang','mood-mongoo','mood-tolki','mood-puddi','mood-mallang'];
@@ -1483,9 +1558,9 @@ function renderMoodCharts(data){
   if(shopCtx){
     const packs = PACK_IDS.map(id=>({
       label: PACK_KO[id]||id,
-      views: btnMap['shop_pack_'+id]||0,
-      buys:  btnMap['shop_buy_'+id]||0,
-      done:  btnMap['shop_purchase_success_'+id]||0,
+      views: shopMap['shop_pack_'+id]||0,
+      buys:  shopMap['shop_buy_'+id]||0,
+      done:  shopMap['shop_purchase_success_'+id]||0,
     })).filter(r=>r.views>0||r.buys>0||r.done>0);
     if(packs.length){
       charts['moodShop'] = new Chart(shopCtx,{type:'bar',
@@ -1500,29 +1575,46 @@ function renderMoodCharts(data){
     }
   }
 
-  // ③ 상점 캐릭터 미리보기 (이모티콘 클릭)
-  destroyChart('moodPreview');
-  const prevCtx = document.getElementById('mood-preview-chart');
-  if(prevCtx){
-    const prevs = CHAR_IDS.map(id=>({ id, label: CHAR_KO[id]||id, clicks: btnMap['shop_character_preview_'+id]||0 })).filter(r=>r.clicks>0);
-    if(prevs.length){
-      charts['moodPreview'] = new Chart(prevCtx,{type:'bar',
-        data:{labels:prevs.map(r=>r.label),datasets:[{label:'클릭',data:prevs.map(r=>r.clicks),
-          backgroundColor:['#F4A48C','#8EB8E0','#C1A9D9','#F7CE76','#9DC9A0'],borderRadius:6}]},
-        options:CHART_DEFAULTS});
-    } else {
-      prevCtx.getContext('2d'); prevCtx.parentElement.innerHTML='<p style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--ink-mute);font-size:13px;font-family:var(--mono)">데이터 없음</p>';
-    }
-  }
+  // ③ 상점 클릭 관심 순위 (미리보기 + 셋트 열기)
+  const clickRows = CHAR_IDS.map((id) => ({
+    label: CHAR_KO[id] || id,
+    preview: shopMap['shop_character_preview_' + id] || 0,
+    packs: shopMap['shop_pack_mood-' + id] || 0,
+    score: (shopMap['shop_character_preview_' + id] || 0) + (shopMap['shop_pack_mood-' + id] || 0),
+  }));
+  renderShopRankBarChart(
+    'shopClickRank',
+    'shop-click-rank-chart',
+    clickRows,
+    'score',
+    '관심 클릭',
+    (row, lines) => {
+      lines.push(`미리보기: ${fmtN(row.preview)}`);
+      lines.push(`셋트 열기: ${fmtN(row.packs)}`);
+    },
+  );
 
-  // ④ 보기 방식 선호 (도넛)
+  // ④ 상점 구매 완료 순위
+  const purchaseRows = PACK_IDS.map((packId) => ({
+    label: PACK_KO[packId] || packId,
+    count: shopMap['shop_purchase_success_' + packId] || 0,
+  }));
+  renderShopRankBarChart(
+    'shopPurchaseRank',
+    'shop-purchase-rank-chart',
+    purchaseRows,
+    'count',
+    '구매 완료',
+  );
+
+  // ⑤ 보기 방식 선호 (도넛)
   destroyChart('moodView');
   const viewCtx = document.getElementById('mood-view-chart');
   if(viewCtx){
     const views = [
-      {label:'한줄 보기', clicks: btnMap['shop_view_wide']||0},
-      {label:'두줄 보기', clicks: btnMap['shop_view_compact']||0},
-      {label:'네줄 보기', clicks: btnMap['shop_view_dense']||0},
+      {label:'한줄 보기', clicks: shopMap['shop_view_wide']||0},
+      {label:'두줄 보기', clicks: shopMap['shop_view_compact']||0},
+      {label:'네줄 보기', clicks: shopMap['shop_view_dense']||0},
     ].filter(r=>r.clicks>0);
     if(views.length){
       charts['moodView'] = new Chart(viewCtx,{type:'doughnut',
