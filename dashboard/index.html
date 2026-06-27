@@ -537,18 +537,50 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
         <div class="chart-wrap" style="height:260px"><canvas id="mood-shop-chart"></canvas></div>
       </div>
     </div>
+    <div class="sec-head" style="margin-top:8px;margin-bottom:12px">
+      <div class="sec-label" style="font-size:13px;color:var(--ink-soft)">— 도시락 상점 · 캐릭터별</div>
+    </div>
     <div class="chart-grid-eq" style="margin-bottom:16px">
-      <div class="chart-card">
-        <div class="chart-card-head">
-          <div class="chart-title">상점 클릭 관심 순위 <span>미리보기+셋트열기 합산 · 1위부터</span></div>
+      <div class="chart-card" style="padding:0;overflow:hidden">
+        <div style="padding:16px 20px 12px;border-bottom:1px solid var(--line)">
+          <div class="chart-title">캐릭터별 클릭 수 <span>상점 미리보기 + 셋트 열기 · 1위부터</span></div>
         </div>
-        <div class="chart-wrap" style="height:280px"><canvas id="shop-click-rank-chart"></canvas></div>
+        <div style="overflow-x:auto">
+          <table class="alltime-table">
+            <thead>
+              <tr>
+                <th>순위</th>
+                <th>캐릭터</th>
+                <th>미리보기</th>
+                <th>셋트 열기</th>
+                <th>합계</th>
+              </tr>
+            </thead>
+            <tbody id="shop-click-table-tbody">
+              <tr class="loading-row"><td colspan="5" style="text-align:center;padding:24px;color:var(--ink-mute);font-size:13px">로딩 중…</td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
-      <div class="chart-card">
-        <div class="chart-card-head">
-          <div class="chart-title">상점 구매 완료 순위 <span>실제 코인 차감 성공 · 1위부터</span></div>
+      <div class="chart-card" style="padding:0;overflow:hidden">
+        <div style="padding:16px 20px 12px;border-bottom:1px solid var(--line)">
+          <div class="chart-title">캐릭터별 구매 완료 <span>실제 코인 차감 성공 · 1위부터</span></div>
         </div>
-        <div class="chart-wrap" style="height:280px"><canvas id="shop-purchase-rank-chart"></canvas></div>
+        <div style="overflow-x:auto">
+          <table class="alltime-table">
+            <thead>
+              <tr>
+                <th>순위</th>
+                <th>캐릭터</th>
+                <th>구매 완료</th>
+                <th>구매버튼</th>
+              </tr>
+            </thead>
+            <tbody id="shop-purchase-table-tbody">
+              <tr class="loading-row"><td colspan="4" style="text-align:center;padding:24px;color:var(--ink-mute);font-size:13px">로딩 중…</td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
     <div class="chart-grid-eq" style="margin-bottom:16px">
@@ -1465,61 +1497,50 @@ function buildShopBtnMap(data){
   return map;
 }
 
-function renderShopRankBarChart(chartKey, canvasId, rows, valueKey, barLabel, tooltipLines){
-  destroyChart(chartKey);
-  const host = document.getElementById(canvasId);
-  if (!host) return;
-  const ranked = rows.slice().sort((a, b) => b[valueKey] - a[valueKey]);
-  const hasData = ranked.some(r => r[valueKey] > 0);
-  if (!hasData) {
-    host.getContext('2d');
-    host.parentElement.innerHTML = '<p style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--ink-mute);font-size:13px;font-family:var(--mono)">데이터 없음</p>';
-    return;
+function renderShopCharacterTables(data){
+  const shopMap = buildShopBtnMap(data);
+  const CHAR_IDS = ['nayang','mongoo','tolki','puddi','mallang'];
+  const CHAR_KO  = {nayang:'나양',mongoo:'몽구',tolki:'톨키',puddi:'푸디',mallang:'말랑'};
+  const PACK_IDS = ['mood-nayang','mood-mongoo','mood-tolki','mood-puddi','mood-mallang'];
+  const PACK_KO  = {'mood-nayang':'나양','mood-mongoo':'몽구','mood-tolki':'톨키','mood-puddi':'푸디','mood-mallang':'말랑'};
+
+  const clickRows = CHAR_IDS.map((id) => ({
+    label: CHAR_KO[id] || id,
+    preview: shopMap['shop_character_preview_' + id] || 0,
+    packs: shopMap['shop_pack_mood-' + id] || 0,
+    total: (shopMap['shop_character_preview_' + id] || 0) + (shopMap['shop_pack_mood-' + id] || 0),
+  })).sort((a, b) => b.total - a.total || b.preview - a.preview);
+
+  const clickTbody = document.getElementById('shop-click-table-tbody');
+  if (clickTbody) {
+    clickTbody.innerHTML = clickRows.map((r, i) => `
+      <tr>
+        <td>${i + 1}</td>
+        <td>${r.label}</td>
+        <td>${fmtN(r.preview)}</td>
+        <td>${fmtN(r.packs)}</td>
+        <td><strong>${fmtN(r.total)}</strong></td>
+      </tr>
+    `).join('');
   }
-  const rankColors = ['#F7CE76','#C1A9D9','#8EB8E0','#9DC9A0','#F4A48C'];
-  const labels = ranked.map((r, i) => `${i + 1}위 ${r.label}`);
-  charts[chartKey] = new Chart(host, {
-    type: 'bar',
-    data: {
-      labels,
-      datasets: [{
-        label: barLabel,
-        data: ranked.map(r => r[valueKey]),
-        backgroundColor: ranked.map((_, i) => rankColors[i % rankColors.length]),
-        borderRadius: 5,
-      }],
-    },
-    options: {
-      indexAxis: 'y',
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          callbacks: {
-            title: items => items[0].label,
-            label: ctx => {
-              const row = ranked[ctx.dataIndex];
-              const lines = [`${barLabel}: ${fmtN(row[valueKey])}`];
-              if (typeof tooltipLines === 'function') tooltipLines(row, lines);
-              return lines;
-            },
-          },
-        },
-      },
-      scales: {
-        x: {
-          beginAtZero: true,
-          ticks: { callback: fmtAxisTick, precision: 0, color: '#C8BEB4', font: { size: 11 } },
-          grid: { color: 'rgba(46,43,39,.4)' },
-        },
-        y: {
-          ticks: { color: '#C8BEB4', font: { size: 12 } },
-          grid: { display: false },
-        },
-      },
-    },
-  });
+
+  const purchaseRows = PACK_IDS.map((packId) => ({
+    label: PACK_KO[packId] || packId,
+    done: shopMap['shop_purchase_success_' + packId] || 0,
+    buyBtn: shopMap['shop_buy_' + packId] || 0,
+  })).sort((a, b) => b.done - a.done || b.buyBtn - a.buyBtn);
+
+  const purchaseTbody = document.getElementById('shop-purchase-table-tbody');
+  if (purchaseTbody) {
+    purchaseTbody.innerHTML = purchaseRows.map((r, i) => `
+      <tr>
+        <td>${i + 1}</td>
+        <td>${r.label}</td>
+        <td><strong>${fmtN(r.done)}</strong></td>
+        <td>${fmtN(r.buyBtn)}</td>
+      </tr>
+    `).join('');
+  }
 }
 
 function renderMoodCharts(data){
@@ -1575,39 +1596,10 @@ function renderMoodCharts(data){
     }
   }
 
-  // ③ 상점 클릭 관심 순위 (미리보기 + 셋트 열기)
-  const clickRows = CHAR_IDS.map((id) => ({
-    label: CHAR_KO[id] || id,
-    preview: shopMap['shop_character_preview_' + id] || 0,
-    packs: shopMap['shop_pack_mood-' + id] || 0,
-    score: (shopMap['shop_character_preview_' + id] || 0) + (shopMap['shop_pack_mood-' + id] || 0),
-  }));
-  renderShopRankBarChart(
-    'shopClickRank',
-    'shop-click-rank-chart',
-    clickRows,
-    'score',
-    '관심 클릭',
-    (row, lines) => {
-      lines.push(`미리보기: ${fmtN(row.preview)}`);
-      lines.push(`셋트 열기: ${fmtN(row.packs)}`);
-    },
-  );
+  // ③ 도시락 상점 · 캐릭터별 클릭 / 구매 표
+  renderShopCharacterTables(data);
 
-  // ④ 상점 구매 완료 순위
-  const purchaseRows = PACK_IDS.map((packId) => ({
-    label: PACK_KO[packId] || packId,
-    count: shopMap['shop_purchase_success_' + packId] || 0,
-  }));
-  renderShopRankBarChart(
-    'shopPurchaseRank',
-    'shop-purchase-rank-chart',
-    purchaseRows,
-    'count',
-    '구매 완료',
-  );
-
-  // ⑤ 보기 방식 선호 (도넛)
+  // ④ 보기 방식 선호 (도넛)
   destroyChart('moodView');
   const viewCtx = document.getElementById('mood-view-chart');
   if(viewCtx){
