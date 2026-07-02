@@ -572,12 +572,13 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
               <tr>
                 <th>순위</th>
                 <th>캐릭터</th>
-                <th>구매 완료</th>
-                <th>구매버튼</th>
+                <th>구매 완료 (서버)</th>
+                <th>구매자 수</th>
+                <th>구매버튼 클릭</th>
               </tr>
             </thead>
             <tbody id="shop-purchase-table-tbody">
-              <tr class="loading-row"><td colspan="4" style="text-align:center;padding:24px;color:var(--ink-mute);font-size:13px">로딩 중…</td></tr>
+              <tr class="loading-row"><td colspan="5" style="text-align:center;padding:24px;color:var(--ink-mute);font-size:13px">로딩 중…</td></tr>
             </tbody>
           </table>
         </div>
@@ -589,6 +590,40 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
           <div class="chart-title">상점 보기 방식 선호 <span>한줄·두줄·네줄</span></div>
         </div>
         <div class="chart-wrap" style="height:240px"><canvas id="mood-view-chart"></canvas></div>
+      </div>
+    </div>
+
+    <!-- 7-B. Background skin analysis -->
+    <div class="sec-head" style="margin-top:32px;margin-bottom:12px">
+      <div class="sec-label">배경 스킨 분석</div>
+    </div>
+    <div class="chart-grid-eq" style="margin-bottom:16px">
+      <div class="chart-card">
+        <div class="chart-card-head">
+          <div class="chart-title">스킨 구매 관심 <span>카드 클릭 · 구매버튼 · 구매완료</span></div>
+        </div>
+        <div class="chart-wrap" style="height:280px"><canvas id="skin-shop-chart"></canvas></div>
+      </div>
+      <div class="chart-card" style="padding:0;overflow:hidden">
+        <div style="padding:16px 20px 12px;border-bottom:1px solid var(--line)">
+          <div class="chart-title">스킨별 구매 완료 <span>실제 코인 차감 성공 · 1위부터</span></div>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="alltime-table">
+            <thead>
+              <tr>
+                <th>순위</th>
+                <th>스킨</th>
+                <th>구매완료</th>
+                <th>구매버튼</th>
+                <th>카드클릭</th>
+              </tr>
+            </thead>
+            <tbody id="skin-purchase-table-tbody">
+              <tr class="loading-row"><td colspan="5" style="text-align:center;padding:24px;color:var(--ink-mute);font-size:13px">로딩 중</td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
 
@@ -712,6 +747,9 @@ const BTN_KO = {
   concept_tolki:                '설정-톨키',
   concept_puddi:                '설정-푸디',
   concept_mallang:              '설정-말랑',
+  concept_dalpeni:              '설정-달페니',
+  concept_hurai:                '설정-후라이',
+  concept_molli:                '설정-몰리',
   // ── 설정 탭 — 색상 테마 ─────────────────────────────────────
   theme_midnight:               '설정-테마_midnight',
   theme_paper:                  '설정-테마_paper',
@@ -728,6 +766,8 @@ const BTN_KO = {
   calendarMemoOnCellsToggle:    '달력 일정 표시 토글',
   widgetMemoOnCellsToggle:      '위젯 일정 표시 토글',
   lunchboxSyncBtn:              '도시락 서버 동기화',
+  settingsMoodLunchboxCta:      '설정-기분캐릭터-도시락 CTA',
+  settingsBgSkinLunchboxCta:    '설정-배경스킨-도시락 CTA',
   // ── 설정 탭 — 도시락 패널 ──────────────────────────────────
   lunchboxAppLoginToggle:       '설정-앱 로그인 토글',
   lunchboxAccessToggle:         '설정-도시락 접근 로그인 토글',
@@ -741,24 +781,67 @@ const BTN_KO = {
   'shop_pack_mood-tolki':       '도시락-톨키 셋트 열기',
   'shop_pack_mood-puddi':       '도시락-푸디 셋트 열기',
   'shop_pack_mood-mallang':     '도시락-말랑 셋트 열기',
+  'shop_pack_mood-dalpeni':     '도시락-달페니 셋트 열기',
+  'shop_pack_mood-hurai':       '도시락-후라이 셋트 열기',
+  'shop_pack_mood-molli':       '도시락-몰리 셋트 열기',
   // ── 도시락 상점 — 구매 시도 ─────────────────────────────────
   'shop_buy_mood-nayang':       '도시락-나양 구매버튼',
   'shop_buy_mood-mongoo':       '도시락-몽구 구매버튼',
   'shop_buy_mood-tolki':        '도시락-톨키 구매버튼',
   'shop_buy_mood-puddi':        '도시락-푸디 구매버튼',
   'shop_buy_mood-mallang':      '도시락-말랑 구매버튼',
+  'shop_buy_mood-dalpeni':      '도시락-달페니 구매버튼',
+  'shop_buy_mood-hurai':        '도시락-후라이 구매버튼',
+  'shop_buy_mood-molli':        '도시락-몰리 구매버튼',
   // ── 도시락 상점 — 구매 완료 ─────────────────────────────────
   'shop_purchase_success_mood-nayang':  '도시락-나양 구매완료',
   'shop_purchase_success_mood-mongoo':  '도시락-몽구 구매완료',
   'shop_purchase_success_mood-tolki':   '도시락-톨키 구매완료',
   'shop_purchase_success_mood-puddi':   '도시락-푸디 구매완료',
   'shop_purchase_success_mood-mallang': '도시락-말랑 구매완료',
+  'shop_purchase_success_mood-dalpeni': '도시락-달페니 구매완료',
+  'shop_purchase_success_mood-hurai':   '도시락-후라이 구매완료',
+  'shop_purchase_success_mood-molli':   '도시락-몰리 구매완료',
   // ── 도시락 상점 — 캐릭터 미리보기 ───────────────────────────
   shop_character_preview_nayang:  '상점-캐릭터미리보기_나양',
   shop_character_preview_mongoo:  '상점-캐릭터미리보기_몽구',
   shop_character_preview_tolki:   '상점-캐릭터미리보기_톨키',
   shop_character_preview_puddi:   '상점-캐릭터미리보기_푸디',
   shop_character_preview_mallang: '상점-캐릭터미리보기_말랑',
+  shop_character_preview_dalpeni: '상점-캐릭터미리보기_달페니',
+  shop_character_preview_hurai:   '상점-캐릭터미리보기_후라이',
+  shop_character_preview_molli:   '상점-캐릭터미리보기_몰리',
+  // ── 도시락 상점 — 배경 스킨 ─────────────────────────────────
+  'shop_skin_preview_soft-picnic':            '상점-스킨카드_소프트 피크닉',
+  'shop_skin_preview_dark-soft-picnic':       '상점-스킨카드_다크 소프트 피크닉',
+  'shop_skin_preview_tiny-bloom-paper':       '상점-스킨카드_타이니 블룸 페이퍼',
+  'shop_skin_preview_starry-cocoa-night':     '상점-스킨카드_스타리 코코아 나이트',
+  'shop_skin_preview_sunny-shore':            '상점-스킨카드_써니 쇼어',
+  'shop_skin_preview_last-leaf-lane':         '상점-스킨카드_마지막 잎새 길',
+  'shop_skin_preview_snowy-alley':            '상점-스킨카드_눈 내리는 골목',
+  'shop_skin_preview_sea-breeze-crossing':    '상점-스킨카드_바닷바람 건널목',
+  'shop_skin_preview_cherry-bloom-walk':      '상점-스킨카드_벚꽃 산책길',
+  'shop_skin_preview_wave-play-beach':        '상점-스킨카드_파도놀이 해변',
+  'shop_buy_skin-soft-picnic':                '상점-스킨구매버튼_소프트 피크닉',
+  'shop_buy_skin-dark-soft-picnic':           '상점-스킨구매버튼_다크 소프트 피크닉',
+  'shop_buy_skin-tiny-bloom-paper':           '상점-스킨구매버튼_타이니 블룸 페이퍼',
+  'shop_buy_skin-starry-cocoa-night':         '상점-스킨구매버튼_스타리 코코아 나이트',
+  'shop_buy_skin-sunny-shore':                '상점-스킨구매버튼_써니 쇼어',
+  'shop_buy_skin-last-leaf-lane':             '상점-스킨구매버튼_마지막 잎새 길',
+  'shop_buy_skin-snowy-alley':                '상점-스킨구매버튼_눈 내리는 골목',
+  'shop_buy_skin-sea-breeze-crossing':        '상점-스킨구매버튼_바닷바람 건널목',
+  'shop_buy_skin-cherry-bloom-walk':          '상점-스킨구매버튼_벚꽃 산책길',
+  'shop_buy_skin-wave-play-beach':            '상점-스킨구매버튼_파도놀이 해변',
+  'shop_purchase_success_skin-soft-picnic':   '상점-스킨구매완료_소프트 피크닉',
+  'shop_purchase_success_skin-dark-soft-picnic': '상점-스킨구매완료_다크 소프트 피크닉',
+  'shop_purchase_success_skin-tiny-bloom-paper': '상점-스킨구매완료_타이니 블룸 페이퍼',
+  'shop_purchase_success_skin-starry-cocoa-night': '상점-스킨구매완료_스타리 코코아 나이트',
+  'shop_purchase_success_skin-sunny-shore':   '상점-스킨구매완료_써니 쇼어',
+  'shop_purchase_success_skin-last-leaf-lane': '상점-스킨구매완료_마지막 잎새 길',
+  'shop_purchase_success_skin-snowy-alley':   '상점-스킨구매완료_눈 내리는 골목',
+  'shop_purchase_success_skin-sea-breeze-crossing': '상점-스킨구매완료_바닷바람 건널목',
+  'shop_purchase_success_skin-cherry-bloom-walk': '상점-스킨구매완료_벚꽃 산책길',
+  'shop_purchase_success_skin-wave-play-beach': '상점-스킨구매완료_파도놀이 해변',
   // ── 도시락 상점 — 감정 미리보기 ─────────────────────────────
   shop_mood_preview_happy:      '상점-미리보기_행복',
   shop_mood_preview_sad:        '상점-미리보기_슬픔',
@@ -1159,7 +1242,7 @@ let _cache = null;
 async function loadAll(){
   document.getElementById('error-banner').classList.remove('visible');
   try{
-    const [summary, alltime, monthly, daily, dau, geo, session, recent] = await Promise.all([
+    const [summary, alltime, monthly, daily, dau, geo, session, recent, purchases] = await Promise.all([
       apiFetch('/api/analytics?type=summary'),
       apiFetch('/api/analytics?type=all-time'),
       apiFetch(`/api/analytics?type=monthly&months=${currentMonths}`),
@@ -1168,8 +1251,9 @@ async function loadAll(){
       apiFetch(`/api/analytics?type=geo&days=${currentGeoDays}`),
       apiFetch(`/api/analytics?type=session&days=${currentSessionDays}`),
       apiFetch('/api/analytics?type=recent&limit=100'),
+      apiFetch('/api/analytics?type=purchases'),
     ]);
-    _cache = { summary, alltime, monthly, daily, dau, geo, session, recent, loadedAt: new Date() };
+    _cache = { summary, alltime, monthly, daily, dau, geo, session, recent, purchases, loadedAt: new Date() };
     renderSummary(summary);
     renderAllTime(alltime);
     renderMonthly(monthly);
@@ -1177,8 +1261,9 @@ async function loadAll(){
     renderDaily(daily);
     renderDau(dau);
     renderGeo(geo);
-    renderSession(session);
+    renderSession(session, purchases);
     renderMoodCharts(session);
+    renderSkinCharts(session);
     renderNotifCharts(session);
     renderLunchboxActivity(session);
     renderSettingsActions(session);
@@ -1365,7 +1450,7 @@ async function reloadGeo(){
 const TAB_KO = {calendar:'달력',chart:'차트',settings:'설정',bento:'도시락'};
 const TAB_COLORS = ['#9DC9A0','#C1A9D9','#8EB8E0','#F4A48C'];
 
-function renderSession(data){
+function renderSession(data, purchases){
   const s = data?.summary || {};
   const sessions = s.sessions || 0;
   const avgDur   = s.avgDurationMs || 0;
@@ -1485,7 +1570,13 @@ function renderSession(data){
 }
 
 async function reloadSession(){
-  try{const d=await apiFetch(`/api/analytics?type=session&days=${currentSessionDays}`);renderSession(d);renderMoodCharts(d);renderNotifCharts(d);renderLunchboxActivity(d);renderSettingsActions(d)}catch{}
+  try{
+    const [d, p] = await Promise.all([
+      apiFetch(`/api/analytics?type=session&days=${currentSessionDays}`),
+      apiFetch('/api/analytics?type=purchases'),
+    ]);
+    renderSession(d, p);renderMoodCharts(d);renderSkinCharts(d);renderNotifCharts(d);renderLunchboxActivity(d);renderSettingsActions(d);
+  }catch{}
 }
 
 function buildShopBtnMap(data){
@@ -1497,15 +1588,41 @@ function buildShopBtnMap(data){
   return map;
 }
 
-function renderShopCharacterTables(data){
-  const shopMap = buildShopBtnMap(data);
-  const CHAR_IDS = ['nayang','mongoo','tolki','puddi','mallang'];
-  const CHAR_KO  = {nayang:'나양',mongoo:'몽구',tolki:'톨키',puddi:'푸디',mallang:'말랑'};
-  const PACK_IDS = ['mood-nayang','mood-mongoo','mood-tolki','mood-puddi','mood-mallang'];
-  const PACK_KO  = {'mood-nayang':'나양','mood-mongoo':'몽구','mood-tolki':'톨키','mood-puddi':'푸디','mood-mallang':'말랑'};
+const CHARACTER_IDS = ['nayang','mongoo','tolki','puddi','mallang','dalpeni','hurai','molli'];
+const CHARACTER_KO = {
+  nayang:'나양', mongoo:'몽구', tolki:'톨키', puddi:'푸디', mallang:'말랑',
+  dalpeni:'달페니', hurai:'후라이', molli:'몰리',
+};
+const CHARACTER_PACK_IDS = CHARACTER_IDS.map(id => 'mood-' + id);
+const CHARACTER_PACK_KO = Object.fromEntries(CHARACTER_IDS.map(id => ['mood-' + id, CHARACTER_KO[id] || id]));
 
-  const clickRows = CHAR_IDS.map((id) => ({
-    label: CHAR_KO[id] || id,
+const SKIN_ITEMS = [
+  { id:'soft-picnic', itemId:'skin-soft-picnic', label:'소프트 피크닉' },
+  { id:'dark-soft-picnic', itemId:'skin-dark-soft-picnic', label:'다크 소프트 피크닉' },
+  { id:'tiny-bloom-paper', itemId:'skin-tiny-bloom-paper', label:'타이니 블룸 페이퍼' },
+  { id:'starry-cocoa-night', itemId:'skin-starry-cocoa-night', label:'스타리 코코아 나이트' },
+  { id:'sunny-shore', itemId:'skin-sunny-shore', label:'써니 쇼어' },
+  { id:'last-leaf-lane', itemId:'skin-last-leaf-lane', label:'마지막 잎새 길' },
+  { id:'snowy-alley', itemId:'skin-snowy-alley', label:'눈 내리는 골목' },
+  { id:'sea-breeze-crossing', itemId:'skin-sea-breeze-crossing', label:'바닷바람 건널목' },
+  { id:'cherry-bloom-walk', itemId:'skin-cherry-bloom-walk', label:'벚꽃 산책길' },
+  { id:'wave-play-beach', itemId:'skin-wave-play-beach', label:'파도놀이 해변' },
+];
+
+function renderShopCharacterTables(data, purchases){
+  const shopMap = buildShopBtnMap(data);
+  // 서버 DB의 EMOTICON_PURCHASE 이벤트 기반 정확한 구매 수치
+  const purchaseMap = {};
+  const uniqueBuyerMap = {};
+  if (purchases && Array.isArray(purchases.purchases)) {
+    purchases.purchases.forEach(p => {
+      purchaseMap[p.iconId] = p.count;
+      uniqueBuyerMap[p.iconId] = p.uniqueBuyers;
+    });
+  }
+
+  const clickRows = CHARACTER_IDS.map((id) => ({
+    label: CHARACTER_KO[id] || id,
     preview: shopMap['shop_character_preview_' + id] || 0,
     packs: shopMap['shop_pack_mood-' + id] || 0,
     total: (shopMap['shop_character_preview_' + id] || 0) + (shopMap['shop_pack_mood-' + id] || 0),
@@ -1524,11 +1641,12 @@ function renderShopCharacterTables(data){
     `).join('');
   }
 
-  const purchaseRows = PACK_IDS.map((packId) => ({
-    label: PACK_KO[packId] || packId,
-    done: shopMap['shop_purchase_success_' + packId] || 0,
-    buyBtn: shopMap['shop_buy_' + packId] || 0,
-  })).sort((a, b) => b.done - a.done || b.buyBtn - a.buyBtn);
+  const purchaseRows = CHARACTER_PACK_IDS.map((packId) => {
+    const serverCount = purchaseMap[packId] || 0;
+    const uniqueBuyers = uniqueBuyerMap[packId] || 0;
+    const buyBtn = shopMap['shop_buy_' + packId] || 0;
+    return { label: CHARACTER_PACK_KO[packId] || packId, done: serverCount, uniqueBuyers, buyBtn };
+  }).sort((a, b) => b.done - a.done || b.uniqueBuyers - a.uniqueBuyers);
 
   const purchaseTbody = document.getElementById('shop-purchase-table-tbody');
   if (purchaseTbody) {
@@ -1537,7 +1655,56 @@ function renderShopCharacterTables(data){
         <td>${i + 1}</td>
         <td>${r.label}</td>
         <td><strong>${fmtN(r.done)}</strong></td>
+        <td>${fmtN(r.uniqueBuyers)}</td>
         <td>${fmtN(r.buyBtn)}</td>
+      </tr>
+    `).join('');
+  }
+}
+
+function renderSkinCharts(data){
+  const shopMap = buildShopBtnMap(data);
+  const rows = SKIN_ITEMS.map((skin) => ({
+    ...skin,
+    preview: shopMap['shop_skin_preview_' + skin.id] || 0,
+    buyBtn: shopMap['shop_buy_' + skin.itemId] || 0,
+    done: shopMap['shop_purchase_success_' + skin.itemId] || 0,
+  })).sort((a, b) => b.done - a.done || b.buyBtn - a.buyBtn || b.preview - a.preview);
+
+  destroyChart('skinShop');
+  const skinCtx = document.getElementById('skin-shop-chart');
+  if (skinCtx) {
+    const chartRows = rows.filter(r => r.preview > 0 || r.buyBtn > 0 || r.done > 0);
+    if (chartRows.length) {
+      charts['skinShop'] = new Chart(skinCtx, { type:'bar',
+        data:{ labels:chartRows.map(r=>r.label), datasets:[
+          { label:'카드 클릭', data:chartRows.map(r=>r.preview), backgroundColor:'rgba(142,184,224,0.7)', borderRadius:4 },
+          { label:'구매버튼', data:chartRows.map(r=>r.buyBtn), backgroundColor:'rgba(244,164,140,0.9)', borderRadius:4 },
+          { label:'구매완료', data:chartRows.map(r=>r.done), backgroundColor:'rgba(157,201,160,0.95)', borderRadius:4 },
+        ]},
+        options:{ responsive:true, maintainAspectRatio:false,
+          plugins:{ legend:{ display:true, labels:{ color:'#C8BEB4', font:{size:11} } } },
+          scales:{ x:{ ticks:{ font:{size:10}, color:'#C8BEB4' }, grid:{ color:'rgba(46,43,39,.4)' } },
+                   y:{ beginAtZero:true, ticks:{ callback:fmtAxisTick, precision:0, font:{size:11}, color:'#C8BEB4' }, grid:{ color:'rgba(46,43,39,.4)' } } } } });
+    } else {
+      const ctx = skinCtx.getContext('2d');
+      ctx.clearRect(0, 0, skinCtx.width, skinCtx.height);
+      ctx.fillStyle = '#9A8E84';
+      ctx.font = '13px JetBrains Mono, monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText('데이터 없음', skinCtx.width / 2, skinCtx.height / 2);
+    }
+  }
+
+  const tbody = document.getElementById('skin-purchase-table-tbody');
+  if (tbody) {
+    tbody.innerHTML = rows.map((r, i) => `
+      <tr>
+        <td>${i + 1}</td>
+        <td>${r.label}</td>
+        <td><strong>${fmtN(r.done)}</strong></td>
+        <td>${fmtN(r.buyBtn)}</td>
+        <td>${fmtN(r.preview)}</td>
       </tr>
     `).join('');
   }
@@ -1548,10 +1715,6 @@ function renderMoodCharts(data){
   const shopMap = buildShopBtnMap(data);
   const MOOD_IDS = ['happy','sad','angry','love','surprised','sleepy','laughing','shy'];
   const MOOD_KO  = {happy:'행복',sad:'슬픔',angry:'화남',love:'사랑',surprised:'놀람',sleepy:'졸림',laughing:'웃음',shy:'수줍음'};
-  const PACK_IDS = ['mood-nayang','mood-mongoo','mood-tolki','mood-puddi','mood-mallang'];
-  const PACK_KO  = {'mood-nayang':'나양','mood-mongoo':'몽구','mood-tolki':'톨키','mood-puddi':'푸디','mood-mallang':'말랑'};
-  const CHAR_IDS = ['nayang','mongoo','tolki','puddi','mallang'];
-  const CHAR_KO  = {nayang:'나양',mongoo:'몽구',tolki:'톨키',puddi:'푸디',mallang:'말랑'};
   const CHART_DEFAULTS = {responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
     scales:{x:{ticks:{font:{size:11},color:'#C8BEB4'},grid:{color:'rgba(46,43,39,.4)'}},
             y:{beginAtZero:true,ticks:{callback:fmtAxisTick,precision:0,font:{size:11},color:'#C8BEB4'},grid:{color:'rgba(46,43,39,.4)'}}}};
@@ -1577,8 +1740,8 @@ function renderMoodCharts(data){
   destroyChart('moodShop');
   const shopCtx = document.getElementById('mood-shop-chart');
   if(shopCtx){
-    const packs = PACK_IDS.map(id=>({
-      label: PACK_KO[id]||id,
+    const packs = CHARACTER_PACK_IDS.map(id=>({
+      label: CHARACTER_PACK_KO[id]||id,
       views: shopMap['shop_pack_'+id]||0,
       buys:  shopMap['shop_buy_'+id]||0,
       done:  shopMap['shop_purchase_success_'+id]||0,
@@ -1597,7 +1760,7 @@ function renderMoodCharts(data){
   }
 
   // ③ 도시락 상점 · 캐릭터별 클릭 / 구매 표
-  renderShopCharacterTables(data);
+  renderShopCharacterTables(data, purchases);
 
   // ④ 보기 방식 선호 (도넛)
   destroyChart('moodView');
