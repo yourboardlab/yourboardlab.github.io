@@ -463,25 +463,26 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
         <div class="stat-sub">이벤트가 기록된 도시</div>
       </div>
     </div>
+    <div class="chart-card-head" style="margin:4px 0 12px">
+      <div class="chart-title">지역별 이벤트 추이 <span>시간대별 변화</span></div>
+      <div class="range-tabs" id="geo-trend-tabs">
+        <button class="rtab active" data-grain="day">Daily</button>
+        <button class="rtab" data-grain="week">Weekly</button>
+        <button class="rtab" data-grain="month">Monthly</button>
+      </div>
+    </div>
     <div class="chart-grid-eq">
       <div class="chart-card">
         <div class="chart-card-head">
-          <div class="chart-title">국가별 이벤트 수 <span>가로 막대</span></div>
+          <div class="chart-title">국가별 이벤트 수 <span id="geo-country-period">최근 30일</span></div>
         </div>
-        <div class="chart-wrap-lg"><canvas id="geo-bar-chart"></canvas></div>
+        <div class="event-trend-wrap"><canvas id="geo-country-trend-chart"></canvas></div>
       </div>
-      <div class="chart-card" style="padding:0;overflow:hidden">
-        <div style="padding:16px 20px 12px;border-bottom:1px solid var(--line)">
-          <div class="chart-title">도시별 현황 <span>상위 15개</span></div>
+      <div class="chart-card">
+        <div class="chart-card-head">
+          <div class="chart-title">도시별 이벤트 수 <span id="geo-city-period">최근 30일</span></div>
         </div>
-        <div style="overflow-y:auto;max-height:300px">
-          <table class="alltime-table">
-            <thead><tr><th>도시</th><th>국가</th><th>이벤트</th><th>유저</th></tr></thead>
-            <tbody id="geo-city-tbody">
-              <tr class="loading-row"><td colspan="4" style="text-align:center;padding:24px;color:var(--ink-mute);font-size:13px">로딩 중…</td></tr>
-            </tbody>
-          </table>
-        </div>
+        <div class="event-trend-wrap"><canvas id="geo-city-trend-chart"></canvas></div>
       </div>
     </div>
 
@@ -903,6 +904,7 @@ let currentMonths = 6;
 let currentDays   = 14;
 let currentEventTrendGrain = 'day';
 let currentGeoDays    = 30;
+let currentGeoTrendGrain = 'day';
 let currentSessionDays = 30;
 const charts = {};
 
@@ -1234,6 +1236,14 @@ document.getElementById('event-trend-tabs').querySelectorAll('.rtab').forEach(bt
     if(_cache?.eventTrend) renderEventTrend(_cache.eventTrend);
   });
 });
+document.getElementById('geo-trend-tabs').querySelectorAll('.rtab').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.getElementById('geo-trend-tabs').querySelectorAll('.rtab').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    currentGeoTrendGrain=btn.dataset.grain;
+    if(_cache?.geoTrend) renderGeoTrend(_cache.geoTrend);
+  });
+});
 bindRangeTabs('geo-tabs','days',async d=>{currentGeoDays=d;await reloadGeo()});
 bindRangeTabs('session-tabs','days',async d=>{currentSessionDays=d;await reloadSession()});
 
@@ -1266,7 +1276,7 @@ let _cache = null;
 async function loadAll(){
   document.getElementById('error-banner').classList.remove('visible');
   try{
-    const [summary, alltime, eventTrend, monthly, daily, dau, geo, session, recent, purchases] = await Promise.all([
+    const [summary, alltime, eventTrend, monthly, daily, dau, geo, geoTrend, session, recent, purchases] = await Promise.all([
       apiFetch('/api/analytics?type=summary'),
       apiFetch('/api/analytics?type=all-time'),
       apiFetch('/api/analytics?type=daily&days=365'),
@@ -1274,11 +1284,12 @@ async function loadAll(){
       apiFetch(`/api/analytics?type=daily&days=${currentDays}`),
       apiFetch(`/api/analytics?type=dau&days=${currentDays}`),
       apiFetch(`/api/analytics?type=geo&days=${currentGeoDays}`),
+      apiFetch('/api/analytics?type=geo&days=365&trend=1'),
       apiFetch(`/api/analytics?type=session&days=${currentSessionDays}`),
       apiFetch('/api/analytics?type=recent&limit=100'),
       apiFetch('/api/analytics?type=purchases'),
     ]);
-    _cache = { summary, alltime, eventTrend, monthly, daily, dau, geo, session, recent, purchases, loadedAt: new Date() };
+    _cache = { summary, alltime, eventTrend, monthly, daily, dau, geo, geoTrend, session, recent, purchases, loadedAt: new Date() };
     renderSummary(summary);
     renderAllTime(alltime);
     renderEventTrend(eventTrend);
@@ -1287,6 +1298,7 @@ async function loadAll(){
     renderDaily(daily);
     renderDau(dau);
     renderGeo(geo);
+    renderGeoTrend(geoTrend);
     renderSession(session, purchases);
     renderMoodCharts(session, purchases);
     renderSkinCharts(session);
@@ -2032,54 +2044,69 @@ function renderGeo(data){
     document.getElementById('geo-top-country-sub').textContent = '아직 데이터 없음';
   }
 
-  destroyChart('geo-bar');
-  if (countries.length > 0) {
-    const labels = countries.slice(0,15).map(r=>`${flagEmoji(r.country)} ${countryName(r.country)}`);
-    const totals = countries.slice(0,15).map(r=>r.total);
-    charts['geo-bar'] = new Chart(document.getElementById('geo-bar-chart'), {
-      type: 'bar',
-      data: {
-        labels,
-        datasets: [{
-          label: '이벤트 수',
-          data: totals,
-          backgroundColor: 'rgba(137,207,201,.55)',
-          borderColor: '#89CFC9',
-          borderWidth: 1,
-          borderRadius: 4,
-        }],
-      },
-      options: {
-        indexAxis: 'y',
-        responsive: true, maintainAspectRatio: false,
-        plugins: {
-          legend: { display: false },
-          tooltip: CHART_DEFAULTS.tooltip,
-        },
-        scales: {
-          x: { grid:{color:'rgba(46,43,39,.6)'}, ticks:{color:'#9A8E84',font:{size:11},callback:fmtAxisTick}, beginAtZero:true },
-          y: { grid:{display:false}, ticks:{color:'#C8BEB4',font:{size:12}}, },
-        },
-      },
-    });
-  } else {
-    const ctx = document.getElementById('geo-bar-chart').getContext('2d');
-    ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
-  }
+}
 
-  const tbody = document.getElementById('geo-city-tbody');
-  if (!cities.length) {
-    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:20px;color:var(--ink-mute)">아직 데이터 없음</td></tr>';
-    return;
+function geoCountryLabel(code){
+  return code?`${flagEmoji(code)} ${countryName(code)}`:'국가 미상';
+}
+function renderGeoTrendChart({canvasId,chartKey,rows,keyOf,labelOf,limit}){
+  destroyChart(chartKey);
+  const grain=currentGeoTrendGrain;
+  const buckets=trendBuckets(grain);
+  const bucketSet=new Set(buckets);
+  const counts=new Map();
+  const totals=new Map();
+  const labels=new Map();
+  for(const row of rows||[]){
+    const bucket=trendBucketKey(row.day,grain);
+    if(!bucketSet.has(bucket))continue;
+    const seriesKey=keyOf(row);
+    const count=Number(row.count)||0;
+    counts.set(`${bucket}\u0000${seriesKey}`,(counts.get(`${bucket}\u0000${seriesKey}`)||0)+count);
+    totals.set(seriesKey,(totals.get(seriesKey)||0)+count);
+    labels.set(seriesKey,labelOf(row));
   }
-  tbody.innerHTML = cities.slice(0,15).map(r =>
-    `<tr>
-      <td style="font-weight:500;color:var(--ink)">${r.city}</td>
-      <td>${flagEmoji(r.country)} ${countryName(r.country)}</td>
-      <td>${fmtN(r.total)}</td>
-      <td>${fmtN(r.uniqueUsers)}</td>
-    </tr>`
-  ).join('');
+  const series=[...totals.keys()].sort((a,b)=>totals.get(b)-totals.get(a)||a.localeCompare(b)).slice(0,limit);
+  const datasets=series.map(seriesKey=>{
+    const color=trendSeriesColor(seriesKey);
+    return{
+      label:labels.get(seriesKey)||seriesKey,
+      data:buckets.map(bucket=>counts.get(`${bucket}\u0000${seriesKey}`)||0),
+      borderColor:color.border,backgroundColor:color.background,
+      borderWidth:2,fill:false,tension:.28,
+      pointRadius:grain==='day'?2:3,pointHoverRadius:5,
+    };
+  });
+  charts[chartKey]=new Chart(document.getElementById(canvasId),{
+    type:'line',
+    data:{labels:buckets.map(key=>trendBucketLabel(key,grain)),datasets},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      interaction:{mode:'index',intersect:false},
+      plugins:{
+        legend:{position:window.innerWidth<760?'bottom':'right',align:'start',labels:{...CHART_DEFAULTS.legend.labels,usePointStyle:true,pointStyle:'line',padding:12}},
+        tooltip:CHART_DEFAULTS.tooltip,
+      },
+      scales:{
+        x:{grid:{color:'rgba(46,43,39,.6)'},ticks:{color:'#9A8E84',font:{size:11},maxTicksLimit:grain==='day'?10:8}},
+        y:{grid:{color:'rgba(46,43,39,.6)'},ticks:{color:'#9A8E84',font:{size:11},callback:fmtAxisTick,precision:0},beginAtZero:true},
+      },
+    },
+  });
+}
+function renderGeoTrend(data){
+  const periodText={day:'최근 30일',week:'최근 26주',month:'최근 12개월'}[currentGeoTrendGrain];
+  document.getElementById('geo-country-period').textContent=periodText;
+  document.getElementById('geo-city-period').textContent=periodText;
+  renderGeoTrendChart({
+    canvasId:'geo-country-trend-chart',chartKey:'geoCountryTrend',rows:data?.countryTrend||[],limit:10,
+    keyOf:row=>row.country||'UNKNOWN',labelOf:row=>geoCountryLabel(row.country),
+  });
+  renderGeoTrendChart({
+    canvasId:'geo-city-trend-chart',chartKey:'geoCityTrend',rows:data?.cityTrend||[],limit:12,
+    keyOf:row=>`${row.country||'UNKNOWN'}\u0000${row.city}`,
+    labelOf:row=>`${row.city} · ${row.country||'—'}`,
+  });
 }
 
 function renderLog(data){
