@@ -134,6 +134,10 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
 .chart-checkbox-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .action-trend-layout{display:grid;grid-template-columns:minmax(0,1fr) 180px;gap:14px;height:320px}
 .action-trend-canvas{position:relative;min-width:0;height:100%}
+.line-checkbox-layout{display:grid;grid-template-columns:minmax(0,1fr) 160px;gap:12px;height:280px}
+.line-checkbox-layout.geo{grid-template-columns:minmax(0,1fr) 180px;height:400px}
+.line-checkbox-layout.session{height:220px}
+.line-checkbox-canvas{position:relative;min-width:0;height:100%}
 .empty-chart{display:flex;align-items:center;justify-content:center;height:100%;color:var(--ink-mute);font-size:13px;font-family:var(--mono)}
 
 /* ── All-time table ── */
@@ -162,7 +166,7 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
 .ev-table tbody tr:last-child td{border-bottom:none}
 .loading-row td{text-align:center;padding:32px!important;color:var(--ink-mute);font-size:13px}
 
-@media(max-width:759px){.event-trend-layout,.action-trend-layout{grid-template-columns:1fr;height:auto}.event-trend-canvas{height:320px}.action-trend-canvas{height:280px}.chart-checkbox-legend{max-height:180px;border-left:0;border-top:1px solid var(--line);padding:10px 0 0}}
+@media(max-width:759px){.event-trend-layout,.action-trend-layout,.line-checkbox-layout,.line-checkbox-layout.geo,.line-checkbox-layout.session{grid-template-columns:1fr;height:auto}.event-trend-canvas{height:320px}.action-trend-canvas{height:280px}.line-checkbox-canvas{height:280px}.chart-checkbox-legend{max-height:180px;border-left:0;border-top:1px solid var(--line);padding:10px 0 0}}
 @media(max-width:520px){.main-wrap{padding:18px 14px 60px}.stat-value{font-size:24px}}
 </style>
 </head>
@@ -440,13 +444,19 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
         <div class="chart-card-head">
           <div class="chart-title">이벤트 타입별 일별 추이 <span>라인 차트</span></div>
         </div>
-        <div class="chart-wrap-lg"><canvas id="daily-chart"></canvas></div>
+        <div class="line-checkbox-layout">
+          <div class="line-checkbox-canvas"><canvas id="daily-chart"></canvas></div>
+          <div class="chart-checkbox-legend" id="daily-trend-legend" aria-label="일별 이벤트 표시 선택"></div>
+        </div>
       </div>
       <div class="chart-card">
         <div class="chart-card-head">
           <div class="chart-title">DAU 추이 <span>일간 활성 유저 · 하루 방문 유저 수</span></div>
         </div>
-        <div class="chart-wrap-lg"><canvas id="dau-chart"></canvas></div>
+        <div class="line-checkbox-layout">
+          <div class="line-checkbox-canvas"><canvas id="dau-chart"></canvas></div>
+          <div class="chart-checkbox-legend" id="dau-trend-legend" aria-label="DAU 지표 표시 선택"></div>
+        </div>
       </div>
     </div>
 
@@ -489,13 +499,19 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
         <div class="chart-card-head">
           <div class="chart-title">국가별 이벤트 수 <span id="geo-country-period">최근 30일</span></div>
         </div>
-        <div class="event-trend-wrap"><canvas id="geo-country-trend-chart"></canvas></div>
+        <div class="line-checkbox-layout geo">
+          <div class="line-checkbox-canvas"><canvas id="geo-country-trend-chart"></canvas></div>
+          <div class="chart-checkbox-legend" id="geo-country-trend-legend" aria-label="국가 표시 선택"></div>
+        </div>
       </div>
       <div class="chart-card">
         <div class="chart-card-head">
           <div class="chart-title">도시별 이벤트 수 <span id="geo-city-period">최근 30일</span></div>
         </div>
-        <div class="event-trend-wrap"><canvas id="geo-city-trend-chart"></canvas></div>
+        <div class="line-checkbox-layout geo">
+          <div class="line-checkbox-canvas"><canvas id="geo-city-trend-chart"></canvas></div>
+          <div class="chart-checkbox-legend" id="geo-city-trend-legend" aria-label="도시 표시 선택"></div>
+        </div>
       </div>
     </div>
 
@@ -536,7 +552,10 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
         <div class="chart-card-head">
           <div class="chart-title">일별 세션 수 <span>라인 차트</span></div>
         </div>
-        <div class="chart-wrap"><canvas id="sess-daily-chart"></canvas></div>
+        <div class="line-checkbox-layout session">
+          <div class="line-checkbox-canvas"><canvas id="sess-daily-chart"></canvas></div>
+          <div class="chart-checkbox-legend" id="session-daily-legend" aria-label="세션 지표 표시 선택"></div>
+        </div>
       </div>
     </div>
     <div class="chart-card" style="margin-top:16px">
@@ -942,6 +961,7 @@ let currentActionTrendGrain = 'day';
 const charts = {};
 const hiddenEventTrendTypes = new Set();
 const hiddenActionTrendIds = {notif:new Set(),lunchbox:new Set(),settings:new Set()};
+const hiddenLineSeries = {daily:new Set(),dau:new Set(),sessionDaily:new Set(),geoCountry:new Set(),geoCity:new Set()};
 
 // ─── Token ───────────────────────────────────────────────────────────────────
 const loadToken = () => { try{return localStorage.getItem(TOKEN_KEY)||null}catch{return null} };
@@ -1466,6 +1486,28 @@ const eventTrendLegendPlugin={
   id:'eventTrendCheckboxLegend',
   afterUpdate(chart){renderEventTrendLegend(chart)},
 };
+function renderLineCheckboxLegend(chart,legendId,hiddenSet){
+  const root=document.getElementById(legendId);
+  root.replaceChildren();
+  chart.data.datasets.forEach((dataset,index)=>{
+    const seriesKey=dataset.seriesKey||dataset.label;
+    const row=document.createElement('label');
+    row.className='chart-checkbox-item';row.title=dataset.rawLabel||dataset.label;
+    const checkbox=document.createElement('input');
+    checkbox.type='checkbox';checkbox.checked=chart.isDatasetVisible(index);
+    checkbox.setAttribute('aria-label',`${dataset.label} 표시`);checkbox.style.accentColor=dataset.borderColor;
+    checkbox.addEventListener('change',()=>{
+      if(checkbox.checked)hiddenSet.delete(seriesKey);else hiddenSet.add(seriesKey);
+      chart.setDatasetVisibility(index,checkbox.checked);chart.update();
+    });
+    const swatch=document.createElement('span');swatch.className='chart-checkbox-swatch';swatch.style.backgroundColor=dataset.borderColor;
+    const name=document.createElement('span');name.className='chart-checkbox-name';name.textContent=dataset.label;
+    row.append(checkbox,swatch,name);root.appendChild(row);
+  });
+}
+function createLineCheckboxLegendPlugin(pluginId,legendId,hiddenSet){
+  return{id:pluginId,afterUpdate(chart){renderLineCheckboxLegend(chart,legendId,hiddenSet)}};
+}
 function renderEventTrend(data){
   destroyChart('eventTrend');
   const grain=currentEventTrendGrain;
@@ -1526,7 +1568,7 @@ function renderMonthly(data){
   const datasets=types.map(type=>{
     const s=ev(type);
     return{
-      label:evLabel(type),
+      label:evLabel(type),seriesKey:type,rawLabel:type,hidden:hiddenLineSeries.daily.has(type),
       data:months.map(m=>{const r=data.rows.find(x=>x.month===m&&x.eventType===type);return r?r.count:0}),
       backgroundColor:s.bg.replace('.2','.7'),
       borderColor:s.bd,
@@ -1592,11 +1634,12 @@ function renderDaily(data){
   charts['daily']=new Chart(document.getElementById('daily-chart'),{
     type:'line',
     data:{labels:days.map(dayLabel),datasets},
+    plugins:[createLineCheckboxLegendPlugin('dailyCheckboxLegend','daily-trend-legend',hiddenLineSeries.daily)],
     options:{
       responsive:true,maintainAspectRatio:false,
       interaction:{mode:'index',intersect:false},
       plugins:{
-        legend:{position:'bottom',labels:CHART_DEFAULTS.legend.labels},
+        legend:{display:false},
         tooltip:CHART_DEFAULTS.tooltip,
       },
       scales:{
@@ -1616,13 +1659,13 @@ function renderDau(data){
       labels:rows.map(r=>dayLabel(r.day)),
       datasets:[
         {
-          label:'DAU',
+          label:'DAU',seriesKey:'dau',hidden:hiddenLineSeries.dau.has('dau'),
           data:rows.map(r=>r.dau),
           borderColor:'#89CFC9',backgroundColor:'rgba(137,207,201,.15)',
           borderWidth:2,fill:true,tension:.3,pointRadius:rows.length>60?0:3,pointHoverRadius:5,
         },
         {
-          label:'총 이벤트',
+          label:'총 이벤트',seriesKey:'events',hidden:hiddenLineSeries.dau.has('events'),
           data:rows.map(r=>r.events),
           borderColor:'#C1A9D9',backgroundColor:'rgba(193,169,217,.1)',
           borderWidth:1.5,fill:false,tension:.3,pointRadius:0,pointHoverRadius:4,
@@ -1630,11 +1673,12 @@ function renderDau(data){
         },
       ],
     },
+    plugins:[createLineCheckboxLegendPlugin('dauCheckboxLegend','dau-trend-legend',hiddenLineSeries.dau)],
     options:{
       responsive:true,maintainAspectRatio:false,
       interaction:{mode:'index',intersect:false},
       plugins:{
-        legend:{position:'bottom',labels:CHART_DEFAULTS.legend.labels},
+        legend:{display:false},
         tooltip:CHART_DEFAULTS.tooltip,
       },
       scales:{
@@ -1711,12 +1755,13 @@ function renderSession(data, purchases){
       data:{
         labels: daily.map(r=>dayLabel(r.day)),
         datasets:[{
-          label:'세션 수',
+          label:'세션 수',seriesKey:'sessions',hidden:hiddenLineSeries.sessionDaily.has('sessions'),
           data: daily.map(r=>r.sessions),
           borderColor:'#8EB8E0',backgroundColor:'rgba(142,184,224,0.15)',
           tension:0.3,pointRadius:2,fill:true,
         }],
       },
+      plugins:[createLineCheckboxLegendPlugin('sessionDailyCheckboxLegend','session-daily-legend',hiddenLineSeries.sessionDaily)],
       options:{
         responsive:true,maintainAspectRatio:false,
         plugins:{legend:{display:false}},
@@ -2045,7 +2090,7 @@ function renderGeo(data){
 function geoCountryLabel(code){
   return code?`${flagEmoji(code)} ${countryName(code)}`:'국가 미상';
 }
-function renderGeoTrendChart({canvasId,chartKey,rows,keyOf,labelOf,limit}){
+function renderGeoTrendChart({canvasId,chartKey,legendId,hiddenSet,rows,keyOf,labelOf,limit}){
   destroyChart(chartKey);
   const grain=currentGeoTrendGrain;
   const buckets=trendBuckets(grain);
@@ -2066,7 +2111,7 @@ function renderGeoTrendChart({canvasId,chartKey,rows,keyOf,labelOf,limit}){
   const datasets=series.map(seriesKey=>{
     const color=trendSeriesColor(seriesKey);
     return{
-      label:labels.get(seriesKey)||seriesKey,
+      label:labels.get(seriesKey)||seriesKey,seriesKey,rawLabel:seriesKey,hidden:hiddenSet.has(seriesKey),
       data:buckets.map(bucket=>counts.get(`${bucket}\u0000${seriesKey}`)||0),
       borderColor:color.border,backgroundColor:color.background,
       borderWidth:2,fill:false,tension:.28,
@@ -2076,11 +2121,12 @@ function renderGeoTrendChart({canvasId,chartKey,rows,keyOf,labelOf,limit}){
   charts[chartKey]=new Chart(document.getElementById(canvasId),{
     type:'line',
     data:{labels:buckets.map(key=>trendBucketLabel(key,grain)),datasets},
+    plugins:[createLineCheckboxLegendPlugin(`${chartKey}CheckboxLegend`,legendId,hiddenSet)],
     options:{
       responsive:true,maintainAspectRatio:false,
       interaction:{mode:'index',intersect:false},
       plugins:{
-        legend:{position:window.innerWidth<760?'bottom':'right',align:'start',labels:{...CHART_DEFAULTS.legend.labels,usePointStyle:true,pointStyle:'line',padding:12}},
+        legend:{display:false},
         tooltip:CHART_DEFAULTS.tooltip,
       },
       scales:{
@@ -2095,11 +2141,11 @@ function renderGeoTrend(data){
   document.getElementById('geo-country-period').textContent=periodText;
   document.getElementById('geo-city-period').textContent=periodText;
   renderGeoTrendChart({
-    canvasId:'geo-country-trend-chart',chartKey:'geoCountryTrend',rows:data?.countryTrend||[],limit:10,
+    canvasId:'geo-country-trend-chart',chartKey:'geoCountryTrend',legendId:'geo-country-trend-legend',hiddenSet:hiddenLineSeries.geoCountry,rows:data?.countryTrend||[],limit:10,
     keyOf:row=>row.country||'UNKNOWN',labelOf:row=>geoCountryLabel(row.country),
   });
   renderGeoTrendChart({
-    canvasId:'geo-city-trend-chart',chartKey:'geoCityTrend',rows:data?.cityTrend||[],limit:12,
+    canvasId:'geo-city-trend-chart',chartKey:'geoCityTrend',legendId:'geo-city-trend-legend',hiddenSet:hiddenLineSeries.geoCity,rows:data?.cityTrend||[],limit:12,
     keyOf:row=>`${row.country||'UNKNOWN'}\u0000${row.city}`,
     labelOf:row=>`${row.city} · ${row.country||'—'}`,
   });
