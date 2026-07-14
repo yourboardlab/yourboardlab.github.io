@@ -1477,7 +1477,7 @@ function renderDonut(s){
   charts['donut']=new Chart(document.getElementById('donut-chart'),{
     type:'doughnut',
     data:{
-      labels:items.map(t=>t.eventType),
+      labels:items.map(t=>evLabel(t.eventType)),
       datasets:[{
         data:items.map(t=>t.count),
         backgroundColor:items.map(t=>ev(t.eventType).bg.replace('.2','.7')),
