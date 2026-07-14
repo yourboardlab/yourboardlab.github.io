@@ -132,6 +132,8 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
 .chart-checkbox-item input{width:14px;height:14px;margin:0;flex:0 0 auto;cursor:pointer}
 .chart-checkbox-swatch{width:14px;height:2px;border-radius:2px;flex:0 0 auto}
 .chart-checkbox-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.action-trend-layout{display:grid;grid-template-columns:minmax(0,1fr) 180px;gap:14px;height:320px}
+.action-trend-canvas{position:relative;min-width:0;height:100%}
 .empty-chart{display:flex;align-items:center;justify-content:center;height:100%;color:var(--ink-mute);font-size:13px;font-family:var(--mono)}
 
 /* ── All-time table ── */
@@ -160,7 +162,7 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
 .ev-table tbody tr:last-child td{border-bottom:none}
 .loading-row td{text-align:center;padding:32px!important;color:var(--ink-mute);font-size:13px}
 
-@media(max-width:759px){.event-trend-layout{grid-template-columns:1fr;height:auto}.event-trend-canvas{height:320px}.chart-checkbox-legend{max-height:180px;border-left:0;border-top:1px solid var(--line);padding:10px 0 0}}
+@media(max-width:759px){.event-trend-layout,.action-trend-layout{grid-template-columns:1fr;height:auto}.event-trend-canvas{height:320px}.action-trend-canvas{height:280px}.chart-checkbox-legend{max-height:180px;border-left:0;border-top:1px solid var(--line);padding:10px 0 0}}
 @media(max-width:520px){.main-wrap{padding:18px 14px 60px}.stat-value{font-size:24px}}
 </style>
 </head>
@@ -655,30 +657,49 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
     <!-- § 8. 알림 설정 분석 -->
     <div class="sec-head" style="margin-top:40px">
       <div class="sec-label">— 알림 설정 분석</div>
+      <div class="range-tabs action-trend-tabs">
+        <button class="rtab active" data-grain="day">Daily</button>
+        <button class="rtab" data-grain="week">Weekly</button>
+        <button class="rtab" data-grain="month">Monthly</button>
+      </div>
     </div>
     <div class="chart-card">
       <div class="chart-card-head">
-        <div class="chart-title">알림 설정 버튼 클릭 <span>기능별 사용 빈도</span></div>
+        <div class="chart-title">알림 설정 버튼 클릭 <span id="notif-trend-period">최근 30일</span></div>
       </div>
-      <div class="chart-wrap" style="height:200px"><canvas id="notif-chart"></canvas></div>
+      <div class="action-trend-layout">
+        <div class="action-trend-canvas"><canvas id="notif-chart"></canvas></div>
+        <div class="chart-checkbox-legend" id="notif-trend-legend" aria-label="알림 동작 표시 선택"></div>
+      </div>
     </div>
 
     <!-- § 9. 도시락 기본 활동 -->
     <div class="sec-head" style="margin-top:40px">
       <div class="sec-label">— 도시락 기본 활동</div>
+      <div class="range-tabs action-trend-tabs">
+        <button class="rtab active" data-grain="day">Daily</button>
+        <button class="rtab" data-grain="week">Weekly</button>
+        <button class="rtab" data-grain="month">Monthly</button>
+      </div>
     </div>
     <div class="chart-grid-eq" style="margin-bottom:16px">
       <div class="chart-card">
         <div class="chart-card-head">
-          <div class="chart-title">도시락 탭 활동 <span>출석·충전·탈퇴 클릭 수</span></div>
+          <div class="chart-title">도시락 탭 활동 <span id="lunchbox-trend-period">최근 30일</span></div>
         </div>
-        <div class="chart-wrap" style="height:200px"><canvas id="lunchbox-activity-chart"></canvas></div>
+        <div class="action-trend-layout">
+          <div class="action-trend-canvas"><canvas id="lunchbox-activity-chart"></canvas></div>
+          <div class="chart-checkbox-legend" id="lunchbox-trend-legend" aria-label="도시락 동작 표시 선택"></div>
+        </div>
       </div>
       <div class="chart-card">
         <div class="chart-card-head">
-          <div class="chart-title">설정 기타 동작 <span>내보내기·불러오기·토글 클릭 수</span></div>
+          <div class="chart-title">설정 기타 동작 <span id="settings-trend-period">최근 30일</span></div>
         </div>
-        <div class="chart-wrap" style="height:200px"><canvas id="settings-actions-chart"></canvas></div>
+        <div class="action-trend-layout">
+          <div class="action-trend-canvas"><canvas id="settings-actions-chart"></canvas></div>
+          <div class="chart-checkbox-legend" id="settings-trend-legend" aria-label="설정 동작 표시 선택"></div>
+        </div>
       </div>
     </div>
 
@@ -917,8 +938,10 @@ let currentEventTrendGrain = 'day';
 let currentGeoDays    = 30;
 let currentGeoTrendGrain = 'day';
 let currentSessionDays = 30;
+let currentActionTrendGrain = 'day';
 const charts = {};
 const hiddenEventTrendTypes = new Set();
+const hiddenActionTrendIds = {notif:new Set(),lunchbox:new Set(),settings:new Set()};
 
 // ─── Token ───────────────────────────────────────────────────────────────────
 const loadToken = () => { try{return localStorage.getItem(TOKEN_KEY)||null}catch{return null} };
@@ -1256,6 +1279,17 @@ document.getElementById('geo-trend-tabs').querySelectorAll('.rtab').forEach(btn=
     if(_cache?.geoTrend) renderGeoTrend(_cache.geoTrend);
   });
 });
+document.querySelectorAll('.action-trend-tabs .rtab').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    currentActionTrendGrain=btn.dataset.grain;
+    document.querySelectorAll('.action-trend-tabs .rtab').forEach(b=>b.classList.toggle('active',b.dataset.grain===currentActionTrendGrain));
+    if(_cache?.actionTrend){
+      renderNotifCharts(_cache.actionTrend);
+      renderLunchboxActivity(_cache.actionTrend);
+      renderSettingsActions(_cache.actionTrend);
+    }
+  });
+});
 bindRangeTabs('geo-tabs','days',async d=>{currentGeoDays=d;await reloadGeo()});
 bindRangeTabs('session-tabs','days',async d=>{currentSessionDays=d;await reloadSession()});
 
@@ -1288,7 +1322,7 @@ let _cache = null;
 async function loadAll(){
   document.getElementById('error-banner').classList.remove('visible');
   try{
-    const [summary, alltime, eventTrend, monthly, daily, dau, geo, geoTrend, session, recent, purchases] = await Promise.all([
+    const [summary, alltime, eventTrend, monthly, daily, dau, geo, geoTrend, session, actionTrend, recent, purchases] = await Promise.all([
       apiFetch('/api/analytics?type=summary'),
       apiFetch('/api/analytics?type=all-time'),
       apiFetch('/api/analytics?type=daily&days=365'),
@@ -1298,10 +1332,11 @@ async function loadAll(){
       apiFetch(`/api/analytics?type=geo&days=${currentGeoDays}`),
       apiFetch('/api/analytics?type=geo&days=365&trend=1'),
       apiFetch(`/api/analytics?type=session&days=${currentSessionDays}`),
+      apiFetch('/api/analytics?type=session&days=365&trend=1'),
       apiFetch('/api/analytics?type=recent&limit=100'),
       apiFetch('/api/analytics?type=purchases'),
     ]);
-    _cache = { summary, alltime, eventTrend, monthly, daily, dau, geo, geoTrend, session, recent, purchases, loadedAt: new Date() };
+    _cache = { summary, alltime, eventTrend, monthly, daily, dau, geo, geoTrend, session, actionTrend, recent, purchases, loadedAt: new Date() };
     renderSummary(summary);
     renderAllTime(alltime);
     renderEventTrend(eventTrend);
@@ -1314,9 +1349,9 @@ async function loadAll(){
     renderSession(session, purchases);
     renderMoodCharts(session, purchases);
     renderSkinCharts(session);
-    renderNotifCharts(session);
-    renderLunchboxActivity(session);
-    renderSettingsActions(session);
+    renderNotifCharts(actionTrend);
+    renderLunchboxActivity(actionTrend);
+    renderSettingsActions(actionTrend);
     renderLog(recent);
     document.getElementById('last-updated').textContent=`Last updated: ${new Date().toLocaleString('ko-KR')}`;
   }catch(e){
@@ -1742,7 +1777,7 @@ async function reloadSession(){
       apiFetch(`/api/analytics?type=session&days=${currentSessionDays}`),
       apiFetch('/api/analytics?type=purchases'),
     ]);
-    renderSession(d, p);renderMoodCharts(d, p);renderSkinCharts(d);renderNotifCharts(d);renderLunchboxActivity(d);renderSettingsActions(d);
+    renderSession(d, p);renderMoodCharts(d, p);renderSkinCharts(d);
   }catch{}
 }
 
@@ -1950,129 +1985,44 @@ function renderMoodCharts(data, purchases){
   }
 }
 
-function renderNotifCharts(data){
-  const btnMap = Object.fromEntries((data?.buttons||[]).map(b=>[b.btn,b.clicks]));
-  const items = [
-    {id:'accordion_dailyNotif',  label:'알림 설정 열기'},
-    {id:'notif_memo_toggle',     label:'오늘은 토글'},
-    {id:'notif_check_toggle',    label:'했니 토글'},
-    {id:'notif_memo_time_change',label:'오늘은 시간변경'},
-    {id:'notif_check_time_change',label:'했니 시간변경'},
-  ].map(r=>({...r, clicks: btnMap[r.id]||0}));
-
-  destroyChart('notif');
-  const ctx = document.getElementById('notif-chart');
-  if(!ctx) return;
-  const hasData = items.some(r=>r.clicks>0);
-  if(!hasData){
-    ctx.getContext('2d');
-    ctx.parentElement.innerHTML='<p style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--ink-mute);font-size:13px;font-family:var(--mono)">데이터 없음</p>';
-    return;
-  }
-  charts['notif'] = new Chart(ctx,{
-    type:'bar',
-    data:{
-      labels: items.map(r=>r.label),
-      datasets:[{
-        label:'클릭 수',
-        data: items.map(r=>r.clicks),
-        backgroundColor:['#89CFC9','#9DC9A0','#F0BF94','#8EB8E0','#C1A9D9'],
-        borderRadius:5,
-      }],
-    },
-    options:{
-      responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:false},tooltip:{callbacks:{title:i=>i[0].label}}},
-      scales:{
-        x:{grid:{color:'rgba(46,43,39,.5)'},ticks:{color:'#C8BEB4',font:{size:12}}},
-        y:{beginAtZero:true,grid:{color:'rgba(46,43,39,.5)'},ticks:{callback:fmtAxisTick,precision:0,color:'#C8BEB4',font:{size:11}}},
-      },
-    },
+const ACTION_TREND_GROUPS={
+  notif:{chartKey:'notif',canvasId:'notif-chart',legendId:'notif-trend-legend',periodId:'notif-trend-period',hidden:hiddenActionTrendIds.notif,items:[
+    {id:'accordion_dailyNotif',label:'알림 설정 열기',color:'#89CFC9'},{id:'notif_memo_toggle',label:'오늘은 토글',color:'#9DC9A0'},
+    {id:'notif_check_toggle',label:'했니 토글',color:'#F0BF94'},{id:'notif_memo_time_change',label:'오늘은 시간변경',color:'#8EB8E0'},
+    {id:'notif_check_time_change',label:'했니 시간변경',color:'#C1A9D9'},]},
+  lunchbox:{chartKey:'lunchboxActivity',canvasId:'lunchbox-activity-chart',legendId:'lunchbox-trend-legend',periodId:'lunchbox-trend-period',hidden:hiddenActionTrendIds.lunchbox,items:[
+    {id:'lunchboxAttendanceBtn',label:'출석 체크',color:'#9DC9A0'},{id:'lunchboxRechargeOpenBtn',label:'코인 충전 열기',color:'#F7CE76'},
+    {id:'lunchboxSyncBtn',label:'서버 동기화',color:'#8EB8E0'},{id:'lunchboxWithdrawBtn',label:'도시락 탈퇴',color:'#F4A48C'},]},
+  settings:{chartKey:'settingsActions',canvasId:'settings-actions-chart',legendId:'settings-trend-legend',periodId:'settings-trend-period',hidden:hiddenActionTrendIds.settings,items:[
+    {id:'exportDataBtn',label:'내보내기 실행',color:'#89CFC9'},{id:'importDataBtn',label:'불러오기 실행',color:'#8EB8E0'},
+    {id:'rotationToggle',label:'화면 회전 토글',color:'#C1A9D9'},{id:'calendarMemoOnCellsToggle',label:'달력 일정 표시',color:'#F0BF94'},
+    {id:'widgetMemoOnCellsToggle',label:'위젯 일정 표시',color:'#A8D8A8'},{id:'lunchboxAppLoginToggle',label:'앱 로그인 토글',color:'#F7CE76'},
+    {id:'lunchboxAccessToggle',label:'도시락 접근 토글',color:'#F4A48C'},]},
+};
+function renderActionTrendLegend(chart,group){
+  const root=document.getElementById(group.legendId);root.replaceChildren();
+  chart.data.datasets.forEach((dataset,index)=>{
+    const row=document.createElement('label');row.className='chart-checkbox-item';row.title=dataset.actionId;
+    const checkbox=document.createElement('input');checkbox.type='checkbox';checkbox.checked=chart.isDatasetVisible(index);
+    checkbox.setAttribute('aria-label',`${dataset.label} 표시`);checkbox.style.accentColor=dataset.borderColor;
+    checkbox.addEventListener('change',()=>{if(checkbox.checked)group.hidden.delete(dataset.actionId);else group.hidden.add(dataset.actionId);chart.setDatasetVisibility(index,checkbox.checked);chart.update()});
+    const swatch=document.createElement('span');swatch.className='chart-checkbox-swatch';swatch.style.backgroundColor=dataset.borderColor;
+    const name=document.createElement('span');name.className='chart-checkbox-name';name.textContent=dataset.label;
+    row.append(checkbox,swatch,name);root.appendChild(row);
   });
 }
-
-function renderLunchboxActivity(data){
-  const btnMap = Object.fromEntries((data?.buttons||[]).map(b=>[b.btn,b.clicks]));
-  const items = [
-    {id:'lunchboxAttendanceBtn',   label:'출석 체크'},
-    {id:'lunchboxRechargeOpenBtn', label:'코인 충전 열기'},
-    {id:'lunchboxSyncBtn',         label:'서버 동기화'},
-    {id:'lunchboxWithdrawBtn',     label:'도시락 탈퇴'},
-  ].map(r=>({...r, clicks: btnMap[r.id]||0}));
-
-  destroyChart('lunchboxActivity');
-  const ctx = document.getElementById('lunchbox-activity-chart');
-  if(!ctx) return;
-  const hasData = items.some(r=>r.clicks>0);
-  if(!hasData){
-    ctx.getContext('2d');
-    ctx.parentElement.innerHTML='<p style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--ink-mute);font-size:13px;font-family:var(--mono)">데이터 없음</p>';
-    return;
-  }
-  charts['lunchboxActivity'] = new Chart(ctx,{
-    type:'bar',
-    data:{
-      labels: items.map(r=>r.label),
-      datasets:[{
-        label:'클릭 수',
-        data: items.map(r=>r.clicks),
-        backgroundColor:['#9DC9A0','#F7CE76','#8EB8E0','#F4A48C'],
-        borderRadius:5,
-      }],
-    },
-    options:{
-      responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:false},tooltip:{callbacks:{title:i=>i[0].label}}},
-      scales:{
-        x:{grid:{color:'rgba(46,43,39,.5)'},ticks:{color:'#C8BEB4',font:{size:12}}},
-        y:{beginAtZero:true,grid:{color:'rgba(46,43,39,.5)'},ticks:{callback:fmtAxisTick,precision:0,color:'#C8BEB4',font:{size:11}}},
-      },
-    },
-  });
+function renderActionTrendChart(data,group){
+  destroyChart(group.chartKey);
+  const grain=currentActionTrendGrain,buckets=trendBuckets(grain),bucketSet=new Set(buckets),itemIds=new Set(group.items.map(item=>item.id)),counts=new Map();
+  for(const row of data?.buttonDaily||[]){if(!itemIds.has(row.btn))continue;const bucket=trendBucketKey(row.day,grain);if(!bucketSet.has(bucket))continue;const key=`${bucket}\u0000${row.btn}`;counts.set(key,(counts.get(key)||0)+(Number(row.clicks)||0))}
+  const datasets=group.items.map(item=>({label:item.label,actionId:item.id,data:buckets.map(bucket=>counts.get(`${bucket}\u0000${item.id}`)||0),borderColor:item.color,backgroundColor:`${item.color}22`,hidden:group.hidden.has(item.id),borderWidth:2,fill:false,tension:.28,pointRadius:grain==='day'?2:3,pointHoverRadius:5}));
+  document.getElementById(group.periodId).textContent={day:'최근 30일',week:'최근 26주',month:'최근 12개월'}[grain];
+  const legendPlugin={id:`${group.chartKey}CheckboxLegend`,afterUpdate(chart){renderActionTrendLegend(chart,group)}};
+  charts[group.chartKey]=new Chart(document.getElementById(group.canvasId),{type:'line',data:{labels:buckets.map(key=>trendBucketLabel(key,grain)),datasets},plugins:[legendPlugin],options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{...CHART_DEFAULTS.tooltip,callbacks:{label:ctx=>`${ctx.dataset.label}: ${fmtN(ctx.parsed.y)}`}}},scales:{x:{grid:{color:'rgba(46,43,39,.5)'},ticks:{color:'#C8BEB4',font:{size:11},maxTicksLimit:grain==='day'?10:8}},y:{beginAtZero:true,grid:{color:'rgba(46,43,39,.5)'},ticks:{callback:fmtAxisTick,precision:0,color:'#C8BEB4',font:{size:11}}}}}});
 }
-
-function renderSettingsActions(data){
-  const btnMap = Object.fromEntries((data?.buttons||[]).map(b=>[b.btn,b.clicks]));
-  const items = [
-    {id:'exportDataBtn',            label:'내보내기 실행'},
-    {id:'importDataBtn',            label:'불러오기 실행'},
-    {id:'rotationToggle',           label:'화면 회전 토글'},
-    {id:'calendarMemoOnCellsToggle',label:'달력 일정 표시'},
-    {id:'widgetMemoOnCellsToggle',  label:'위젯 일정 표시'},
-    {id:'lunchboxAppLoginToggle',   label:'앱 로그인 토글'},
-    {id:'lunchboxAccessToggle',     label:'도시락 접근 토글'},
-  ].map(r=>({...r, clicks: btnMap[r.id]||0}));
-
-  destroyChart('settingsActions');
-  const ctx = document.getElementById('settings-actions-chart');
-  if(!ctx) return;
-  const hasData = items.some(r=>r.clicks>0);
-  if(!hasData){
-    ctx.getContext('2d');
-    ctx.parentElement.innerHTML='<p style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--ink-mute);font-size:13px;font-family:var(--mono)">데이터 없음</p>';
-    return;
-  }
-  charts['settingsActions'] = new Chart(ctx,{
-    type:'bar',
-    data:{
-      labels: items.map(r=>r.label),
-      datasets:[{
-        label:'클릭 수',
-        data: items.map(r=>r.clicks),
-        backgroundColor:['#89CFC9','#8EB8E0','#C1A9D9','#F0BF94','#A8D8A8','#F7CE76','#F4A48C'],
-        borderRadius:5,
-      }],
-    },
-    options:{
-      responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:false},tooltip:{callbacks:{title:i=>i[0].label}}},
-      scales:{
-        x:{grid:{color:'rgba(46,43,39,.5)'},ticks:{color:'#C8BEB4',font:{size:12}}},
-        y:{beginAtZero:true,grid:{color:'rgba(46,43,39,.5)'},ticks:{callback:fmtAxisTick,precision:0,color:'#C8BEB4',font:{size:11}}},
-      },
-    },
-  });
-}
+function renderNotifCharts(data){renderActionTrendChart(data,ACTION_TREND_GROUPS.notif)}
+function renderLunchboxActivity(data){renderActionTrendChart(data,ACTION_TREND_GROUPS.lunchbox)}
+function renderSettingsActions(data){renderActionTrendChart(data,ACTION_TREND_GROUPS.settings)}
 
 function renderGeo(data){
   const countries = data.countries || [];
