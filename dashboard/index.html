@@ -1262,7 +1262,7 @@ async function loadAll(){
     renderDau(dau);
     renderGeo(geo);
     renderSession(session, purchases);
-    renderMoodCharts(session);
+    renderMoodCharts(session, purchases);
     renderSkinCharts(session);
     renderNotifCharts(session);
     renderLunchboxActivity(session);
@@ -1575,7 +1575,7 @@ async function reloadSession(){
       apiFetch(`/api/analytics?type=session&days=${currentSessionDays}`),
       apiFetch('/api/analytics?type=purchases'),
     ]);
-    renderSession(d, p);renderMoodCharts(d);renderSkinCharts(d);renderNotifCharts(d);renderLunchboxActivity(d);renderSettingsActions(d);
+    renderSession(d, p);renderMoodCharts(d, p);renderSkinCharts(d);renderNotifCharts(d);renderLunchboxActivity(d);renderSettingsActions(d);
   }catch{}
 }
 
@@ -1710,7 +1710,7 @@ function renderSkinCharts(data){
   }
 }
 
-function renderMoodCharts(data){
+function renderMoodCharts(data, purchases){
   const allBtns = data?.buttons || [];
   const shopMap = buildShopBtnMap(data);
   const MOOD_IDS = ['happy','sad','angry','love','surprised','sleepy','laughing','shy'];
