@@ -125,6 +125,13 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
 .chart-wrap-lg{position:relative;height:280px}
 .event-trend-card{margin-top:16px}
 .event-trend-wrap{position:relative;height:400px}
+.event-trend-layout{display:grid;grid-template-columns:minmax(0,1fr) 190px;gap:16px;height:400px}
+.event-trend-canvas{position:relative;min-width:0;height:100%}
+.chart-checkbox-legend{overflow-y:auto;border-left:1px solid var(--line);padding-left:14px}
+.chart-checkbox-item{display:flex;align-items:center;gap:8px;min-height:30px;color:var(--ink-soft);font-size:12px;cursor:pointer;user-select:none}
+.chart-checkbox-item input{width:14px;height:14px;margin:0;flex:0 0 auto;cursor:pointer}
+.chart-checkbox-swatch{width:14px;height:2px;border-radius:2px;flex:0 0 auto}
+.chart-checkbox-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .empty-chart{display:flex;align-items:center;justify-content:center;height:100%;color:var(--ink-mute);font-size:13px;font-family:var(--mono)}
 
 /* ── All-time table ── */
@@ -153,6 +160,7 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
 .ev-table tbody tr:last-child td{border-bottom:none}
 .loading-row td{text-align:center;padding:32px!important;color:var(--ink-mute);font-size:13px}
 
+@media(max-width:759px){.event-trend-layout{grid-template-columns:1fr;height:auto}.event-trend-canvas{height:320px}.chart-checkbox-legend{max-height:180px;border-left:0;border-top:1px solid var(--line);padding:10px 0 0}}
 @media(max-width:520px){.main-wrap{padding:18px 14px 60px}.stat-value{font-size:24px}}
 </style>
 </head>
@@ -384,7 +392,10 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
           <button class="rtab" data-grain="month">Monthly</button>
         </div>
       </div>
-      <div class="event-trend-wrap"><canvas id="event-trend-chart"></canvas></div>
+      <div class="event-trend-layout">
+        <div class="event-trend-canvas"><canvas id="event-trend-chart"></canvas></div>
+        <div class="chart-checkbox-legend" id="event-trend-legend" aria-label="이벤트 타입 표시 선택"></div>
+      </div>
     </div>
 
     <!-- § 3. 월별 현황 -->
@@ -907,6 +918,7 @@ let currentGeoDays    = 30;
 let currentGeoTrendGrain = 'day';
 let currentSessionDays = 30;
 const charts = {};
+const hiddenEventTrendTypes = new Set();
 
 // ─── Token ───────────────────────────────────────────────────────────────────
 const loadToken = () => { try{return localStorage.getItem(TOKEN_KEY)||null}catch{return null} };
@@ -1387,6 +1399,38 @@ function trendSeriesColor(type){
   const hue=Math.abs(hash)%360;
   return {border:`hsl(${hue} 55% 68%)`,background:`hsl(${hue} 55% 68% / .16)`};
 }
+function renderEventTrendLegend(chart){
+  const root=document.getElementById('event-trend-legend');
+  root.replaceChildren();
+  chart.data.datasets.forEach((dataset,index)=>{
+    const row=document.createElement('label');
+    row.className='chart-checkbox-item';
+    row.title=dataset.eventType;
+    const checkbox=document.createElement('input');
+    checkbox.type='checkbox';
+    checkbox.checked=chart.isDatasetVisible(index);
+    checkbox.setAttribute('aria-label',`${dataset.label} 표시`);
+    checkbox.style.accentColor=dataset.borderColor;
+    checkbox.addEventListener('change',()=>{
+      if(checkbox.checked)hiddenEventTrendTypes.delete(dataset.eventType);
+      else hiddenEventTrendTypes.add(dataset.eventType);
+      chart.setDatasetVisibility(index,checkbox.checked);
+      chart.update();
+    });
+    const swatch=document.createElement('span');
+    swatch.className='chart-checkbox-swatch';
+    swatch.style.backgroundColor=dataset.borderColor;
+    const name=document.createElement('span');
+    name.className='chart-checkbox-name';
+    name.textContent=dataset.label;
+    row.append(checkbox,swatch,name);
+    root.appendChild(row);
+  });
+}
+const eventTrendLegendPlugin={
+  id:'eventTrendCheckboxLegend',
+  afterUpdate(chart){renderEventTrendLegend(chart)},
+};
 function renderEventTrend(data){
   destroyChart('eventTrend');
   const grain=currentEventTrendGrain;
@@ -1409,6 +1453,7 @@ function renderEventTrend(data){
       label:evLabel(type),eventType:type,
       data:buckets.map(bucket=>counts.get(`${bucket}\u0000${type}`)||0),
       borderColor:color.border,backgroundColor:color.background,
+      hidden:hiddenEventTrendTypes.has(type),
       borderWidth:2,fill:false,tension:.28,
       pointRadius:grain==='day'?2:3,pointHoverRadius:5,
     };
@@ -1418,11 +1463,12 @@ function renderEventTrend(data){
   charts.eventTrend=new Chart(document.getElementById('event-trend-chart'),{
     type:'line',
     data:{labels:buckets.map(key=>trendBucketLabel(key,grain)),datasets},
+    plugins:[eventTrendLegendPlugin],
     options:{
       responsive:true,maintainAspectRatio:false,
       interaction:{mode:'index',intersect:false},
       plugins:{
-        legend:{position:window.innerWidth<760?'bottom':'right',align:'start',labels:{...CHART_DEFAULTS.legend.labels,usePointStyle:true,pointStyle:'line',padding:14}},
+        legend:{display:false},
         tooltip:{...CHART_DEFAULTS.tooltip,callbacks:{label:ctx=>`${ctx.dataset.label} (${ctx.dataset.eventType}): ${fmtN(ctx.parsed.y)}`}},
       },
       scales:{
