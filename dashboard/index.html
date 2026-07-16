@@ -2470,8 +2470,8 @@ function renderCoinPurchases(data){
     tbody.innerHTML = '<tr class="loading-row"><td colspan="11">구매 이력 없음</td></tr>';
     return;
   }
-  tbody.innerHTML = rows.map((r,i)=>`
-    <tr class="coin-purchase-row" data-idx="${i}" style="cursor:pointer">
+  tbody.innerHTML = rows.map((r)=>`
+    <tr>
       <td>${r.updatedAt ? new Date(r.updatedAt).toLocaleString('ko-KR') : '—'}</td>
       <td title="${r.userMasked || ''}">${r.userId || r.userMasked || '—'}</td>
       <td>${r.productId || '—'}</td>
@@ -2484,48 +2484,7 @@ function renderCoinPurchases(data){
       <td>${r.tokenSha256Prefix || '—'}</td>
       <td>${r.creditAfter!=null ? fmtN(r.creditAfter) : '—'}</td>
     </tr>
-    <tr class="coin-purchase-detail-row" data-detail-for="${i}" style="display:none"><td colspan="11"></td></tr>
   `).join('');
-
-  tbody.querySelectorAll('.coin-purchase-row').forEach(tr=>{
-    tr.addEventListener('click', async ()=>{
-      const idx = tr.dataset.idx;
-      const detailRow = tbody.querySelector(`.coin-purchase-detail-row[data-detail-for="${idx}"]`);
-      if(!detailRow) return;
-      const isOpen = detailRow.style.display !== 'none';
-      tbody.querySelectorAll('.coin-purchase-detail-row').forEach(d=>{d.style.display='none'});
-      if(isOpen) return;
-      const row = rows[Number(idx)];
-      const cell = detailRow.querySelector('td');
-      cell.style.padding='14px 20px';
-      cell.innerHTML = '<span style="color:var(--ink-mute);font-size:12px">불러오는 중…</span>';
-      detailRow.style.display='';
-      if(!row.tokenSha256Prefix) return;
-      try{
-        const d = await apiFetch(`/api/analytics?type=coin-purchase-detail&token=${encodeURIComponent(row.tokenSha256Prefix)}`);
-        const p = d.purchase || {};
-        cell.innerHTML = `
-          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px 20px;font-family:var(--mono);font-size:12px;color:var(--ink-soft)">
-            <div>user_id: ${p.userId || row.userId || '—'}</div>
-            <div>order_id: ${p.orderId || row.orderId || '—'}</div>
-            <div>coins: ${p.coins != null ? fmtN(p.coins) : fmtN(row.coins)}</div>
-            <div>krw: ${p.krwCatalogAmount != null ? fmtKrw(p.krwCatalogAmount) : (row.krwCatalogAmount != null ? fmtKrw(row.krwCatalogAmount) : '—')}</div>
-            <div>first_seen: ${p.firstSeenAt ? new Date(p.firstSeenAt).toLocaleString('ko-KR') : '—'}</div>
-            <div>granted_at: ${p.grantedAt ? new Date(p.grantedAt).toLocaleString('ko-KR') : '—'}</div>
-            <div>purchase_state: ${p.purchaseState ?? '—'}</div>
-            <div>consumption_state: ${p.consumptionState ?? '—'}</div>
-            <div>acknowledgement_state: ${p.acknowledgementState ?? '—'}</div>
-            <div>account_bound: ${p.accountBound===true?'true':(p.accountBound===false?'false':'—')}</div>
-            <div>ledger_status: ${p.ledgerStatus || '—'}</div>
-            <div>stage: ${p.stage || '—'}</div>
-            <div>google_http_status: ${p.googleHttpStatus ?? '—'}</div>
-            <div>app_version: ${p.appVersion || '—'} / ${p.platform || '—'}</div>
-          </div>`;
-      }catch(e){
-        cell.innerHTML = `<span style="color:var(--coral);font-size:12px">상세 조회 실패: ${e.message}</span>`;
-      }
-    });
-  });
 }
 
 document.getElementById('coin-filter-search-btn').addEventListener('click', async ()=>{
