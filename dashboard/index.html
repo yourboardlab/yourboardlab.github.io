@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Yomi Analytics · yourboardlab</title>
+<title>Yomi Analytics v.1.0 · yourboardlab</title>
 <meta name="robots" content="noindex, nofollow" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -63,6 +63,7 @@ header{background:var(--bg2);border-bottom:1px solid var(--line);padding:0 24px;
 .header-mark::after{content:"";position:absolute;inset:7px;background:var(--bg2);border-radius:50%}
 header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
 .header-badge{font-family:var(--mono);font-size:10px;background:rgba(137,207,201,.15);color:var(--teal);border:1px solid rgba(137,207,201,.25);border-radius:999px;padding:2px 8px;letter-spacing:.05em}
+.header-version{font-family:var(--mono);font-size:10px;background:rgba(142,184,224,.12);color:var(--blue);border:1px solid rgba(142,184,224,.28);border-radius:999px;padding:2px 8px;letter-spacing:.05em}
 .header-right{display:flex;align-items:center;gap:10px}
 .hbtn{background:var(--bg3);border:1px solid var(--line);color:var(--ink-soft);border-radius:8px;padding:6px 12px;font-size:12px;font-family:var(--sans);cursor:pointer;transition:color .2s,border-color .2s;display:flex;align-items:center;gap:6px}
 .hbtn:hover{color:var(--ink);border-color:var(--ink-mute)}
@@ -125,19 +126,19 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
 .chart-wrap-lg{position:relative;height:280px}
 .event-trend-card{margin-top:16px}
 .event-trend-wrap{position:relative;height:400px}
-.event-trend-layout{display:grid;grid-template-columns:minmax(0,1fr) 190px;gap:16px;height:400px}
-.event-trend-canvas{position:relative;min-width:0;height:100%}
-.chart-checkbox-legend{overflow-y:auto;border-left:1px solid var(--line);padding-left:14px}
-.chart-checkbox-item{display:flex;align-items:center;gap:8px;min-height:30px;color:var(--ink-soft);font-size:12px;cursor:pointer;user-select:none}
+.event-trend-layout{display:grid;grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr);gap:10px;height:400px}
+.event-trend-canvas{order:2;position:relative;min-width:0;height:100%}
+.chart-checkbox-legend{order:1;display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;align-content:flex-start;max-height:76px;overflow-y:auto;border-bottom:1px solid var(--line);padding:0 0 8px}
+.chart-checkbox-item{display:flex;align-items:center;gap:8px;min-height:22px;color:var(--ink-soft);font-size:12px;cursor:pointer;user-select:none}
 .chart-checkbox-item input{width:14px;height:14px;margin:0;flex:0 0 auto;cursor:pointer}
 .chart-checkbox-swatch{width:14px;height:2px;border-radius:2px;flex:0 0 auto}
 .chart-checkbox-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.action-trend-layout{display:grid;grid-template-columns:minmax(0,1fr) 180px;gap:14px;height:320px}
-.action-trend-canvas{position:relative;min-width:0;height:100%}
-.line-checkbox-layout{display:grid;grid-template-columns:minmax(0,1fr) 160px;gap:12px;height:280px}
-.line-checkbox-layout.geo{grid-template-columns:minmax(0,1fr) 180px;height:400px}
+.action-trend-layout{display:grid;grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr);gap:10px;height:320px}
+.action-trend-canvas{order:2;position:relative;min-width:0;height:100%}
+.line-checkbox-layout{display:grid;grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr);gap:10px;height:280px}
+.line-checkbox-layout.geo{height:400px}
 .line-checkbox-layout.session{height:220px}
-.line-checkbox-canvas{position:relative;min-width:0;height:100%}
+.line-checkbox-canvas{order:2;position:relative;min-width:0;height:100%}
 .empty-chart{display:flex;align-items:center;justify-content:center;height:100%;color:var(--ink-mute);font-size:13px;font-family:var(--mono)}
 
 /* ── All-time table ── */
@@ -166,7 +167,7 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
 .ev-table tbody tr:last-child td{border-bottom:none}
 .loading-row td{text-align:center;padding:32px!important;color:var(--ink-mute);font-size:13px}
 
-@media(max-width:759px){.event-trend-layout,.action-trend-layout,.line-checkbox-layout,.line-checkbox-layout.geo,.line-checkbox-layout.session{grid-template-columns:1fr;height:auto}.event-trend-canvas{height:320px}.action-trend-canvas{height:280px}.line-checkbox-canvas{height:280px}.chart-checkbox-legend{max-height:180px;border-left:0;border-top:1px solid var(--line);padding:10px 0 0}}
+@media(max-width:759px){.event-trend-layout,.action-trend-layout,.line-checkbox-layout,.line-checkbox-layout.geo,.line-checkbox-layout.session{height:auto}.event-trend-canvas{height:320px}.action-trend-canvas{height:280px}.line-checkbox-canvas{height:280px}.chart-checkbox-legend{max-height:120px;border-bottom:1px solid var(--line);padding:0 0 8px}}
 @media(max-width:520px){.main-wrap{padding:18px 14px 60px}.stat-value{font-size:24px}}
 </style>
 </head>
@@ -302,6 +303,7 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
     <div class="header-left">
       <div class="header-mark"></div>
       <h1>Yomi Analytics</h1>
+      <span class="header-version">v.1.0</span>
       <span class="header-badge">ADMIN</span>
     </div>
     <div class="header-right">
@@ -494,6 +496,14 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
         <button class="rtab" data-grain="month">Monthly</button>
       </div>
     </div>
+    <div class="chart-card-head" style="margin:4px 0 12px">
+      <div class="chart-title">세션 세부 활동 시계열 <span>탭 체류 · 버튼 클릭</span></div>
+      <div class="range-tabs action-trend-tabs">
+        <button class="rtab active" data-grain="day">Daily</button>
+        <button class="rtab" data-grain="week">Weekly</button>
+        <button class="rtab" data-grain="month">Monthly</button>
+      </div>
+    </div>
     <div class="chart-grid-eq">
       <div class="chart-card">
         <div class="chart-card-head">
@@ -539,14 +549,6 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
         <div class="stat-label"><span class="stat-dot" style="background:var(--peach)"></span>최다 체류 탭</div>
         <div class="stat-value" id="sess-top-tab" style="font-size:20px;padding-top:4px">—</div>
         <div class="stat-sub" id="sess-top-tab-sub">—</div>
-      </div>
-    </div>
-    <div class="chart-card-head" style="margin:4px 0 12px">
-      <div class="chart-title">세션 세부 활동 시계열 <span>탭 체류 · 버튼 클릭</span></div>
-      <div class="range-tabs action-trend-tabs">
-        <button class="rtab active" data-grain="day">Daily</button>
-        <button class="rtab" data-grain="week">Weekly</button>
-        <button class="rtab" data-grain="month">Monthly</button>
       </div>
     </div>
     <div class="chart-grid-2">
@@ -743,7 +745,130 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
       </div>
     </div>
 
-    <!-- § 10. 최근 이벤트 -->
+    <!-- § 10. 코인 결제 운영 (QA3차) -->
+    <div class="sec-head">
+      <div class="sec-label">— 코인 결제 운영 <span style="font-weight:400;text-transform:none;letter-spacing:0">(Yomi Coin IAP)</span></div>
+      <div class="range-tabs" id="coin-days-tabs">
+        <button class="rtab" data-days="7">7일</button>
+        <button class="rtab active" data-days="30">30일</button>
+        <button class="rtab" data-days="90">90일</button>
+      </div>
+    </div>
+    <p style="font-family:var(--mono);font-size:11px;color:var(--ink-mute);margin:-6px 0 14px">
+      버튼 퍼널(코인 충전 열기~결제시도)은 세션 클릭 집계, 실제 지급 성공은 서버 결제 ledger 기준 — 서로 다른 데이터 소스입니다.
+      실패 코드 해석: <code>Doc/코인_시스템/QA2차/07_CS_실패코드_대응표.txt</code> 기준.
+    </p>
+    <div class="cards-row cards-4">
+      <div class="stat-card">
+        <div class="stat-label"><span class="stat-dot" style="background:var(--blue)"></span>총 결제 건수</div>
+        <div class="stat-value" id="coin-orders">—</div>
+        <div class="stat-sub">기간 내 서버 검증 시도 건수</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label"><span class="stat-dot" style="background:var(--green)"></span>지급 완료 건수</div>
+        <div class="stat-value" id="coin-granted">—</div>
+        <div class="stat-sub">Yomi Coin 지급 성공(GRANT_OK)</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label"><span class="stat-dot" style="background:var(--peach)"></span>지급 코인 합계</div>
+        <div class="stat-value" id="coin-coins-granted">—</div>
+        <div class="stat-sub">기준 매출 <span id="coin-krw-total">—</span></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label"><span class="stat-dot" style="background:var(--coral)"></span>실패/확인 필요</div>
+        <div class="stat-value" id="coin-needs-support">—</div>
+        <div class="stat-sub">고객지원 확인 필요(CONSUMED_WITHOUT_LEDGER) 포함</div>
+      </div>
+    </div>
+
+    <div class="sec-head">
+      <div class="sec-label">— 코인 충전 이력 로그 <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--ink-soft)">도시락 ID · 결제 금액 · 지급 코인</span></div>
+      <span id="coin-purchase-count" style="font-family:var(--mono);font-size:10px;color:var(--ink-mute);letter-spacing:.06em;text-transform:uppercase">—</span>
+    </div>
+    <div class="chart-card" style="margin-bottom:16px">
+      <div class="chart-card-head">
+        <div class="chart-title">일자별 코인 충전 추이 <span>지급 완료 기준 · 로그와 동일 데이터</span></div>
+      </div>
+      <div class="chart-wrap" style="height:260px"><canvas id="coin-history-chart"></canvas></div>
+    </div>
+    <div class="chart-card" style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px">
+      <input id="coin-filter-user" type="text" placeholder="도시락 ID / 계정 이메일" style="flex:1;min-width:160px;background:var(--bg1);border:1px solid var(--line);border-radius:6px;color:var(--ink);font-size:13px;padding:8px 10px" />
+      <input id="coin-filter-order" type="text" placeholder="Play 주문 ID (order_id)" style="flex:1;min-width:160px;background:var(--bg1);border:1px solid var(--line);border-radius:6px;color:var(--ink);font-size:13px;padding:8px 10px" />
+      <select id="coin-filter-product" style="background:var(--bg1);border:1px solid var(--line);border-radius:6px;color:var(--ink);font-size:13px;padding:8px 10px">
+        <option value="">상품 전체</option>
+        <option value="yomi_coin_30">yomi_coin_30</option>
+        <option value="yomi_coin_55">yomi_coin_55</option>
+        <option value="yomi_coin_115">yomi_coin_115</option>
+        <option value="yomi_coin_230">yomi_coin_230</option>
+        <option value="yomi_coin_350">yomi_coin_350</option>
+      </select>
+      <select id="coin-filter-status" style="background:var(--bg1);border:1px solid var(--line);border-radius:6px;color:var(--ink);font-size:13px;padding:8px 10px">
+        <option value="">상태 전체</option>
+        <option value="GRANT_OK">GRANT_OK</option>
+        <option value="VERIFY_FAILED">VERIFY_FAILED</option>
+        <option value="GRANT_FAILED">GRANT_FAILED</option>
+        <option value="ACCOUNT_MISMATCH">ACCOUNT_MISMATCH</option>
+        <option value="ALREADY_REDEEMED">ALREADY_REDEEMED</option>
+        <option value="REDEEMED_OTHER_ACCOUNT">REDEEMED_OTHER_ACCOUNT</option>
+        <option value="CONSUMED_WITHOUT_LEDGER">CONSUMED_WITHOUT_LEDGER</option>
+        <option value="PROCESSING">PROCESSING</option>
+      </select>
+      <button class="hbtn" id="coin-filter-search-btn" style="padding:8px 14px">검색</button>
+      <button class="hbtn ghost" id="coin-filter-reset-btn" style="padding:8px 14px">초기화</button>
+    </div>
+    <div class="table-card" style="margin-bottom:16px">
+      <div class="table-scroll">
+        <table class="ev-table">
+          <thead>
+            <tr>
+              <th>시간</th><th>도시락 ID</th><th>상품</th><th>지급 코인</th><th>결제 금액</th>
+              <th>주문 ID</th><th>상태</th><th>실패 코드</th><th>계정 바인딩</th><th>token prefix</th><th>지급 후 잔액</th>
+            </tr>
+          </thead>
+          <tbody id="coin-purchase-tbody"><tr class="loading-row"><td colspan="11">로딩 중…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="chart-grid-2" style="margin-bottom:16px">
+      <div class="chart-card">
+        <div class="chart-card-head">
+          <div class="chart-title">상품별 충전 건수 <span>지급 성공 기준</span></div>
+        </div>
+        <div class="chart-wrap" style="height:240px"><canvas id="coin-product-chart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-card-head">
+          <div class="chart-title">상태별 분포 <span>GRANT_OK · ACCOUNT_MISMATCH · CONSUMED_WITHOUT_LEDGER 등</span></div>
+        </div>
+        <div class="chart-wrap" style="height:240px"><canvas id="coin-status-chart"></canvas></div>
+      </div>
+    </div>
+    <div class="chart-grid-eq" style="margin-bottom:16px">
+      <div class="chart-card">
+        <div class="chart-card-head">
+          <div class="chart-title">코인 충전 버튼 퍼널 <span>열기 → 상품선택 → 결제시도 → 재시도</span></div>
+        </div>
+        <div class="chart-wrap" style="height:220px"><canvas id="coin-funnel-chart"></canvas></div>
+      </div>
+      <div class="chart-card" style="padding:0;overflow:hidden">
+        <div style="padding:16px 20px 12px;border-bottom:1px solid var(--line)">
+          <div class="chart-title">상품별 선택→결제시도→지급성공 <span>버튼 퍼널 vs 실제 지급</span></div>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="alltime-table">
+            <thead>
+              <tr><th>상품</th><th>선택 수</th><th>결제시도 수</th><th>지급 성공 수</th></tr>
+            </thead>
+            <tbody id="coin-funnel-table-tbody">
+              <tr class="loading-row"><td colspan="4" style="text-align:center;padding:24px;color:var(--ink-mute);font-size:13px">로딩 중</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- § 11. 최근 이벤트 -->
     <div class="sec-head">
       <div class="sec-label">— 최근 이벤트 로그</div>
       <span id="table-count" style="font-family:var(--mono);font-size:10px;color:var(--ink-mute);letter-spacing:.06em;text-transform:uppercase">—</span>
@@ -863,6 +988,19 @@ const BTN_KO = {
   // ── 도시락 탭 ──────────────────────────────────────────────
   lunchboxAttendanceBtn:        '출석 체크',
   lunchboxRechargeOpenBtn:      '코인 충전 열기',
+  // ── 코인 충전 모달 (QA3차) ───────────────────────────────────
+  lunchboxRechargeCloseBtn:        '코인 충전 닫기',
+  recharge_select_yomi_coin_30:    '코인 충전-30코인 선택',
+  recharge_select_yomi_coin_55:    '코인 충전-55코인 선택',
+  recharge_select_yomi_coin_115:   '코인 충전-115코인 선택',
+  recharge_select_yomi_coin_230:   '코인 충전-230코인 선택',
+  recharge_select_yomi_coin_350:   '코인 충전-350코인 선택',
+  recharge_confirm_yomi_coin_30:   '코인 충전-30코인 결제시도',
+  recharge_confirm_yomi_coin_55:   '코인 충전-55코인 결제시도',
+  recharge_confirm_yomi_coin_115:  '코인 충전-115코인 결제시도',
+  recharge_confirm_yomi_coin_230:  '코인 충전-230코인 결제시도',
+  recharge_confirm_yomi_coin_350:  '코인 충전-350코인 결제시도',
+  recharge_pending_retry:          '코인 지급 재시도',
   // ── 도시락 상점 — 셋트 열람 ─────────────────────────────────
   'shop_pack_mood-nayang':      '도시락-나양 셋트 열기',
   'shop_pack_mood-mongoo':      '도시락-몽구 셋트 열기',
@@ -979,6 +1117,8 @@ let currentGeoDays    = 30;
 let currentGeoTrendGrain = 'day';
 let currentSessionDays = 30;
 let currentActionTrendGrain = 'day';
+let currentCoinDays = 30;
+let currentCoinFilters = {};
 const charts = {};
 const hiddenEventTrendTypes = new Set();
 const hiddenActionTrendIds = {
@@ -1339,6 +1479,7 @@ document.querySelectorAll('.action-trend-tabs .rtab').forEach(btn=>{
 });
 bindRangeTabs('geo-tabs','days',async d=>{currentGeoDays=d;await reloadGeo()});
 bindRangeTabs('session-tabs','days',async d=>{currentSessionDays=d;await reloadSession()});
+bindRangeTabs('coin-days-tabs','days',async d=>{currentCoinDays=d;await reloadCoinAll()});
 
 // ─── Chart utils ──────────────────────────────────────────────────────────────
 function destroyChart(key){if(charts[key]){charts[key].destroy();delete charts[key]}}
@@ -1369,7 +1510,7 @@ let _cache = null;
 async function loadAll(){
   document.getElementById('error-banner').classList.remove('visible');
   try{
-    const [summary, alltime, eventTrend, monthly, daily, dau, geo, geoTrend, session, actionTrend, recent, purchases] = await Promise.all([
+    const [summary, alltime, eventTrend, monthly, daily, dau, geo, geoTrend, session, actionTrend, recent, purchases, coinSummary, coinPurchases] = await Promise.all([
       apiFetch('/api/analytics?type=summary'),
       apiFetch('/api/analytics?type=all-time'),
       apiFetch('/api/analytics?type=daily&days=365'),
@@ -1382,8 +1523,10 @@ async function loadAll(){
       apiFetch('/api/analytics?type=session&days=365&trend=1'),
       apiFetch('/api/analytics?type=recent&limit=100'),
       apiFetch('/api/analytics?type=purchases'),
+      apiFetch(`/api/analytics?type=coin-purchase-summary&days=${currentCoinDays}`),
+      apiFetch(`/api/analytics?type=coin-purchases&days=${currentCoinDays}&limit=100`),
     ]);
-    _cache = { summary, alltime, eventTrend, monthly, daily, dau, geo, geoTrend, session, actionTrend, recent, purchases, loadedAt: new Date() };
+    _cache = { summary, alltime, eventTrend, monthly, daily, dau, geo, geoTrend, session, actionTrend, recent, purchases, coinSummary, coinPurchases, loadedAt: new Date() };
     renderSummary(summary);
     renderAllTime(alltime);
     renderEventTrend(eventTrend);
@@ -1400,6 +1543,9 @@ async function loadAll(){
     renderLunchboxActivity(actionTrend);
     renderSettingsActions(actionTrend);
     renderLog(recent);
+    renderCoinPurchaseSummary(coinSummary);
+    renderCoinFunnel(session, coinSummary);
+    renderCoinPurchases(coinPurchases);
     document.getElementById('last-updated').textContent=`Last updated: ${new Date().toLocaleString('ko-KR')}`;
   }catch(e){
     if(e.message==='expired')return;
@@ -1610,7 +1756,7 @@ function renderMonthly(data){
       responsive:true,maintainAspectRatio:false,
       interaction:{mode:'index',intersect:false},
       plugins:{
-        legend:{position:'bottom',labels:CHART_DEFAULTS.legend.labels},
+        legend:{position:'top',labels:CHART_DEFAULTS.legend.labels},
         tooltip:CHART_DEFAULTS.tooltip,
       },
       scales:{
@@ -1638,7 +1784,7 @@ function renderDonut(s){
     options:{
       responsive:true,maintainAspectRatio:false,cutout:'62%',
       plugins:{
-        legend:{position:'bottom',labels:CHART_DEFAULTS.legend.labels},
+        legend:{position:'top',labels:CHART_DEFAULTS.legend.labels},
         tooltip:CHART_DEFAULTS.tooltip,
       },
     },
@@ -1835,12 +1981,38 @@ function renderSession(data,trendData){
 
 async function reloadSession(){
   try{
-    const [d, p] = await Promise.all([
+    const [d,p]=await Promise.all([
       apiFetch(`/api/analytics?type=session&days=${currentSessionDays}`),
       apiFetch('/api/analytics?type=purchases'),
     ]);
     if(_cache){_cache.session=d;_cache.purchases=p}
     renderSession(d,_cache?.actionTrend);renderMoodCharts(_cache?.actionTrend,p);renderSkinCharts(_cache?.actionTrend);
+  }catch{}
+}
+
+// ─── 코인 결제 운영 (QA3차) ─────────────────────────────────────────────────────
+function coinQuery(extra){
+  const p = new URLSearchParams({ days: String(currentCoinDays), ...currentCoinFilters, ...(extra||{}) });
+  for (const [k,v] of [...p.entries()]) if(!v) p.delete(k);
+  return p.toString();
+}
+async function reloadCoinAll(){
+  try{
+    const [coinSummary, session] = await Promise.all([
+      apiFetch(`/api/analytics?type=coin-purchase-summary&days=${currentCoinDays}`),
+      _cache && _cache.session ? Promise.resolve(_cache.session) : apiFetch(`/api/analytics?type=session&days=${currentSessionDays}`),
+    ]);
+    if(_cache) _cache.coinSummary = coinSummary;
+    renderCoinPurchaseSummary(coinSummary);
+    renderCoinFunnel(session, coinSummary);
+    await reloadCoinPurchases();
+  }catch{}
+}
+async function reloadCoinPurchases(){
+  try{
+    const d = await apiFetch(`/api/analytics?type=coin-purchases&${coinQuery({limit:'100'})}`);
+    if(_cache) _cache.coinPurchases = d;
+    renderCoinPurchases(d);
   }catch{}
 }
 
@@ -1878,11 +2050,11 @@ const MOOD_KO  = {happy:'행복',sad:'슬픔',angry:'화남',love:'사랑',surpr
 
 function renderShopCharacterTables(data, purchases){
   const shopMap = buildShopBtnMap(data);
-  // 서버 DB의 EMOTICON_PURCHASE 이벤트 기반 정확한 구매 수치
+  // 서버 DB의 EMOTICON_PURCHASE 이벤트 기반 정확한 구매 수치 (버튼 클릭 집계와는 다른 소스)
   const purchaseMap = {};
   const uniqueBuyerMap = {};
   if (purchases && Array.isArray(purchases.purchases)) {
-    purchases.purchases.forEach(p => {
+    purchases.purchases.forEach((p) => {
       purchaseMap[p.iconId] = p.count;
       uniqueBuyerMap[p.iconId] = p.uniqueBuyers;
     });
@@ -1977,7 +2149,7 @@ function renderMoodCharts(data, purchases){
         data:{labels:views.map(r=>r.label),datasets:[{data:views.map(r=>r.clicks),
           backgroundColor:['#9DC9A0','#8EB8E0','#C1A9D9'],borderWidth:0}]},
         options:{responsive:true,maintainAspectRatio:false,cutout:'62%',
-          plugins:{legend:{display:true,position:'bottom',labels:{color:'#C8BEB4',font:{size:12},padding:16}}}}});
+          plugins:{legend:{display:true,position:'top',labels:{color:'#C8BEB4',font:{size:12},padding:16}}}}});
     } else {
       viewCtx.getContext('2d'); viewCtx.parentElement.innerHTML='<p style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--ink-mute);font-size:13px;font-family:var(--mono)">데이터 없음</p>';
     }
@@ -2015,26 +2187,51 @@ const ACTION_TREND_GROUPS={
       {id:`shop_purchase_success_${skin.itemId}`,label:`${skin.label} · 구매완료`,color:trendSeriesColor(`shop_purchase_success_${skin.itemId}`).border},
     ]),
   },
-  notif:{chartKey:'notif',canvasId:'notif-chart',legendId:'notif-trend-legend',periodId:'notif-trend-period',hidden:hiddenActionTrendIds.notif,items:[
-    {id:'accordion_dailyNotif',label:'알림 설정 열기',color:'#89CFC9'},{id:'notif_memo_toggle',label:'오늘은 토글',color:'#9DC9A0'},
-    {id:'notif_check_toggle',label:'했니 토글',color:'#F0BF94'},{id:'notif_memo_time_change',label:'오늘은 시간변경',color:'#8EB8E0'},
-    {id:'notif_check_time_change',label:'했니 시간변경',color:'#C1A9D9'},]},
-  lunchbox:{chartKey:'lunchboxActivity',canvasId:'lunchbox-activity-chart',legendId:'lunchbox-trend-legend',periodId:'lunchbox-trend-period',hidden:hiddenActionTrendIds.lunchbox,items:[
-    {id:'lunchboxAttendanceBtn',label:'출석 체크',color:'#9DC9A0'},{id:'lunchboxRechargeOpenBtn',label:'코인 충전 열기',color:'#F7CE76'},
-    {id:'lunchboxSyncBtn',label:'서버 동기화',color:'#8EB8E0'},{id:'lunchboxWithdrawBtn',label:'도시락 탈퇴',color:'#F4A48C'},]},
-  settings:{chartKey:'settingsActions',canvasId:'settings-actions-chart',legendId:'settings-trend-legend',periodId:'settings-trend-period',hidden:hiddenActionTrendIds.settings,items:[
-    {id:'exportDataBtn',label:'내보내기 실행',color:'#89CFC9'},{id:'importDataBtn',label:'불러오기 실행',color:'#8EB8E0'},
-    {id:'rotationToggle',label:'화면 회전 토글',color:'#C1A9D9'},{id:'calendarMemoOnCellsToggle',label:'달력 일정 표시',color:'#F0BF94'},
-    {id:'widgetMemoOnCellsToggle',label:'위젯 일정 표시',color:'#A8D8A8'},{id:'lunchboxAppLoginToggle',label:'앱 로그인 토글',color:'#F7CE76'},
-    {id:'lunchboxAccessToggle',label:'도시락 접근 토글',color:'#F4A48C'},]},
+  notif:{
+    chartKey:'notif',canvasId:'notif-chart',legendId:'notif-trend-legend',periodId:'notif-trend-period',hidden:hiddenActionTrendIds.notif,
+    items:[
+      {id:'accordion_dailyNotif',label:'알림 설정 열기',color:'#89CFC9'},
+      {id:'notif_memo_toggle',label:'오늘은 토글',color:'#9DC9A0'},
+      {id:'notif_check_toggle',label:'했니 토글',color:'#F0BF94'},
+      {id:'notif_memo_time_change',label:'오늘은 시간변경',color:'#8EB8E0'},
+      {id:'notif_check_time_change',label:'했니 시간변경',color:'#C1A9D9'},
+    ],
+  },
+  lunchbox:{
+    chartKey:'lunchboxActivity',canvasId:'lunchbox-activity-chart',legendId:'lunchbox-trend-legend',periodId:'lunchbox-trend-period',hidden:hiddenActionTrendIds.lunchbox,
+    items:[
+      {id:'lunchboxAttendanceBtn',label:'출석 체크',color:'#9DC9A0'},
+      {id:'lunchboxRechargeOpenBtn',label:'코인 충전 열기',color:'#F7CE76'},
+      {id:'lunchboxSyncBtn',label:'서버 동기화',color:'#8EB8E0'},
+      {id:'lunchboxWithdrawBtn',label:'도시락 탈퇴',color:'#F4A48C'},
+    ],
+  },
+  settings:{
+    chartKey:'settingsActions',canvasId:'settings-actions-chart',legendId:'settings-trend-legend',periodId:'settings-trend-period',hidden:hiddenActionTrendIds.settings,
+    items:[
+      {id:'exportDataBtn',label:'내보내기 실행',color:'#89CFC9'},
+      {id:'importDataBtn',label:'불러오기 실행',color:'#8EB8E0'},
+      {id:'rotationToggle',label:'화면 회전 토글',color:'#C1A9D9'},
+      {id:'calendarMemoOnCellsToggle',label:'달력 일정 표시',color:'#F0BF94'},
+      {id:'widgetMemoOnCellsToggle',label:'위젯 일정 표시',color:'#A8D8A8'},
+      {id:'lunchboxAppLoginToggle',label:'앱 로그인 토글',color:'#F7CE76'},
+      {id:'lunchboxAccessToggle',label:'도시락 접근 토글',color:'#F4A48C'},
+    ],
+  },
 };
 function renderActionTrendLegend(chart,group){
-  const root=document.getElementById(group.legendId);root.replaceChildren();
+  const root=document.getElementById(group.legendId);
+  root.replaceChildren();
   chart.data.datasets.forEach((dataset,index)=>{
-    const row=document.createElement('label');row.className='chart-checkbox-item';row.title=dataset.actionId;
-    const checkbox=document.createElement('input');checkbox.type='checkbox';checkbox.checked=chart.isDatasetVisible(index);
+    const row=document.createElement('label');
+    row.className='chart-checkbox-item';row.title=dataset.actionId;
+    const checkbox=document.createElement('input');
+    checkbox.type='checkbox';checkbox.checked=chart.isDatasetVisible(index);
     checkbox.setAttribute('aria-label',`${dataset.label} 표시`);checkbox.style.accentColor=dataset.borderColor;
-    checkbox.addEventListener('change',()=>{if(checkbox.checked)group.hidden.delete(dataset.actionId);else group.hidden.add(dataset.actionId);chart.setDatasetVisibility(index,checkbox.checked);chart.update()});
+    checkbox.addEventListener('change',()=>{
+      if(checkbox.checked)group.hidden.delete(dataset.actionId);else group.hidden.add(dataset.actionId);
+      chart.setDatasetVisibility(index,checkbox.checked);chart.update();
+    });
     const swatch=document.createElement('span');swatch.className='chart-checkbox-swatch';swatch.style.backgroundColor=dataset.borderColor;
     const name=document.createElement('span');name.className='chart-checkbox-name';name.textContent=dataset.label;
     row.append(checkbox,swatch,name);root.appendChild(row);
@@ -2042,16 +2239,312 @@ function renderActionTrendLegend(chart,group){
 }
 function renderActionTrendChart(data,group){
   destroyChart(group.chartKey);
-  const grain=currentActionTrendGrain,buckets=trendBuckets(grain),bucketSet=new Set(buckets),itemIds=new Set(group.items.map(item=>item.id)),counts=new Map();
-  for(const row of data?.buttonDaily||[]){if(!itemIds.has(row.btn))continue;const bucket=trendBucketKey(row.day,grain);if(!bucketSet.has(bucket))continue;const key=`${bucket}\u0000${row.btn}`;counts.set(key,(counts.get(key)||0)+(Number(row.clicks)||0))}
-  const datasets=group.items.map(item=>({label:item.label,actionId:item.id,data:buckets.map(bucket=>counts.get(`${bucket}\u0000${item.id}`)||0),borderColor:item.color,backgroundColor:`${item.color}22`,hidden:group.hidden.has(item.id),borderWidth:2,fill:false,tension:.28,pointRadius:grain==='day'?2:3,pointHoverRadius:5}));
+  const grain=currentActionTrendGrain;
+  const buckets=trendBuckets(grain);
+  const bucketSet=new Set(buckets);
+  const itemIds=new Set(group.items.map(item=>item.id));
+  const counts=new Map();
+  for(const row of data?.buttonDaily||[]){
+    if(!itemIds.has(row.btn))continue;
+    const bucket=trendBucketKey(row.day,grain);
+    if(!bucketSet.has(bucket))continue;
+    const key=`${bucket}\u0000${row.btn}`;
+    counts.set(key,(counts.get(key)||0)+(Number(row.clicks)||0));
+  }
+  const datasets=group.items.map(item=>({
+    label:item.label,actionId:item.id,
+    data:buckets.map(bucket=>counts.get(`${bucket}\u0000${item.id}`)||0),
+    borderColor:item.color,backgroundColor:`${item.color}22`,hidden:group.hidden.has(item.id),
+    borderWidth:2,fill:false,tension:.28,pointRadius:grain==='day'?2:3,pointHoverRadius:5,
+  }));
   document.getElementById(group.periodId).textContent={day:'최근 30일',week:'최근 26주',month:'최근 12개월'}[grain];
   const legendPlugin={id:`${group.chartKey}CheckboxLegend`,afterUpdate(chart){renderActionTrendLegend(chart,group)}};
-  charts[group.chartKey]=new Chart(document.getElementById(group.canvasId),{type:'line',data:{labels:buckets.map(key=>trendBucketLabel(key,grain)),datasets},plugins:[legendPlugin],options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{...CHART_DEFAULTS.tooltip,callbacks:{label:ctx=>`${ctx.dataset.label}: ${fmtN(ctx.parsed.y)}`}}},scales:{x:{grid:{color:'rgba(46,43,39,.5)'},ticks:{color:'#C8BEB4',font:{size:11},maxTicksLimit:grain==='day'?10:8}},y:{beginAtZero:true,grid:{color:'rgba(46,43,39,.5)'},ticks:{callback:fmtAxisTick,precision:0,color:'#C8BEB4',font:{size:11}}}}}});
+  charts[group.chartKey]=new Chart(document.getElementById(group.canvasId),{
+    type:'line',data:{labels:buckets.map(key=>trendBucketLabel(key,grain)),datasets},plugins:[legendPlugin],
+    options:{
+      responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+      plugins:{legend:{display:false},tooltip:{...CHART_DEFAULTS.tooltip,callbacks:{label:ctx=>`${ctx.dataset.label}: ${fmtN(ctx.parsed.y)}`}}},
+      scales:{
+        x:{grid:{color:'rgba(46,43,39,.5)'},ticks:{color:'#C8BEB4',font:{size:11},maxTicksLimit:grain==='day'?10:8}},
+        y:{beginAtZero:true,grid:{color:'rgba(46,43,39,.5)'},ticks:{callback:fmtAxisTick,precision:0,color:'#C8BEB4',font:{size:11}}},
+      },
+    },
+  });
 }
 function renderNotifCharts(data){renderActionTrendChart(data,ACTION_TREND_GROUPS.notif)}
 function renderLunchboxActivity(data){renderActionTrendChart(data,ACTION_TREND_GROUPS.lunchbox)}
 function renderSettingsActions(data){renderActionTrendChart(data,ACTION_TREND_GROUPS.settings)}
+
+const COIN_STATUS_COLORS = {
+  GRANT_OK:'#9DC9A0', VERIFY_FAILED:'#F4A48C', GRANT_FAILED:'#F4A48C',
+  ACCOUNT_MISMATCH:'#F7CE76', ALREADY_REDEEMED:'#8EB8E0', REDEEMED_OTHER_ACCOUNT:'#C1A9D9',
+  CONSUMED_WITHOUT_LEDGER:'#E86A5C', PROCESSING:'#89CFC9',
+};
+function coinStatusColor(s){return COIN_STATUS_COLORS[s]||'#B4AAA0'}
+function fmtKrw(n){return `₩${fmtN(n)}`}
+
+function coinHistoryDayKey(value){
+  const d = value ? new Date(value) : null;
+  if(!d || Number.isNaN(d.getTime())) return null;
+  return d.toISOString().slice(0,10);
+}
+
+function renderCoinPurchaseHistoryChart(rows){
+  destroyChart('coinHistory');
+  const ctx = document.getElementById('coin-history-chart');
+  if(!ctx) return;
+  const buckets = new Map();
+  (rows||[]).filter(r=>r.status==='GRANT_OK').forEach(r=>{
+    const key = coinHistoryDayKey(r.updatedAt);
+    if(!key) return;
+    const cur = buckets.get(key) || {orders:0, coins:0, krw:0};
+    cur.orders += 1;
+    cur.coins += Number(r.coins)||0;
+    cur.krw += Number(r.krwCatalogAmount)||0;
+    buckets.set(key, cur);
+  });
+  const keys = [...buckets.keys()].sort();
+  const labels = keys.length ? keys.map(k=>dayLabel(k)) : ['데이터 없음'];
+  const rowsByDay = keys.map(k=>buckets.get(k));
+  charts['coinHistory'] = new Chart(ctx,{
+    type:'bar',
+    data:{
+      labels,
+      datasets:[
+        {
+          type:'bar',label:'결제 금액',yAxisID:'krw',
+          data:keys.length ? rowsByDay.map(r=>r.krw) : [0],
+          backgroundColor:'rgba(142,184,224,.62)',borderColor:'#8EB8E0',borderWidth:1,borderRadius:5,
+        },
+        {
+          type:'line',label:'지급 코인',yAxisID:'coins',
+          data:keys.length ? rowsByDay.map(r=>r.coins) : [0],
+          borderColor:'#9DC9A0',backgroundColor:'rgba(157,201,160,.18)',borderWidth:2,tension:.28,pointRadius:3,pointHoverRadius:5,
+        },
+        {
+          type:'line',label:'충전 건수',yAxisID:'coins',
+          data:keys.length ? rowsByDay.map(r=>r.orders) : [0],
+          borderColor:'#F7CE76',backgroundColor:'rgba(247,206,118,.16)',borderWidth:2,tension:.28,pointRadius:3,pointHoverRadius:5,
+        },
+      ],
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      interaction:{mode:'index',intersect:false},
+      plugins:{
+        legend:{position:'top',labels:{color:'#C8BEB4',font:{size:11},boxWidth:10}},
+        tooltip:{...CHART_DEFAULTS.tooltip,callbacks:{
+          label:(ctx)=>{
+            const label = ctx.dataset.label || '';
+            if(ctx.dataset.yAxisID==='krw') return `${label}: ${fmtKrw(ctx.parsed.y)}`;
+            return `${label}: ${fmtN(ctx.parsed.y)}`;
+          },
+        }},
+      },
+      scales:{
+        x:{grid:{color:'rgba(46,43,39,.5)'},ticks:{color:'#C8BEB4',font:{size:11},maxRotation:45,minRotation:0}},
+        krw:{position:'left',beginAtZero:true,grid:{color:'rgba(46,43,39,.5)'},ticks:{color:'#C8BEB4',font:{size:11},callback:v=>fmtKrw(v)}},
+        coins:{position:'right',beginAtZero:true,grid:{drawOnChartArea:false},ticks:{color:'#C8BEB4',font:{size:11},precision:0}},
+      },
+    },
+  });
+}
+
+function renderCoinPurchaseSummary(data){
+  const s = data && data.summary ? data.summary : {};
+  document.getElementById('coin-orders').textContent = fmtN(s.orders);
+  document.getElementById('coin-granted').textContent = fmtN(s.grantedOrders);
+  document.getElementById('coin-coins-granted').textContent = fmtN(s.coinsGranted);
+  document.getElementById('coin-krw-total').textContent = fmtKrw(s.krwCatalogTotal);
+  document.getElementById('coin-needs-support').textContent = fmtN(s.failedOrders);
+
+  const byProduct = (data && data.byProduct) || [];
+  destroyChart('coinProduct');
+  const pctx = document.getElementById('coin-product-chart');
+  if(pctx){
+    if(!byProduct.length){
+      pctx.parentElement.innerHTML='<p style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--ink-mute);font-size:13px;font-family:var(--mono)">데이터 없음</p>';
+    } else {
+      charts['coinProduct'] = new Chart(pctx,{
+        type:'bar',
+        data:{
+          labels: byProduct.map(r=>r.productId),
+          datasets:[{ label:'지급 성공 건수', data: byProduct.map(r=>r.orders), backgroundColor:'#8EB8E0', borderRadius:5 }],
+        },
+        options:{
+          responsive:true,maintainAspectRatio:false,
+          plugins:{legend:{display:false},tooltip:{callbacks:{
+            afterLabel:(item)=>{const r=byProduct[item.dataIndex];return `코인 ${fmtN(r.coins)} · 기준매출 ${fmtKrw(r.krwCatalogTotal)}`}
+          }}},
+          scales:{
+            x:{grid:{color:'rgba(46,43,39,.5)'},ticks:{color:'#C8BEB4',font:{size:11}}},
+            y:{beginAtZero:true,grid:{color:'rgba(46,43,39,.5)'},ticks:{precision:0,color:'#C8BEB4',font:{size:11}}},
+          },
+        },
+      });
+    }
+  }
+
+  const byStatus = (data && data.byStatus) || [];
+  destroyChart('coinStatus');
+  const sctx = document.getElementById('coin-status-chart');
+  if(sctx){
+    if(!byStatus.length){
+      sctx.parentElement.innerHTML='<p style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--ink-mute);font-size:13px;font-family:var(--mono)">데이터 없음</p>';
+    } else {
+      charts['coinStatus'] = new Chart(sctx,{
+        type:'doughnut',
+        data:{
+          labels: byStatus.map(r=>r.status),
+          datasets:[{ data: byStatus.map(r=>r.count), backgroundColor: byStatus.map(r=>coinStatusColor(r.status)) }],
+        },
+        options:{
+          responsive:true,maintainAspectRatio:false,
+          plugins:{legend:{position:'top',labels:{color:'#C8BEB4',font:{size:11},boxWidth:10}}},
+        },
+      });
+    }
+  }
+}
+
+function renderCoinFunnel(session, coinSummary){
+  const btnMap = Object.fromEntries((session && session.buttons || []).map(b=>[b.btn,b.clicks]));
+  const productIds = ['yomi_coin_30','yomi_coin_55','yomi_coin_115','yomi_coin_230','yomi_coin_350'];
+  const openClicks = btnMap['lunchboxRechargeOpenBtn'] || 0;
+  const selectTotal = productIds.reduce((sum,p)=>sum + (btnMap['recharge_select_'+p]||0), 0);
+  const confirmTotal = productIds.reduce((sum,p)=>sum + (btnMap['recharge_confirm_'+p]||0), 0);
+  const retryClicks = btnMap['recharge_pending_retry'] || 0;
+
+  destroyChart('coinFunnel');
+  const ctx = document.getElementById('coin-funnel-chart');
+  if(ctx){
+    const items = [
+      {label:'코인 충전 열기', clicks: openClicks},
+      {label:'상품 선택 합계', clicks: selectTotal},
+      {label:'결제시도 합계', clicks: confirmTotal},
+      {label:'지급 재시도', clicks: retryClicks},
+    ];
+    const hasData = items.some(r=>r.clicks>0);
+    if(!hasData){
+      ctx.parentElement.innerHTML='<p style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--ink-mute);font-size:13px;font-family:var(--mono)">데이터 없음</p>';
+    } else {
+      charts['coinFunnel'] = new Chart(ctx,{
+        type:'bar',
+        data:{
+          labels: items.map(r=>r.label),
+          datasets:[{ label:'클릭 수', data: items.map(r=>r.clicks), backgroundColor:['#8EB8E0','#F7CE76','#F4A48C','#C1A9D9'], borderRadius:5 }],
+        },
+        options:{
+          responsive:true,maintainAspectRatio:false,
+          plugins:{legend:{display:false}},
+          scales:{
+            x:{grid:{color:'rgba(46,43,39,.5)'},ticks:{color:'#C8BEB4',font:{size:12}}},
+            y:{beginAtZero:true,grid:{color:'rgba(46,43,39,.5)'},ticks:{callback:fmtAxisTick,precision:0,color:'#C8BEB4',font:{size:11}}},
+          },
+        },
+      });
+    }
+  }
+
+  const grantedByProduct = Object.fromEntries(((coinSummary && coinSummary.byProduct) || []).map(r=>[r.productId, r.orders]));
+  const tbody = document.getElementById('coin-funnel-table-tbody');
+  if(tbody){
+    tbody.innerHTML = productIds.map(p=>`
+      <tr>
+        <td>${p}</td>
+        <td>${fmtN(btnMap['recharge_select_'+p]||0)}</td>
+        <td>${fmtN(btnMap['recharge_confirm_'+p]||0)}</td>
+        <td>${fmtN(grantedByProduct[p]||0)}</td>
+      </tr>`).join('');
+  }
+}
+
+function renderCoinPurchases(data){
+  const rows = (data && data.rows) || [];
+  renderCoinPurchaseHistoryChart(rows);
+  const countEl = document.getElementById('coin-purchase-count');
+  if(countEl) countEl.textContent = `${fmtN(rows.length)}건`;
+  const tbody = document.getElementById('coin-purchase-tbody');
+  if(!tbody) return;
+  if(!rows.length){
+    tbody.innerHTML = '<tr class="loading-row"><td colspan="11">구매 이력 없음</td></tr>';
+    return;
+  }
+  tbody.innerHTML = rows.map((r,i)=>`
+    <tr class="coin-purchase-row" data-idx="${i}" style="cursor:pointer">
+      <td>${r.updatedAt ? new Date(r.updatedAt).toLocaleString('ko-KR') : '—'}</td>
+      <td title="${r.userMasked || ''}">${r.userId || r.userMasked || '—'}</td>
+      <td>${r.productId || '—'}</td>
+      <td>${fmtN(r.coins)}</td>
+      <td>${r.krwCatalogAmount!=null ? fmtKrw(r.krwCatalogAmount) : '—'}</td>
+      <td>${r.orderId || '—'}</td>
+      <td><span style="color:${coinStatusColor(r.status)}">${r.status || '—'}</span></td>
+      <td>${r.code || '—'}</td>
+      <td>${r.accountBound===true?'✓':(r.accountBound===false?'✗':'—')}</td>
+      <td>${r.tokenSha256Prefix || '—'}</td>
+      <td>${r.creditAfter!=null ? fmtN(r.creditAfter) : '—'}</td>
+    </tr>
+    <tr class="coin-purchase-detail-row" data-detail-for="${i}" style="display:none"><td colspan="11"></td></tr>
+  `).join('');
+
+  tbody.querySelectorAll('.coin-purchase-row').forEach(tr=>{
+    tr.addEventListener('click', async ()=>{
+      const idx = tr.dataset.idx;
+      const detailRow = tbody.querySelector(`.coin-purchase-detail-row[data-detail-for="${idx}"]`);
+      if(!detailRow) return;
+      const isOpen = detailRow.style.display !== 'none';
+      tbody.querySelectorAll('.coin-purchase-detail-row').forEach(d=>{d.style.display='none'});
+      if(isOpen) return;
+      const row = rows[Number(idx)];
+      const cell = detailRow.querySelector('td');
+      cell.style.padding='14px 20px';
+      cell.innerHTML = '<span style="color:var(--ink-mute);font-size:12px">불러오는 중…</span>';
+      detailRow.style.display='';
+      if(!row.tokenSha256Prefix) return;
+      try{
+        const d = await apiFetch(`/api/analytics?type=coin-purchase-detail&token=${encodeURIComponent(row.tokenSha256Prefix)}`);
+        const p = d.purchase || {};
+        cell.innerHTML = `
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px 20px;font-family:var(--mono);font-size:12px;color:var(--ink-soft)">
+            <div>user_id: ${p.userId || row.userId || '—'}</div>
+            <div>order_id: ${p.orderId || row.orderId || '—'}</div>
+            <div>coins: ${p.coins != null ? fmtN(p.coins) : fmtN(row.coins)}</div>
+            <div>krw: ${p.krwCatalogAmount != null ? fmtKrw(p.krwCatalogAmount) : (row.krwCatalogAmount != null ? fmtKrw(row.krwCatalogAmount) : '—')}</div>
+            <div>first_seen: ${p.firstSeenAt ? new Date(p.firstSeenAt).toLocaleString('ko-KR') : '—'}</div>
+            <div>granted_at: ${p.grantedAt ? new Date(p.grantedAt).toLocaleString('ko-KR') : '—'}</div>
+            <div>purchase_state: ${p.purchaseState ?? '—'}</div>
+            <div>consumption_state: ${p.consumptionState ?? '—'}</div>
+            <div>acknowledgement_state: ${p.acknowledgementState ?? '—'}</div>
+            <div>account_bound: ${p.accountBound===true?'true':(p.accountBound===false?'false':'—')}</div>
+            <div>ledger_status: ${p.ledgerStatus || '—'}</div>
+            <div>stage: ${p.stage || '—'}</div>
+            <div>google_http_status: ${p.googleHttpStatus ?? '—'}</div>
+            <div>app_version: ${p.appVersion || '—'} / ${p.platform || '—'}</div>
+          </div>`;
+      }catch(e){
+        cell.innerHTML = `<span style="color:var(--coral);font-size:12px">상세 조회 실패: ${e.message}</span>`;
+      }
+    });
+  });
+}
+
+document.getElementById('coin-filter-search-btn').addEventListener('click', async ()=>{
+  currentCoinFilters = {
+    user: document.getElementById('coin-filter-user').value.trim().toLowerCase(),
+    orderId: document.getElementById('coin-filter-order').value.trim(),
+    productId: document.getElementById('coin-filter-product').value,
+    status: document.getElementById('coin-filter-status').value,
+  };
+  await reloadCoinPurchases();
+});
+document.getElementById('coin-filter-reset-btn').addEventListener('click', async ()=>{
+  currentCoinFilters = {};
+  document.getElementById('coin-filter-user').value='';
+  document.getElementById('coin-filter-order').value='';
+  document.getElementById('coin-filter-product').value='';
+  document.getElementById('coin-filter-status').value='';
+  await reloadCoinPurchases();
+});
 
 function renderGeo(data){
   const countries = data.countries || [];
