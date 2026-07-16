@@ -665,59 +665,88 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
         <button class="rtab" data-grain="month">Monthly</button>
       </div>
     </div>
-    <div class="chart-grid-eq" style="margin-bottom:16px">
-      <div class="chart-card">
-        <div class="chart-card-head">
-          <div class="chart-title">달력 기분 선택 <span id="mood-pick-trend-period">최근 30일</span></div>
-        </div>
-        <div class="action-trend-layout">
-          <div class="action-trend-canvas"><canvas id="mood-pick-chart"></canvas></div>
-          <div class="chart-checkbox-legend" id="mood-pick-trend-legend" aria-label="기분 선택 표시 선택"></div>
-        </div>
+    <div class="chart-card" style="margin-bottom:16px">
+      <div class="chart-card-head">
+        <div class="chart-title">달력 기분 선택 <span id="mood-pick-trend-period">최근 30일</span></div>
       </div>
-      <div class="chart-card">
-        <div class="chart-card-head">
-          <div class="chart-title">도시락 구매 관심 <span id="mood-shop-trend-period">최근 30일</span></div>
-        </div>
-        <div class="action-trend-layout">
-          <div class="action-trend-canvas"><canvas id="mood-shop-chart"></canvas></div>
-          <div class="chart-checkbox-legend" id="mood-shop-trend-legend" aria-label="캐릭터 구매 관심 표시 선택"></div>
-        </div>
+      <div class="action-trend-layout">
+        <div class="action-trend-canvas"><canvas id="mood-pick-chart"></canvas></div>
+        <div class="chart-checkbox-legend" id="mood-pick-trend-legend" aria-label="기분 선택 표시 선택"></div>
+      </div>
+    </div>
+    <div class="chart-card" style="margin-bottom:16px">
+      <div class="chart-card-head">
+        <div class="chart-title">도시락 구매 관심 · 셋트 열기 <span id="mood-shop-packs-trend-period">최근 30일</span></div>
+      </div>
+      <div class="action-trend-layout">
+        <div class="action-trend-canvas"><canvas id="mood-shop-packs-chart"></canvas></div>
+        <div class="chart-checkbox-legend" id="mood-shop-packs-trend-legend" aria-label="캐릭터 셋트 열기 표시 선택"></div>
+      </div>
+    </div>
+    <div class="chart-card" style="margin-bottom:16px">
+      <div class="chart-card-head">
+        <div class="chart-title">도시락 구매 관심 · 구매버튼 <span id="mood-shop-buy-trend-period">최근 30일</span></div>
+      </div>
+      <div class="action-trend-layout">
+        <div class="action-trend-canvas"><canvas id="mood-shop-buy-chart"></canvas></div>
+        <div class="chart-checkbox-legend" id="mood-shop-buy-trend-legend" aria-label="캐릭터 구매버튼 표시 선택"></div>
+      </div>
+    </div>
+    <div class="chart-card" style="margin-bottom:16px">
+      <div class="chart-card-head">
+        <div class="chart-title">도시락 구매 관심 · 구매완료 <span id="mood-shop-success-trend-period">최근 30일</span></div>
+      </div>
+      <div class="action-trend-layout">
+        <div class="action-trend-canvas"><canvas id="mood-shop-success-chart"></canvas></div>
+        <div class="chart-checkbox-legend" id="mood-shop-success-trend-legend" aria-label="캐릭터 구매완료 표시 선택"></div>
       </div>
     </div>
     <div class="sec-head" style="margin-top:8px;margin-bottom:12px">
       <div class="sec-label" style="font-size:13px;color:var(--ink-soft)">— 도시락 상점 · 캐릭터별</div>
     </div>
-    <div class="chart-grid-eq" style="margin-bottom:16px">
-      <div class="chart-card">
-        <div class="chart-card-head">
-          <div class="chart-title">캐릭터별 클릭 수 <span id="character-click-trend-period">최근 30일</span></div>
-        </div>
-        <div class="action-trend-layout">
-          <div class="action-trend-canvas"><canvas id="character-click-trend-chart"></canvas></div>
-          <div class="chart-checkbox-legend" id="character-click-trend-legend" aria-label="캐릭터 클릭 표시 선택"></div>
-        </div>
+    <div class="chart-card" style="margin-bottom:16px">
+      <div class="chart-card-head">
+        <div class="chart-title">캐릭터별 구매 순위 <span>실제 코인 차감 성공 · 1위부터</span></div>
       </div>
-      <div class="chart-card" style="padding:0;overflow:hidden">
-        <div style="padding:16px 20px 12px;border-bottom:1px solid var(--line)">
-          <div class="chart-title">캐릭터별 구매 완료 <span>실제 코인 차감 성공 · 1위부터</span></div>
-        </div>
-        <div style="overflow-x:auto">
-          <table class="alltime-table">
-            <thead>
-              <tr>
-                <th>순위</th>
-                <th>캐릭터</th>
-                <th>구매 완료 (서버)</th>
-                <th>구매자 수</th>
-                <th>구매버튼 클릭</th>
-              </tr>
-            </thead>
-            <tbody id="shop-purchase-table-tbody">
-              <tr class="loading-row"><td colspan="5" style="text-align:center;padding:24px;color:var(--ink-mute);font-size:13px">로딩 중…</td></tr>
-            </tbody>
-          </table>
-        </div>
+      <div class="chart-wrap" style="height:280px"><canvas id="character-purchase-rank-chart"></canvas></div>
+    </div>
+    <div class="chart-card" style="margin-bottom:16px">
+      <div class="chart-card-head">
+        <div class="chart-title">캐릭터별 클릭 수 · 미리보기 <span id="character-preview-trend-period">최근 30일</span></div>
+      </div>
+      <div class="action-trend-layout">
+        <div class="action-trend-canvas"><canvas id="character-preview-trend-chart"></canvas></div>
+        <div class="chart-checkbox-legend" id="character-preview-trend-legend" aria-label="캐릭터 미리보기 표시 선택"></div>
+      </div>
+    </div>
+    <div class="chart-card" style="margin-bottom:16px">
+      <div class="chart-card-head">
+        <div class="chart-title">캐릭터별 클릭 수 · 셋트 열기 <span id="character-pack-trend-period">최근 30일</span></div>
+      </div>
+      <div class="action-trend-layout">
+        <div class="action-trend-canvas"><canvas id="character-pack-trend-chart"></canvas></div>
+        <div class="chart-checkbox-legend" id="character-pack-trend-legend" aria-label="캐릭터 셋트 열기 표시 선택"></div>
+      </div>
+    </div>
+    <div class="chart-card" style="padding:0;overflow:hidden;margin-bottom:16px">
+      <div style="padding:16px 20px 12px;border-bottom:1px solid var(--line)">
+        <div class="chart-title">캐릭터별 구매 완료 <span>실제 코인 차감 성공 · 1위부터</span></div>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="alltime-table">
+          <thead>
+            <tr>
+              <th>순위</th>
+              <th>캐릭터</th>
+              <th>구매 완료 (서버)</th>
+              <th>구매자 수</th>
+              <th>구매버튼 클릭</th>
+            </tr>
+          </thead>
+          <tbody id="shop-purchase-table-tbody">
+            <tr class="loading-row"><td colspan="5" style="text-align:center;padding:24px;color:var(--ink-mute);font-size:13px">로딩 중…</td></tr>
+          </tbody>
+        </table>
       </div>
     </div>
     <div class="chart-grid-eq" style="margin-bottom:16px">
@@ -738,36 +767,58 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
         <button class="rtab" data-grain="month">Monthly</button>
       </div>
     </div>
-    <div class="chart-grid-eq" style="margin-bottom:16px">
-      <div class="chart-card">
-        <div class="chart-card-head">
-          <div class="chart-title">스킨 구매 관심 <span id="skin-shop-trend-period">최근 30일</span></div>
-        </div>
-        <div class="action-trend-layout">
-          <div class="action-trend-canvas"><canvas id="skin-shop-chart"></canvas></div>
-          <div class="chart-checkbox-legend" id="skin-shop-trend-legend" aria-label="스킨 구매 관심 표시 선택"></div>
-        </div>
+    <div class="chart-card" style="margin-bottom:16px">
+      <div class="chart-card-head">
+        <div class="chart-title">스킨별 구매 순위 <span>실제 코인 차감 성공 · 1위부터</span></div>
       </div>
-      <div class="chart-card" style="padding:0;overflow:hidden">
-        <div style="padding:16px 20px 12px;border-bottom:1px solid var(--line)">
-          <div class="chart-title">스킨별 구매 완료 <span>실제 코인 차감 성공 · 1위부터</span></div>
-        </div>
-        <div style="overflow-x:auto">
-          <table class="alltime-table">
-            <thead>
-              <tr>
-                <th>순위</th>
-                <th>스킨</th>
-                <th>구매완료</th>
-                <th>구매버튼</th>
-                <th>카드클릭</th>
-              </tr>
-            </thead>
-            <tbody id="skin-purchase-table-tbody">
-              <tr class="loading-row"><td colspan="5" style="text-align:center;padding:24px;color:var(--ink-mute);font-size:13px">로딩 중</td></tr>
-            </tbody>
-          </table>
-        </div>
+      <div class="chart-wrap" style="height:280px"><canvas id="skin-purchase-rank-chart"></canvas></div>
+    </div>
+    <div class="chart-card" style="margin-bottom:16px">
+      <div class="chart-card-head">
+        <div class="chart-title">스킨 구매 관심 · 구매완료 <span id="skin-shop-success-trend-period">최근 30일</span></div>
+      </div>
+      <div class="action-trend-layout">
+        <div class="action-trend-canvas"><canvas id="skin-shop-success-chart"></canvas></div>
+        <div class="chart-checkbox-legend" id="skin-shop-success-trend-legend" aria-label="스킨 구매완료 표시 선택"></div>
+      </div>
+    </div>
+    <div class="chart-card" style="margin-bottom:16px">
+      <div class="chart-card-head">
+        <div class="chart-title">스킨 구매 관심 · 카드 클릭 <span id="skin-shop-cards-trend-period">최근 30일</span></div>
+      </div>
+      <div class="action-trend-layout">
+        <div class="action-trend-canvas"><canvas id="skin-shop-cards-chart"></canvas></div>
+        <div class="chart-checkbox-legend" id="skin-shop-cards-trend-legend" aria-label="스킨 카드 클릭 표시 선택"></div>
+      </div>
+    </div>
+    <div class="chart-card" style="margin-bottom:16px">
+      <div class="chart-card-head">
+        <div class="chart-title">스킨 구매 관심 · 구매버튼 <span id="skin-shop-buy-trend-period">최근 30일</span></div>
+      </div>
+      <div class="action-trend-layout">
+        <div class="action-trend-canvas"><canvas id="skin-shop-buy-chart"></canvas></div>
+        <div class="chart-checkbox-legend" id="skin-shop-buy-trend-legend" aria-label="스킨 구매버튼 표시 선택"></div>
+      </div>
+    </div>
+    <div class="chart-card" style="padding:0;overflow:hidden;margin-bottom:16px">
+      <div style="padding:16px 20px 12px;border-bottom:1px solid var(--line)">
+        <div class="chart-title">스킨별 구매 완료 <span>실제 코인 차감 성공 · 1위부터</span></div>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="alltime-table">
+          <thead>
+            <tr>
+              <th>순위</th>
+              <th>스킨</th>
+              <th>구매완료</th>
+              <th>구매버튼</th>
+              <th>카드클릭</th>
+            </tr>
+          </thead>
+          <tbody id="skin-purchase-table-tbody">
+            <tr class="loading-row"><td colspan="5" style="text-align:center;padding:24px;color:var(--ink-mute);font-size:13px">로딩 중</td></tr>
+          </tbody>
+        </table>
       </div>
     </div>
 
@@ -1045,6 +1096,8 @@ const BTN_KO = {
   concept_dalpeni:              '설정-달페니',
   concept_hurai:                '설정-후라이',
   concept_molli:                '설정-몰리',
+  concept_harubang:             '설정-하루방',
+  concept_gyuri:                '설정-규리',
   // ── 설정 탭 — 색상 테마 ─────────────────────────────────────
   theme_midnight:               '설정-테마_midnight',
   theme_paper:                  '설정-테마_paper',
@@ -1092,6 +1145,8 @@ const BTN_KO = {
   'shop_pack_mood-dalpeni':     '도시락-달페니 셋트 열기',
   'shop_pack_mood-hurai':       '도시락-후라이 셋트 열기',
   'shop_pack_mood-molli':       '도시락-몰리 셋트 열기',
+  'shop_pack_mood-harubang':    '도시락-하루방 셋트 열기',
+  'shop_pack_mood-gyuri':       '도시락-규리 셋트 열기',
   // ── 도시락 상점 — 구매 시도 ─────────────────────────────────
   'shop_buy_mood-nayang':       '도시락-나양 구매버튼',
   'shop_buy_mood-mongoo':       '도시락-몽구 구매버튼',
@@ -1101,6 +1156,8 @@ const BTN_KO = {
   'shop_buy_mood-dalpeni':      '도시락-달페니 구매버튼',
   'shop_buy_mood-hurai':        '도시락-후라이 구매버튼',
   'shop_buy_mood-molli':        '도시락-몰리 구매버튼',
+  'shop_buy_mood-harubang':     '도시락-하루방 구매버튼',
+  'shop_buy_mood-gyuri':        '도시락-규리 구매버튼',
   // ── 도시락 상점 — 구매 완료 ─────────────────────────────────
   'shop_purchase_success_mood-nayang':  '도시락-나양 구매완료',
   'shop_purchase_success_mood-mongoo':  '도시락-몽구 구매완료',
@@ -1110,6 +1167,8 @@ const BTN_KO = {
   'shop_purchase_success_mood-dalpeni': '도시락-달페니 구매완료',
   'shop_purchase_success_mood-hurai':   '도시락-후라이 구매완료',
   'shop_purchase_success_mood-molli':   '도시락-몰리 구매완료',
+  'shop_purchase_success_mood-harubang': '도시락-하루방 구매완료',
+  'shop_purchase_success_mood-gyuri':   '도시락-규리 구매완료',
   // ── 도시락 상점 — 캐릭터 미리보기 ───────────────────────────
   shop_character_preview_nayang:  '상점-캐릭터미리보기_나양',
   shop_character_preview_mongoo:  '상점-캐릭터미리보기_몽구',
@@ -1119,6 +1178,8 @@ const BTN_KO = {
   shop_character_preview_dalpeni: '상점-캐릭터미리보기_달페니',
   shop_character_preview_hurai:   '상점-캐릭터미리보기_후라이',
   shop_character_preview_molli:   '상점-캐릭터미리보기_몰리',
+  shop_character_preview_harubang: '상점-캐릭터미리보기_하루방',
+  shop_character_preview_gyuri:   '상점-캐릭터미리보기_규리',
   // ── 도시락 상점 — 배경 스킨 ─────────────────────────────────
   'shop_skin_preview_soft-picnic':            '상점-스킨카드_소프트 피크닉',
   'shop_skin_preview_dark-soft-picnic':       '상점-스킨카드_다크 소프트 피크닉',
@@ -1206,7 +1267,10 @@ const charts = {};
 const hiddenEventTrendTypes = new Set();
 const hiddenActionTrendIds = {
   notif:new Set(),lunchbox:new Set(),settings:new Set(),tabDwell:new Set(),buttonRank:new Set(),
-  moodPick:new Set(),moodShop:new Set(),characterClicks:new Set(),skinShop:new Set(),
+  moodPick:new Set(),
+  moodShopPacks:new Set(),moodShopBuy:new Set(),moodShopSuccess:new Set(),
+  characterPreviewClicks:new Set(),characterPackClicks:new Set(),
+  skinShopCards:new Set(),skinShopBuy:new Set(),skinShopSuccess:new Set(),
 };
 const hiddenLineSeries = {daily:new Set(),dau:new Set(),sessionDaily:new Set(),geoCountry:new Set(),geoCity:new Set()};
 
@@ -2242,10 +2306,10 @@ function buildShopBtnMap(data){
   return map;
 }
 
-const CHARACTER_IDS = ['nayang','mongoo','tolki','puddi','mallang','dalpeni','hurai','molli'];
+const CHARACTER_IDS = ['nayang','mongoo','tolki','puddi','mallang','dalpeni','hurai','molli','harubang','gyuri'];
 const CHARACTER_KO = {
   nayang:'나양', mongoo:'몽구', tolki:'톨키', puddi:'푸디', mallang:'말랑',
-  dalpeni:'달페니', hurai:'후라이', molli:'몰리',
+  dalpeni:'달페니', hurai:'후라이', molli:'몰리', harubang:'하루방', gyuri:'규리',
 };
 const CHARACTER_PACK_IDS = CHARACTER_IDS.map(id => 'mood-' + id);
 const CHARACTER_PACK_KO = Object.fromEntries(CHARACTER_IDS.map(id => ['mood-' + id, CHARACTER_KO[id] || id]));
@@ -2264,6 +2328,36 @@ const SKIN_ITEMS = [
 ];
 const MOOD_IDS = ['happy','sad','angry','love','surprised','sleepy','laughing','shy'];
 const MOOD_KO  = {happy:'행복',sad:'슬픔',angry:'화남',love:'사랑',surprised:'놀람',sleepy:'졸림',laughing:'웃음',shy:'수줍음'};
+
+function renderRankBarChart(chartKey, canvasId, rows, valueKey, labelKey){
+  destroyChart(chartKey);
+  const ctx = document.getElementById(canvasId);
+  if(!ctx) return;
+  const ranked = rows.filter(r=>(r[valueKey]||0) > 0);
+  if(!ranked.length){
+    ctx.getContext('2d');
+    ctx.parentElement.innerHTML = '<p style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--ink-mute);font-size:13px;font-family:var(--mono)">데이터 없음</p>';
+    return;
+  }
+  charts[chartKey] = new Chart(ctx, {
+    type:'bar',
+    data:{
+      labels: ranked.map(r=>r[labelKey]),
+      datasets:[{
+        data: ranked.map(r=>r[valueKey]),
+        backgroundColor:'#F7CE76', borderRadius:6, maxBarThickness:28,
+      }],
+    },
+    options:{
+      indexAxis:'y', responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:false}, tooltip:{...CHART_DEFAULTS.tooltip}},
+      scales:{
+        x:{beginAtZero:true, ticks:{precision:0,color:'#B5A99A',font:{size:11}}, grid:{color:'rgba(255,255,255,.08)'}},
+        y:{ticks:{color:'#F4EFE6',font:{size:12}}, grid:{display:false}},
+      },
+    },
+  });
+}
 
 function renderShopCharacterTables(data, purchases){
   const shopMap = buildShopBtnMap(data);
@@ -2304,6 +2398,8 @@ function renderShopCharacterTables(data, purchases){
     return { label: CHARACTER_PACK_KO[packId] || packId, done: serverCount, uniqueBuyers, buyBtn };
   }).sort((a, b) => b.done - a.done || b.uniqueBuyers - a.uniqueBuyers);
 
+  renderRankBarChart('characterPurchaseRank', 'character-purchase-rank-chart', purchaseRows, 'done', 'label');
+
   const purchaseTbody = document.getElementById('shop-purchase-table-tbody');
   if (purchaseTbody) {
     purchaseTbody.innerHTML = purchaseRows.map((r, i) => `
@@ -2327,7 +2423,11 @@ function renderSkinCharts(data){
     done: shopMap['shop_purchase_success_' + skin.itemId] || 0,
   })).sort((a, b) => b.done - a.done || b.buyBtn - a.buyBtn || b.preview - a.preview);
 
-  renderActionTrendChart(data,ACTION_TREND_GROUPS.skinShop);
+  renderRankBarChart('skinPurchaseRank', 'skin-purchase-rank-chart', rows, 'done', 'label');
+
+  renderActionTrendChart(data,ACTION_TREND_GROUPS.skinShopCards);
+  renderActionTrendChart(data,ACTION_TREND_GROUPS.skinShopBuy);
+  renderActionTrendChart(data,ACTION_TREND_GROUPS.skinShopSuccess);
 
   const tbody = document.getElementById('skin-purchase-table-tbody');
   if (tbody) {
@@ -2346,8 +2446,11 @@ function renderSkinCharts(data){
 function renderMoodCharts(data, purchases){
   const shopMap = buildShopBtnMap(data);
   renderActionTrendChart(data,ACTION_TREND_GROUPS.moodPick);
-  renderActionTrendChart(data,ACTION_TREND_GROUPS.moodShop);
-  renderActionTrendChart(data,ACTION_TREND_GROUPS.characterClicks);
+  renderActionTrendChart(data,ACTION_TREND_GROUPS.moodShopPacks);
+  renderActionTrendChart(data,ACTION_TREND_GROUPS.moodShopBuy);
+  renderActionTrendChart(data,ACTION_TREND_GROUPS.moodShopSuccess);
+  renderActionTrendChart(data,ACTION_TREND_GROUPS.characterPreviewClicks);
+  renderActionTrendChart(data,ACTION_TREND_GROUPS.characterPackClicks);
 
   // ③ 도시락 상점 · 캐릭터별 클릭 / 구매 표
   renderShopCharacterTables(data, purchases);
@@ -2381,28 +2484,37 @@ const ACTION_TREND_GROUPS={
       return{id:actionId,label:MOOD_KO[id]||id,color:trendSeriesColor(actionId).border};
     }),
   },
-  moodShop:{
-    chartKey:'moodShop',canvasId:'mood-shop-chart',legendId:'mood-shop-trend-legend',periodId:'mood-shop-trend-period',hidden:hiddenActionTrendIds.moodShop,
-    items:CHARACTER_IDS.flatMap(id=>[
-      {id:`shop_pack_mood-${id}`,label:`${CHARACTER_KO[id]} · 셋트 열기`,color:trendSeriesColor(`shop_pack_mood-${id}`).border},
-      {id:`shop_buy_mood-${id}`,label:`${CHARACTER_KO[id]} · 구매버튼`,color:trendSeriesColor(`shop_buy_mood-${id}`).border},
-      {id:`shop_purchase_success_mood-${id}`,label:`${CHARACTER_KO[id]} · 구매완료`,color:trendSeriesColor(`shop_purchase_success_mood-${id}`).border},
-    ]),
+  moodShopPacks:{
+    chartKey:'moodShopPacks',canvasId:'mood-shop-packs-chart',legendId:'mood-shop-packs-trend-legend',periodId:'mood-shop-packs-trend-period',hidden:hiddenActionTrendIds.moodShopPacks,
+    items:CHARACTER_IDS.map(id=>({id:`shop_pack_mood-${id}`,label:`${CHARACTER_KO[id]} · 셋트 열기`,color:trendSeriesColor(`shop_pack_mood-${id}`).border})),
   },
-  characterClicks:{
-    chartKey:'characterClicks',canvasId:'character-click-trend-chart',legendId:'character-click-trend-legend',periodId:'character-click-trend-period',hidden:hiddenActionTrendIds.characterClicks,
-    items:CHARACTER_IDS.flatMap(id=>[
-      {id:`shop_character_preview_${id}`,label:`${CHARACTER_KO[id]} · 미리보기`,color:trendSeriesColor(`shop_character_preview_${id}`).border},
-      {id:`shop_pack_mood-${id}`,label:`${CHARACTER_KO[id]} · 셋트 열기`,color:trendSeriesColor(`shop_pack_mood-${id}`).border},
-    ]),
+  moodShopBuy:{
+    chartKey:'moodShopBuy',canvasId:'mood-shop-buy-chart',legendId:'mood-shop-buy-trend-legend',periodId:'mood-shop-buy-trend-period',hidden:hiddenActionTrendIds.moodShopBuy,
+    items:CHARACTER_IDS.map(id=>({id:`shop_buy_mood-${id}`,label:`${CHARACTER_KO[id]} · 구매버튼`,color:trendSeriesColor(`shop_buy_mood-${id}`).border})),
   },
-  skinShop:{
-    chartKey:'skinShop',canvasId:'skin-shop-chart',legendId:'skin-shop-trend-legend',periodId:'skin-shop-trend-period',hidden:hiddenActionTrendIds.skinShop,
-    items:SKIN_ITEMS.flatMap(skin=>[
-      {id:`shop_skin_preview_${skin.id}`,label:`${skin.label} · 카드 클릭`,color:trendSeriesColor(`shop_skin_preview_${skin.id}`).border},
-      {id:`shop_buy_${skin.itemId}`,label:`${skin.label} · 구매버튼`,color:trendSeriesColor(`shop_buy_${skin.itemId}`).border},
-      {id:`shop_purchase_success_${skin.itemId}`,label:`${skin.label} · 구매완료`,color:trendSeriesColor(`shop_purchase_success_${skin.itemId}`).border},
-    ]),
+  moodShopSuccess:{
+    chartKey:'moodShopSuccess',canvasId:'mood-shop-success-chart',legendId:'mood-shop-success-trend-legend',periodId:'mood-shop-success-trend-period',hidden:hiddenActionTrendIds.moodShopSuccess,
+    items:CHARACTER_IDS.map(id=>({id:`shop_purchase_success_mood-${id}`,label:`${CHARACTER_KO[id]} · 구매완료`,color:trendSeriesColor(`shop_purchase_success_mood-${id}`).border})),
+  },
+  characterPreviewClicks:{
+    chartKey:'characterPreviewClicks',canvasId:'character-preview-trend-chart',legendId:'character-preview-trend-legend',periodId:'character-preview-trend-period',hidden:hiddenActionTrendIds.characterPreviewClicks,
+    items:CHARACTER_IDS.map(id=>({id:`shop_character_preview_${id}`,label:`${CHARACTER_KO[id]} · 미리보기`,color:trendSeriesColor(`shop_character_preview_${id}`).border})),
+  },
+  characterPackClicks:{
+    chartKey:'characterPackClicks',canvasId:'character-pack-trend-chart',legendId:'character-pack-trend-legend',periodId:'character-pack-trend-period',hidden:hiddenActionTrendIds.characterPackClicks,
+    items:CHARACTER_IDS.map(id=>({id:`shop_pack_mood-${id}`,label:`${CHARACTER_KO[id]} · 셋트 열기`,color:trendSeriesColor(`shop_pack_mood-${id}`).border})),
+  },
+  skinShopCards:{
+    chartKey:'skinShopCards',canvasId:'skin-shop-cards-chart',legendId:'skin-shop-cards-trend-legend',periodId:'skin-shop-cards-trend-period',hidden:hiddenActionTrendIds.skinShopCards,
+    items:SKIN_ITEMS.map(skin=>({id:`shop_skin_preview_${skin.id}`,label:`${skin.label} · 카드 클릭`,color:trendSeriesColor(`shop_skin_preview_${skin.id}`).border})),
+  },
+  skinShopBuy:{
+    chartKey:'skinShopBuy',canvasId:'skin-shop-buy-chart',legendId:'skin-shop-buy-trend-legend',periodId:'skin-shop-buy-trend-period',hidden:hiddenActionTrendIds.skinShopBuy,
+    items:SKIN_ITEMS.map(skin=>({id:`shop_buy_${skin.itemId}`,label:`${skin.label} · 구매버튼`,color:trendSeriesColor(`shop_buy_${skin.itemId}`).border})),
+  },
+  skinShopSuccess:{
+    chartKey:'skinShopSuccess',canvasId:'skin-shop-success-chart',legendId:'skin-shop-success-trend-legend',periodId:'skin-shop-success-trend-period',hidden:hiddenActionTrendIds.skinShopSuccess,
+    items:SKIN_ITEMS.map(skin=>({id:`shop_purchase_success_${skin.itemId}`,label:`${skin.label} · 구매완료`,color:trendSeriesColor(`shop_purchase_success_${skin.itemId}`).border})),
   },
   notif:{
     chartKey:'notif',canvasId:'notif-chart',legendId:'notif-trend-legend',periodId:'notif-trend-period',hidden:hiddenActionTrendIds.notif,
