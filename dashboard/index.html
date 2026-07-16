@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Yomi Analytics v.1.4 · yourboardlab</title>
+<title>Yomi Analytics v.1.5 · yourboardlab</title>
 <meta name="robots" content="noindex, nofollow" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -100,6 +100,12 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
 .rtab{background:none;border:1px solid var(--line);border-radius:6px;color:var(--ink-mute);font-size:11px;font-family:var(--mono);padding:4px 10px;cursor:pointer;transition:all .15s;letter-spacing:.04em}
 .rtab:hover{color:var(--ink);border-color:var(--ink-mute)}
 .rtab.active{color:var(--teal);border-color:var(--teal);background:rgba(137,207,201,.1)}
+.topic-nav{position:sticky;top:56px;z-index:9;background:rgba(19,17,15,.94);backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:var(--r);padding:10px;margin:24px 0 10px;display:flex;flex-wrap:wrap;gap:6px}
+.topic-tab{background:var(--bg2);border:1px solid var(--line);border-radius:8px;color:var(--ink-soft);font-size:12px;font-weight:700;font-family:var(--sans);padding:8px 12px;cursor:pointer;transition:all .15s;white-space:nowrap}
+.topic-tab:hover{color:var(--ink);border-color:var(--ink-mute)}
+.topic-tab.active{color:#0D1E1D;background:var(--teal);border-color:var(--teal)}
+.topic-panel{display:none}
+.topic-panel.active{display:block}
 
 /* ── Stat cards ── */
 .cards-row{display:grid;gap:14px;margin-bottom:0}
@@ -303,7 +309,7 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
     <div class="header-left">
       <div class="header-mark"></div>
       <h1>Yomi Analytics</h1>
-      <span class="header-version">v.1.4</span>
+      <span class="header-version">v.1.5</span>
       <span class="header-badge">ADMIN</span>
     </div>
     <div class="header-right">
@@ -354,6 +360,18 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
       </div>
     </div>
 
+    <div class="topic-nav" id="topic-tabs" aria-label="대시보드 주제별 보기">
+      <button class="topic-tab active" data-topic="accounts">가입</button>
+      <button class="topic-tab" data-topic="events">이벤트</button>
+      <button class="topic-tab" data-topic="geo">지역</button>
+      <button class="topic-tab" data-topic="session">세션</button>
+      <button class="topic-tab" data-topic="shop">상점</button>
+      <button class="topic-tab" data-topic="activity">알림·도시락</button>
+      <button class="topic-tab" data-topic="coin">코인 결제</button>
+      <button class="topic-tab" data-topic="logs">로그</button>
+    </div>
+
+    <section class="topic-panel active" data-topic-panel="accounts">
     <!-- § 2. 도시락 계정 가입 -->
     <div class="sec-head">
       <div class="sec-label">— 도시락 계정 가입 추이 <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--ink-soft)">가입자 리스트 포함</span></div>
@@ -403,6 +421,8 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
       </div>
     </div>
 
+    </section>
+    <section class="topic-panel" data-topic-panel="events">
     <!-- § 2. 전체 누적 -->
     <div class="sec-head">
       <div class="sec-label">— 전체 누적 기록</div>
@@ -511,6 +531,8 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
       </div>
     </div>
 
+    </section>
+    <section class="topic-panel" data-topic-panel="geo">
     <!-- § 5. 국가/지역별 현황 -->
     <div class="sec-head">
       <div class="sec-label">— 국가/지역별 현황</div>
@@ -574,6 +596,8 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
       </div>
     </div>
 
+    </section>
+    <section class="topic-panel" data-topic-panel="session">
     <!-- § 6. 세션 분석 -->
     <div class="sec-head">
       <div class="sec-label">— 세션 분석 <span style="font-weight:400;font-size:13px;letter-spacing:0;text-transform:none;color:var(--ink-soft)">(앱 실행 시간 · 탭 체류)</span></div>
@@ -630,6 +654,8 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
       </div>
     </div>
 
+    </section>
+    <section class="topic-panel" data-topic-panel="shop">
     <!-- § 7. 기분 & 캐릭터 분석 -->
     <div class="sec-head" style="margin-top:40px">
       <div class="sec-label">— 기분 &amp; 캐릭터 분석</div>
@@ -745,6 +771,8 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
       </div>
     </div>
 
+    </section>
+    <section class="topic-panel" data-topic-panel="activity">
     <!-- § 8. 알림 설정 분석 -->
     <div class="sec-head" style="margin-top:40px">
       <div class="sec-label">— 알림 설정 분석</div>
@@ -794,6 +822,8 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
       </div>
     </div>
 
+    </section>
+    <section class="topic-panel" data-topic-panel="coin">
     <!-- § 10. 코인 결제 운영 (QA3차) -->
     <div class="sec-head">
       <div class="sec-label">— 코인 결제 운영 <span style="font-weight:400;text-transform:none;letter-spacing:0">(Yomi Coin IAP)</span></div>
@@ -917,6 +947,8 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
       </div>
     </div>
 
+    </section>
+    <section class="topic-panel" data-topic-panel="logs">
     <!-- § 11. 최근 이벤트 -->
     <div class="sec-head">
       <div class="sec-label">— 최근 이벤트 로그</div>
@@ -930,6 +962,7 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
         </table>
       </div>
     </div>
+    </section>
   </div><!-- /main-wrap -->
 </div><!-- /dashboard -->
 
@@ -1495,6 +1528,21 @@ function bindRangeTabs(groupId,attr,onSelect){
     });
   });
 }
+function resizeDashboardCharts(){
+  requestAnimationFrame(()=>{
+    Object.values(charts).forEach(chart=>{ try{chart.resize()}catch{} });
+  });
+}
+document.getElementById('topic-tabs').querySelectorAll('.topic-tab').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const topic = btn.dataset.topic;
+    document.getElementById('topic-tabs').querySelectorAll('.topic-tab').forEach(b=>b.classList.toggle('active',b===btn));
+    document.querySelectorAll('[data-topic-panel]').forEach(panel=>{
+      panel.classList.toggle('active',panel.dataset.topicPanel===topic);
+    });
+    resizeDashboardCharts();
+  });
+});
 bindRangeTabs('month-tabs','months',async m=>{currentMonths=m;await reloadMonthly()});
 bindRangeTabs('day-tabs','days',async d=>{currentDays=d;await reloadDaily()});
 document.getElementById('event-trend-tabs').querySelectorAll('.rtab').forEach(btn=>{
