@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Yomi Analytics v.1.2 · yourboardlab</title>
+<title>Yomi Analytics v.1.3 · yourboardlab</title>
 <meta name="robots" content="noindex, nofollow" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -303,7 +303,7 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
     <div class="header-left">
       <div class="header-mark"></div>
       <h1>Yomi Analytics</h1>
-      <span class="header-version">v.1.2</span>
+      <span class="header-version">v.1.3</span>
       <span class="header-badge">ADMIN</span>
     </div>
     <div class="header-right">
@@ -1565,13 +1565,22 @@ function fmtDuration(ms){
 // ─── Load all ─────────────────────────────────────────────────────────────────
 let _cache = null;
 
+function emptyAccountSignups(){
+  return {
+    ok:false,
+    summary:{total:0,uniqueUsers:0,firstAt:null,lastAt:null},
+    trend:[],
+    accounts:[],
+  };
+}
+
 async function loadAll(){
   document.getElementById('error-banner').classList.remove('visible');
   try{
     const [summary, alltime, accountSignups, eventTrend, monthly, daily, dau, geo, geoTrend, session, actionTrend, recent, purchases, coinSummary, coinPurchases] = await Promise.all([
       apiFetch('/api/analytics?type=summary'),
       apiFetch('/api/analytics?type=all-time'),
-      apiFetch(`/api/analytics?type=account-signups&grain=${currentAccountSignupGrain}&days=365&limit=200`),
+      apiFetch(`/api/analytics?type=account-signups&grain=${currentAccountSignupGrain}&days=365&limit=200`).catch(()=>emptyAccountSignups()),
       apiFetch('/api/analytics?type=daily&days=365'),
       apiFetch(`/api/analytics?type=monthly&months=${currentMonths}`),
       apiFetch(`/api/analytics?type=daily&days=${currentDays}`),
