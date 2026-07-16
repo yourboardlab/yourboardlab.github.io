@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Yomi Analytics v.1.1 · yourboardlab</title>
+<title>Yomi Analytics v.1.2 · yourboardlab</title>
 <meta name="robots" content="noindex, nofollow" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -303,7 +303,7 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
     <div class="header-left">
       <div class="header-mark"></div>
       <h1>Yomi Analytics</h1>
-      <span class="header-version">v.1.1</span>
+      <span class="header-version">v.1.2</span>
       <span class="header-badge">ADMIN</span>
     </div>
     <div class="header-right">
@@ -351,6 +351,55 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
         <div class="stat-label"><span class="stat-dot" style="background:var(--blue)"></span>일정 공유</div>
         <div class="stat-value" id="s-share">—</div>
         <div class="stat-sub">도시락 일정 공유 횟수</div>
+      </div>
+    </div>
+
+    <!-- § 2. 도시락 계정 가입 -->
+    <div class="sec-head">
+      <div class="sec-label">— 도시락 계정 가입 추이 <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--ink-soft)">가입자 리스트 포함</span></div>
+      <div class="range-tabs" id="account-signup-tabs">
+        <button class="rtab active" data-grain="day">Daily</button>
+        <button class="rtab" data-grain="week">Weekly</button>
+        <button class="rtab" data-grain="month">Monthly</button>
+      </div>
+    </div>
+    <div class="cards-row cards-3" style="margin-bottom:16px">
+      <div class="stat-card">
+        <div class="stat-label"><span class="stat-dot" style="background:var(--coral)"></span>가입 이벤트</div>
+        <div class="stat-value" id="acct-total">—</div>
+        <div class="stat-sub">최근 1년 기준 계정 생성 수</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label"><span class="stat-dot" style="background:var(--peach)"></span>가입 유저</div>
+        <div class="stat-value" id="acct-users">—</div>
+        <div class="stat-sub">익명 해시 기준 중복 제거</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label"><span class="stat-dot" style="background:var(--blue)"></span>최근 가입</div>
+        <div class="stat-value" id="acct-last" style="font-size:18px;padding-top:6px">—</div>
+        <div class="stat-sub">마지막 계정 생성 시각</div>
+      </div>
+    </div>
+    <div class="chart-grid-2">
+      <div class="chart-card">
+        <div class="chart-card-head">
+          <div class="chart-title">도시락 계정 가입 추이 <span id="account-signup-period">최근 30일</span></div>
+        </div>
+        <div class="chart-wrap-lg"><canvas id="account-signup-chart"></canvas></div>
+      </div>
+      <div class="table-card">
+        <div class="table-head">
+          <h3>가입자 리스트</h3>
+          <span id="account-signup-count">—</span>
+        </div>
+        <div class="table-scroll">
+          <table class="ev-table">
+            <thead>
+              <tr><th>가입 시각</th><th>도시락 ID</th><th>익명 해시</th><th>기록 상태</th></tr>
+            </thead>
+            <tbody id="account-signup-tbody"><tr class="loading-row"><td colspan="4">로딩 중…</td></tr></tbody>
+          </table>
+        </div>
       </div>
     </div>
 
@@ -1113,6 +1162,7 @@ let sessionToken  = null;
 let currentMonths = 6;
 let currentDays   = 14;
 let currentEventTrendGrain = 'day';
+let currentAccountSignupGrain = 'day';
 let currentGeoDays    = 30;
 let currentGeoTrendGrain = 'day';
 let currentSessionDays = 30;
@@ -1455,6 +1505,14 @@ document.getElementById('event-trend-tabs').querySelectorAll('.rtab').forEach(bt
     if(_cache?.eventTrend) renderEventTrend(_cache.eventTrend);
   });
 });
+document.getElementById('account-signup-tabs').querySelectorAll('.rtab').forEach(btn=>{
+  btn.addEventListener('click',async ()=>{
+    document.getElementById('account-signup-tabs').querySelectorAll('.rtab').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    currentAccountSignupGrain=btn.dataset.grain;
+    await reloadAccountSignups();
+  });
+});
 document.getElementById('geo-trend-tabs').querySelectorAll('.rtab').forEach(btn=>{
   btn.addEventListener('click',()=>{
     document.getElementById('geo-trend-tabs').querySelectorAll('.rtab').forEach(b=>b.classList.remove('active'));
@@ -1510,9 +1568,10 @@ let _cache = null;
 async function loadAll(){
   document.getElementById('error-banner').classList.remove('visible');
   try{
-    const [summary, alltime, eventTrend, monthly, daily, dau, geo, geoTrend, session, actionTrend, recent, purchases, coinSummary, coinPurchases] = await Promise.all([
+    const [summary, alltime, accountSignups, eventTrend, monthly, daily, dau, geo, geoTrend, session, actionTrend, recent, purchases, coinSummary, coinPurchases] = await Promise.all([
       apiFetch('/api/analytics?type=summary'),
       apiFetch('/api/analytics?type=all-time'),
+      apiFetch(`/api/analytics?type=account-signups&grain=${currentAccountSignupGrain}&days=365&limit=200`),
       apiFetch('/api/analytics?type=daily&days=365'),
       apiFetch(`/api/analytics?type=monthly&months=${currentMonths}`),
       apiFetch(`/api/analytics?type=daily&days=${currentDays}`),
@@ -1526,9 +1585,10 @@ async function loadAll(){
       apiFetch(`/api/analytics?type=coin-purchase-summary&days=${currentCoinDays}`),
       apiFetch(`/api/analytics?type=coin-purchases&days=${currentCoinDays}&limit=100`),
     ]);
-    _cache = { summary, alltime, eventTrend, monthly, daily, dau, geo, geoTrend, session, actionTrend, recent, purchases, coinSummary, coinPurchases, loadedAt: new Date() };
+    _cache = { summary, alltime, accountSignups, eventTrend, monthly, daily, dau, geo, geoTrend, session, actionTrend, recent, purchases, coinSummary, coinPurchases, loadedAt: new Date() };
     renderSummary(summary);
     renderAllTime(alltime);
+    renderAccountSignups(accountSignups);
     renderEventTrend(eventTrend);
     renderMonthly(monthly);
     renderDonut(summary);
@@ -1565,6 +1625,13 @@ async function reloadDaily(){
     renderDaily(daily);renderDau(dau);
   }catch{}
 }
+async function reloadAccountSignups(){
+  try{
+    const d=await apiFetch(`/api/analytics?type=account-signups&grain=${currentAccountSignupGrain}&days=365&limit=200`);
+    if(_cache) _cache.accountSignups=d;
+    renderAccountSignups(d);
+  }catch{}
+}
 
 document.getElementById('refresh-btn').addEventListener('click',loadAll);
 
@@ -1587,6 +1654,87 @@ function renderAllTime(d){
     const style=ev(r.eventType);
     const badge=`<span class="ev-badge" style="background:${style.bg};color:${style.tx};border:1px solid ${style.bd}20">${evLabel(r.eventType)}</span><br><span style="font-family:var(--mono);font-size:10px;color:var(--ink-mute);padding-left:2px">${r.eventType}</span>`;
     return`<tr><td>${badge}</td><td>${fmtN(r.total)}</td><td>${fmtN(r.uniqueUsers)}</td><td>${r.firstSeen?String(r.firstSeen).slice(0,10):'—'}</td><td>${r.lastSeen?String(r.lastSeen).slice(0,10):'—'}</td></tr>`;
+  }).join('');
+}
+
+function escapeHtml(value){
+  return String(value ?? '').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+}
+
+function accountSignupPeriodText(grain){
+  return {day:'최근 30일',week:'최근 26주',month:'최근 12개월'}[grain] || '최근 30일';
+}
+
+function renderAccountSignups(data){
+  const summary = data?.summary || {};
+  const accounts = data?.accounts || [];
+  document.getElementById('acct-total').textContent = fmtN(summary.total);
+  document.getElementById('acct-users').textContent = fmtN(summary.uniqueUsers);
+  document.getElementById('acct-last').textContent = summary.lastAt
+    ? new Date(summary.lastAt).toLocaleString('ko-KR',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})
+    : '—';
+  document.getElementById('account-signup-period').textContent = accountSignupPeriodText(currentAccountSignupGrain);
+  document.getElementById('account-signup-count').textContent = `${fmtN(accounts.length)} accounts`;
+
+  destroyChart('accountSignup');
+  const grain = currentAccountSignupGrain;
+  const buckets = trendBuckets(grain);
+  const countMap = new Map();
+  const uniqueMap = new Map();
+  (data?.trend || []).forEach((row)=>{
+    countMap.set(row.bucket, Number(row.count)||0);
+    uniqueMap.set(row.bucket, Number(row.uniqueUsers)||0);
+  });
+  const ctx = document.getElementById('account-signup-chart');
+  if(ctx){
+    charts.accountSignup = new Chart(ctx,{
+      type:'bar',
+      data:{
+        labels:buckets.map(key=>trendBucketLabel(key,grain)),
+        datasets:[
+          {
+            type:'bar',label:'가입 이벤트',
+            data:buckets.map(key=>countMap.get(key)||0),
+            backgroundColor:'rgba(244,164,140,.62)',borderColor:'#F4A48C',borderWidth:1,borderRadius:5,
+          },
+          {
+            type:'line',label:'가입 유저',
+            data:buckets.map(key=>uniqueMap.get(key)||0),
+            borderColor:'#8EB8E0',backgroundColor:'rgba(142,184,224,.18)',borderWidth:2,tension:.28,pointRadius:3,pointHoverRadius:5,
+          },
+        ],
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        interaction:{mode:'index',intersect:false},
+        plugins:{
+          legend:{position:'top',labels:{color:'#C8BEB4',font:{size:11},boxWidth:10}},
+          tooltip:CHART_DEFAULTS.tooltip,
+        },
+        scales:{
+          x:{grid:{color:'rgba(46,43,39,.5)'},ticks:{color:'#C8BEB4',font:{size:11},maxTicksLimit:grain==='day'?10:12}},
+          y:{beginAtZero:true,grid:{color:'rgba(46,43,39,.5)'},ticks:{precision:0,color:'#C8BEB4',font:{size:11}}},
+        },
+      },
+    });
+  }
+
+  const tbody = document.getElementById('account-signup-tbody');
+  if(!accounts.length){
+    tbody.innerHTML = '<tr class="loading-row"><td colspan="4">가입자 기록 없음</td></tr>';
+    return;
+  }
+  tbody.innerHTML = accounts.map((account)=>{
+    const created = account.createdAt ? new Date(account.createdAt).toLocaleString('ko-KR') : '—';
+    const userId = account.userId || account.userMasked || '기존 로그: 해시만 보유';
+    const hash = account.userHash ? `${String(account.userHash).slice(0,12)}…` : '—';
+    const status = account.legacyHashOnly ? 'HASH_ONLY' : (account.source || 'ACCOUNT_CREATE');
+    return `<tr>
+      <td>${escapeHtml(created)}</td>
+      <td title="${escapeHtml(account.userMasked || account.userId || '')}">${escapeHtml(userId)}</td>
+      <td style="font-family:var(--mono);font-size:12px;color:var(--ink-mute)">${escapeHtml(hash)}</td>
+      <td>${escapeHtml(status)}</td>
+    </tr>`;
   }).join('');
 }
 
