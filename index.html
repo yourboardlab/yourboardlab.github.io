@@ -378,6 +378,70 @@
   }
   .app-card:hover .app-card-visual img { transform: rotate(-1deg) translateY(-4px); }
 
+  /* ---------- Screenshot carousel ---------- */
+  .carousel-track { position: relative; width: 100%; height: 100%; }
+  .carousel-slide {
+    position: absolute; inset: 0; margin: auto;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .5s ease, transform .4s ease;
+  }
+  .carousel-slide.is-active { opacity: 1; pointer-events: auto; }
+
+  .carousel-arrow {
+    position: absolute; top: 50%;
+    transform: translateY(-50%);
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(255,255,255,0.85);
+    border: 1px solid var(--line);
+    color: var(--ink-soft);
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    z-index: 5;
+    opacity: 0;
+    transition: opacity .2s ease, background .2s ease;
+  }
+  .carousel-arrow svg { width: 16px; height: 16px; }
+  .carousel-arrow.prev { left: 10px; }
+  .carousel-arrow.next { right: 10px; }
+  .app-card-visual.carousel:hover .carousel-arrow,
+  .carousel-arrow:focus-visible { opacity: 1; }
+  .carousel-arrow:hover { background: #fff; }
+  @media (max-width: 759px) {
+    .carousel-arrow { opacity: 1; }
+  }
+
+  .carousel-dots {
+    position: absolute; bottom: 14px; left: 50%;
+    transform: translateX(-50%);
+    display: flex; gap: 6px;
+    z-index: 5;
+  }
+  .carousel-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: rgba(31,27,22,0.28);
+    border: none; padding: 0;
+    cursor: pointer;
+    transition: background .2s ease, transform .2s ease;
+  }
+  .carousel-dot.is-active { background: var(--ink); transform: scale(1.35); }
+
+  .carousel-label {
+    position: absolute; top: 12px; right: 12px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    background: rgba(255,255,255,0.85);
+    border: 1px solid var(--line);
+    padding: 4px 10px;
+    border-radius: 999px;
+    color: var(--ink-soft);
+    z-index: 5;
+  }
+
   /* tiny floating decorations on hero card visual */
   .deco {
     position: absolute;
@@ -689,14 +753,37 @@
           <!-- Lifelong Calendar -->
           <article class="app-card reveal">
             <div class="app-card-inner">
-              <div class="app-card-visual">
+              <div class="app-card-visual carousel" data-carousel>
                 <div class="deco d1" aria-hidden="true">📝</div>
                 <div class="deco d2" aria-hidden="true">💚</div>
                 <div class="deco d3" aria-hidden="true">🐻</div>
-                <img
-                  src="https://github.com/yourboardlab/calendar_readme/raw/main/assets/release_drawer_calendar.png"
-                  alt="Lifelong Calendar 메인 달력 화면"
-                  loading="lazy" />
+                <div class="carousel-track">
+                  <img class="carousel-slide is-active"
+                    src="https://github.com/yourboardlab/calendar_readme/raw/main/assets/phone_calendar.png"
+                    alt="달력 메인 화면" loading="lazy" />
+                  <img class="carousel-slide"
+                    src="https://github.com/yourboardlab/calendar_readme/raw/main/assets/phone_chart.png"
+                    alt="기록 차트" loading="lazy" />
+                  <img class="carousel-slide"
+                    src="https://github.com/yourboardlab/calendar_readme/raw/main/assets/phone_settings.png"
+                    alt="설정 · 색상 테마" loading="lazy" />
+                  <img class="carousel-slide"
+                    src="https://github.com/yourboardlab/calendar_readme/raw/main/assets/phone_lunchbox.png"
+                    alt="도시락" loading="lazy" />
+                </div>
+                <span class="carousel-label" data-i18n="slide-calendar">달력</span>
+                <button class="carousel-arrow prev" type="button" aria-label="Previous screenshot">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>
+                </button>
+                <button class="carousel-arrow next" type="button" aria-label="Next screenshot">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+                </button>
+                <div class="carousel-dots">
+                  <button class="carousel-dot is-active" type="button" data-idx="0" data-key="slide-calendar" aria-label="달력"></button>
+                  <button class="carousel-dot" type="button" data-idx="1" data-key="slide-chart" aria-label="차트"></button>
+                  <button class="carousel-dot" type="button" data-idx="2" data-key="slide-settings" aria-label="설정"></button>
+                  <button class="carousel-dot" type="button" data-idx="3" data-key="slide-bento" aria-label="도시락"></button>
+                </div>
               </div>
               <div class="app-card-body">
                 <div class="app-card-head">
@@ -829,6 +916,7 @@
       'btn-video': '소개 영상', 'btn-readme': 'README 보기',
       'tag-offline': '오프라인', 'tag-offline-suffix': ' + 선택 공유',
       'tag-langs': '10개 언어', 'tag-themes': '8가지 파스텔 테마', 'tag-extras': '위젯 · 알림 · 차트',
+      'slide-calendar': '달력', 'slide-chart': '차트', 'slide-settings': '설정', 'slide-bento': '도시락',
       'sec-story-label': '— Story',
       'sec-story-title': '작게, 천천히, <em style="font-style:italic;color:var(--ink-soft);font-variation-settings:\'opsz\' 144,\'SOFT\' 100;">따뜻하게</em>',
       'sec-story-sub': '앱을 만들 때 지키려고 하는 세 가지 약속입니다.',
@@ -858,6 +946,7 @@
       'btn-video': 'Intro Video', 'btn-readme': 'View README',
       'tag-offline': 'Offline', 'tag-offline-suffix': ' + opt-in sharing',
       'tag-langs': '10 languages', 'tag-themes': '8 pastel themes', 'tag-extras': 'Widgets · Alerts · Charts',
+      'slide-calendar': 'Calendar', 'slide-chart': 'Charts', 'slide-settings': 'Settings', 'slide-bento': 'Bento',
       'sec-story-label': '— Story',
       'sec-story-title': 'Small, slow, <em style="font-style:italic;color:var(--ink-soft);font-variation-settings:\'opsz\' 144,\'SOFT\' 100;">warm.</em>',
       'sec-story-sub': 'Three promises we keep when building each app.',
@@ -887,6 +976,7 @@
       'btn-video': '介绍视频', 'btn-readme': '查看 README',
       'tag-offline': '离线', 'tag-offline-suffix': ' + 可选分享',
       'tag-langs': '10 种语言', 'tag-themes': '8 种柔和主题', 'tag-extras': '小组件 · 提醒 · 图表',
+      'slide-calendar': '日历', 'slide-chart': '图表', 'slide-settings': '设置', 'slide-bento': '便当',
       'sec-story-label': '— 理念',
       'sec-story-title': '小而慢，<em style="font-style:italic;color:var(--ink-soft);font-variation-settings:\'opsz\' 144,\'SOFT\' 100;">温暖。</em>',
       'sec-story-sub': '我们在打造每款应用时坚守的三个承诺。',
@@ -916,6 +1006,7 @@
       'btn-video': '紹介動画', 'btn-readme': 'README を見る',
       'tag-offline': 'オフライン', 'tag-offline-suffix': ' + 任意共有',
       'tag-langs': '10 言語対応', 'tag-themes': '8 種のパステルテーマ', 'tag-extras': 'ウィジェット · 通知 · チャート',
+      'slide-calendar': 'カレンダー', 'slide-chart': 'チャート', 'slide-settings': '設定', 'slide-bento': 'お弁当',
       'sec-story-label': '— ストーリー',
       'sec-story-title': '小さく、ゆっくり、<em style="font-style:italic;color:var(--ink-soft);font-variation-settings:\'opsz\' 144,\'SOFT\' 100;">温かく。</em>',
       'sec-story-sub': 'アプリを作るときに守りたい三つの約束です。',
@@ -945,6 +1036,7 @@
       'btn-video': 'Intro Video', 'btn-readme': 'Tingnan ang README',
       'tag-offline': 'Offline', 'tag-offline-suffix': ' + opsyonal na pagbabahagi',
       'tag-langs': '10 wika', 'tag-themes': '8 pastel na tema', 'tag-extras': 'Widget · Paalala · Chart',
+      'slide-calendar': 'Kalendaryo', 'slide-chart': 'Chart', 'slide-settings': 'Settings', 'slide-bento': 'Bento',
       'sec-story-label': '— Kwento',
       'sec-story-title': 'Maliit, dahan-dahan, <em style="font-style:italic;color:var(--ink-soft);font-variation-settings:\'opsz\' 144,\'SOFT\' 100;">mainit.</em>',
       'sec-story-sub': 'Tatlong pangako na sinisikap naming gawin sa bawat app.',
@@ -974,6 +1066,7 @@
       'btn-video': 'Video giới thiệu', 'btn-readme': 'Xem README',
       'tag-offline': 'Ngoại tuyến', 'tag-offline-suffix': ' + chia sẻ tùy chọn',
       'tag-langs': '10 ngôn ngữ', 'tag-themes': '8 chủ đề pastel', 'tag-extras': 'Widget · Thông báo · Biểu đồ',
+      'slide-calendar': 'Lịch', 'slide-chart': 'Biểu đồ', 'slide-settings': 'Cài đặt', 'slide-bento': 'Bento',
       'sec-story-label': '— Câu chuyện',
       'sec-story-title': 'Nhỏ, chậm, <em style="font-style:italic;color:var(--ink-soft);font-variation-settings:\'opsz\' 144,\'SOFT\' 100;">ấm áp.</em>',
       'sec-story-sub': 'Ba cam kết chúng tôi giữ khi tạo ra mỗi ứng dụng.',
@@ -1003,6 +1096,7 @@
       'btn-video': 'Видео', 'btn-readme': 'Смотреть README',
       'tag-offline': 'Оффлайн', 'tag-offline-suffix': ' + sharing по желанию',
       'tag-langs': '10 языков', 'tag-themes': '8 пастельных тем', 'tag-extras': 'Виджеты · Уведомления · Графики',
+      'slide-calendar': 'Календарь', 'slide-chart': 'Графики', 'slide-settings': 'Настройки', 'slide-bento': 'Бэнто',
       'sec-story-label': '— История',
       'sec-story-title': 'Маленькое, медленное, <em style="font-style:italic;color:var(--ink-soft);font-variation-settings:\'opsz\' 144,\'SOFT\' 100;">тёплое.</em>',
       'sec-story-sub': 'Три обещания, которые мы выполняем при создании каждого приложения.',
@@ -1032,6 +1126,7 @@
       'btn-video': 'Video intro', 'btn-readme': 'Ver README',
       'tag-offline': 'Sin conexión', 'tag-offline-suffix': ' + compartir opcional',
       'tag-langs': '10 idiomas', 'tag-themes': '8 temas pastel', 'tag-extras': 'Widgets · Notificaciones · Gráficos',
+      'slide-calendar': 'Calendario', 'slide-chart': 'Gráficos', 'slide-settings': 'Ajustes', 'slide-bento': 'Bento',
       'sec-story-label': '— Historia',
       'sec-story-title': 'Pequeño, lento, <em style="font-style:italic;color:var(--ink-soft);font-variation-settings:\'opsz\' 144,\'SOFT\' 100;">cálido.</em>',
       'sec-story-sub': 'Tres promesas que mantenemos al crear cada app.',
@@ -1061,6 +1156,7 @@
       'btn-video': 'Intro-Video', 'btn-readme': 'README ansehen',
       'tag-offline': 'Offline', 'tag-offline-suffix': ' + opt. Teilen',
       'tag-langs': '10 Sprachen', 'tag-themes': '8 Pastell-Themes', 'tag-extras': 'Widgets · Erinnerungen · Diagramme',
+      'slide-calendar': 'Kalender', 'slide-chart': 'Diagramme', 'slide-settings': 'Einstellungen', 'slide-bento': 'Bento',
       'sec-story-label': '— Geschichte',
       'sec-story-title': 'Klein, langsam, <em style="font-style:italic;color:var(--ink-soft);font-variation-settings:\'opsz\' 144,\'SOFT\' 100;">warm.</em>',
       'sec-story-sub': 'Drei Versprechen, die wir beim Bauen jeder App halten.',
@@ -1090,6 +1186,7 @@
       'btn-video': 'Vidéo intro', 'btn-readme': 'Voir README',
       'tag-offline': 'Hors ligne', 'tag-offline-suffix': ' + partage optionnel',
       'tag-langs': '10 langues', 'tag-themes': '8 thèmes pastel', 'tag-extras': 'Widgets · Notifications · Graphiques',
+      'slide-calendar': 'Calendrier', 'slide-chart': 'Graphiques', 'slide-settings': 'Paramètres', 'slide-bento': 'Bento',
       'sec-story-label': '— Histoire',
       'sec-story-title': 'Petit, lent, <em style="font-style:italic;color:var(--ink-soft);font-variation-settings:\'opsz\' 144,\'SOFT\' 100;">chaleureux.</em>',
       'sec-story-sub': 'Trois promesses que nous tenons en créant chaque app.',
@@ -1149,6 +1246,58 @@
     let saved = 'ko';
     try { saved = localStorage.getItem('ybLang') || 'ko'; } catch(e) {}
     if (T[saved] && saved !== 'ko') applyLang(saved);
+  })();
+
+  // ── Screenshot carousel ─────────────────────────────────────────────────────
+  (function(){
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    document.querySelectorAll('[data-carousel]').forEach((root) => {
+      const slides = Array.from(root.querySelectorAll('.carousel-slide'));
+      const dots = Array.from(root.querySelectorAll('.carousel-dot'));
+      const label = root.querySelector('.carousel-label');
+      const prevBtn = root.querySelector('.carousel-arrow.prev');
+      const nextBtn = root.querySelector('.carousel-arrow.next');
+      if (!slides.length) return;
+      let idx = 0;
+      let timer = null;
+
+      function currentLang() {
+        let lang = 'ko';
+        try { lang = localStorage.getItem('ybLang') || 'ko'; } catch(e) {}
+        return T[lang] ? lang : 'ko';
+      }
+
+      function render() {
+        slides.forEach((s, n) => s.classList.toggle('is-active', n === idx));
+        dots.forEach((d, n) => d.classList.toggle('is-active', n === idx));
+        const key = dots[idx] && dots[idx].dataset.key;
+        if (label && key) {
+          label.setAttribute('data-i18n', key);
+          const dict = T[currentLang()];
+          if (dict && dict[key]) label.textContent = dict[key];
+        }
+      }
+
+      function go(n) {
+        idx = (n + slides.length) % slides.length;
+        render();
+      }
+
+      function restart() {
+        if (reduceMotion) return;
+        if (timer) clearInterval(timer);
+        timer = setInterval(() => go(idx + 1), 4500);
+      }
+
+      dots.forEach((d) => d.addEventListener('click', () => { go(Number(d.dataset.idx)); restart(); }));
+      if (prevBtn) prevBtn.addEventListener('click', () => { go(idx - 1); restart(); });
+      if (nextBtn) nextBtn.addEventListener('click', () => { go(idx + 1); restart(); });
+      root.addEventListener('mouseenter', () => { if (timer) clearInterval(timer); });
+      root.addEventListener('mouseleave', restart);
+
+      render();
+      restart();
+    });
   })();
 
   // ── Scroll reveal ──────────────────────────────────────────────────────────
