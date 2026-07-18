@@ -466,40 +466,6 @@
   .app-tags span { display: inline-flex; gap: 6px; align-items: center; }
   .app-tags b { color: var(--ink); font-weight: 600; }
 
-  /* "coming soon" placeholder card */
-  .app-card.soon {
-    background: transparent;
-    border: 1.5px dashed var(--line);
-    box-shadow: none;
-  }
-  .app-card.soon:hover { transform: none; box-shadow: none; }
-  .soon-body {
-    padding: 40px 26px;
-    text-align: center;
-    color: var(--ink-mute);
-  }
-  .soon-body h3 {
-    font-family: var(--font-display);
-    font-weight: 400;
-    font-size: 22px;
-    color: var(--ink-soft);
-    margin: 8px 0 6px;
-    letter-spacing: -0.02em;
-  }
-  .soon-body p { font-size: 14px; margin: 0; max-width: 360px; margin: 0 auto; }
-  .soon-icon {
-    display: inline-block;
-    font-family: var(--font-mono);
-    font-size: 12px;
-    background: var(--card);
-    border: 1px solid var(--line);
-    color: var(--ink-mute);
-    padding: 5px 12px;
-    border-radius: 999px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-
   /* ---------- Philosophy section ---------- */
   .principles {
     display: grid;
@@ -701,7 +667,7 @@
         <div class="hero-meta reveal">
           <div><b>1</b> <span data-i18n="meta-apps">테스트 중인 앱</span></div>
           <div><b>10</b> <span data-i18n="meta-langs">지원 언어</span></div>
-          <div><b>0</b> <span data-i18n="meta-ads">광고 · 추적</span></div>
+          <div><b>0</b> <span data-i18n="meta-ads">광고</span></div>
           <div data-i18n-html="meta-data">기록은 <b>기기 안에만</b> · 공유는 선택으로</div>
         </div>
       </div>
@@ -773,15 +739,6 @@
                   <span>· <b data-i18n="tag-extras">위젯 · 알림 · 차트</b></span>
                 </div>
               </div>
-            </div>
-          </article>
-
-          <!-- Coming soon placeholder -->
-          <article class="app-card soon reveal">
-            <div class="soon-body">
-              <div class="soon-icon" data-i18n="soon-badge">코인 충전 · 준비중</div>
-              <h3 data-i18n="soon-title">코인 충전(현금 구매) 기능이 준비 중입니다</h3>
-              <p data-i18n-html="soon-desc"><strong>Yomi Coin</strong>은 도시락 가입 보너스와 매일 출석 체크로 이미 무료로 모을 수 있어요. 앞으로 현금으로 Yomi Coin을 충전하는 기능도 추가될 예정입니다.</p>
             </div>
           </article>
 
@@ -861,7 +818,7 @@
       'headline': '<span class="ko">오늘을 가볍게 남기는</span><br/><em>작은 앱</em>을 만듭니다.',
       'lede': 'yourboardlab에서 정성껏 만드는 작은 앱들이에요.<br/>매일의 순간 — 메모, 가계부, 체크, 기분, 일정 — 을 <span class="accent-underline">부담 없이</span> 남기고,<br/>원할 때는 도시락처럼 담아 함께 나눌 수 있는 앱을 만들어요.',
       'btn-apps': '앱 살펴보기', 'btn-contact': '연락하기',
-      'meta-apps': '테스트 중인 앱', 'meta-langs': '지원 언어', 'meta-ads': '광고 · 추적',
+      'meta-apps': '테스트 중인 앱', 'meta-langs': '지원 언어', 'meta-ads': '광고',
       'meta-data': '기록은 <b>기기 안에만</b> · 공유는 선택으로',
       'sec-apps-label': '— Apps', 'sec-apps-title': '지금 만나볼 수 있는 앱',
       'sec-apps-sub': '각 앱은 GitHub의 README로 자세한 소개를 이어 봅니다.',
@@ -872,8 +829,6 @@
       'btn-video': '소개 영상', 'btn-readme': 'README 보기',
       'tag-offline': '오프라인', 'tag-offline-suffix': ' + 선택 공유',
       'tag-langs': '10개 언어', 'tag-themes': '8가지 파스텔 테마', 'tag-extras': '위젯 · 알림 · 차트',
-      'soon-badge': '코인 충전 · 준비중', 'soon-title': '코인 충전(현금 구매) 기능이 준비 중입니다',
-      'soon-desc': '<strong>Yomi Coin</strong>은 도시락 가입 보너스와 매일 출석 체크로 이미 무료로 모을 수 있어요. 앞으로 현금으로 Yomi Coin을 충전하는 기능도 추가될 예정입니다.',
       'sec-story-label': '— Story',
       'sec-story-title': '작게, 천천히, <em style="font-style:italic;color:var(--ink-soft);font-variation-settings:\'opsz\' 144,\'SOFT\' 100;">따뜻하게</em>',
       'sec-story-sub': '앱을 만들 때 지키려고 하는 세 가지 약속입니다.',
@@ -892,7 +847,7 @@
       'headline': 'Small apps for<br/><em>capturing</em> today.',
       'lede': 'yourboardlab makes small apps where every daily moment — memos, expenses, checklists, moods, schedules — can be recorded <span class="accent-underline">effortlessly</span>,<br/>and shared like a bento when you feel like it.',
       'btn-apps': 'Explore Apps', 'btn-contact': 'Contact',
-      'meta-apps': 'app in testing', 'meta-langs': 'languages', 'meta-ads': 'ads · tracking',
+      'meta-apps': 'app in testing', 'meta-langs': 'languages', 'meta-ads': 'ads',
       'meta-data': 'records <b>on device</b> · sharing is optional',
       'sec-apps-label': '— Apps', 'sec-apps-title': 'Apps available now',
       'sec-apps-sub': 'Each app has a detailed README on GitHub.',
@@ -903,8 +858,6 @@
       'btn-video': 'Intro Video', 'btn-readme': 'View README',
       'tag-offline': 'Offline', 'tag-offline-suffix': ' + opt-in sharing',
       'tag-langs': '10 languages', 'tag-themes': '8 pastel themes', 'tag-extras': 'Widgets · Alerts · Charts',
-      'soon-badge': 'Coin top-up · Coming', 'soon-title': 'Cash coin top-up is coming',
-      'soon-desc': 'You can already earn <strong>Yomi Coin</strong> for free via the Bento sign-up bonus and daily check-in. A cash top-up option is coming soon.',
       'sec-story-label': '— Story',
       'sec-story-title': 'Small, slow, <em style="font-style:italic;color:var(--ink-soft);font-variation-settings:\'opsz\' 144,\'SOFT\' 100;">warm.</em>',
       'sec-story-sub': 'Three promises we keep when building each app.',
@@ -923,7 +876,7 @@
       'headline': '轻轻记录<br/><em>今天</em>的小时光。',
       'lede': 'yourboardlab 专注打造让日常记录毫无负担的小应用。<br/>备忘、账本、清单、心情、日程 — <span class="accent-underline">轻松记录</span>，<br/>需要时像便当一样打包，与重要的人分享。',
       'btn-apps': '浏览应用', 'btn-contact': '联系我们',
-      'meta-apps': '款测试中', 'meta-langs': '支持语言', 'meta-ads': '广告 · 追踪',
+      'meta-apps': '款测试中', 'meta-langs': '支持语言', 'meta-ads': '广告',
       'meta-data': '记录仅存于 <b>设备</b> · 分享随你选',
       'sec-apps-label': '— 应用', 'sec-apps-title': '现在可以使用的应用',
       'sec-apps-sub': '每款应用都有详细的 GitHub README 介绍。',
@@ -934,8 +887,6 @@
       'btn-video': '介绍视频', 'btn-readme': '查看 README',
       'tag-offline': '离线', 'tag-offline-suffix': ' + 可选分享',
       'tag-langs': '10 种语言', 'tag-themes': '8 种柔和主题', 'tag-extras': '小组件 · 提醒 · 图表',
-      'soon-badge': 'Yomi Coin 充值 · 即将推出', 'soon-title': '现金充值 Yomi Coin 即将上线',
-      'soon-desc': '现在已经可以通过便当注册奖励和每日签到免费获得 <strong>Yomi Coin</strong>。用现金充值 Yomi Coin 的功能即将推出。',
       'sec-story-label': '— 理念',
       'sec-story-title': '小而慢，<em style="font-style:italic;color:var(--ink-soft);font-variation-settings:\'opsz\' 144,\'SOFT\' 100;">温暖。</em>',
       'sec-story-sub': '我们在打造每款应用时坚守的三个承诺。',
@@ -954,7 +905,7 @@
       'headline': '今日を気軽に残す<br/><em>小さなアプリ</em>。',
       'lede': 'yourboardlab は、毎日の小さな瞬間を気軽に残せるアプリを作っています。<br/>メモ、家計簿、チェック、気分、予定を <span class="accent-underline">気軽に</span> 記録し、<br/>お弁当のように大切な人と日程をシェアできます。',
       'btn-apps': 'アプリを見る', 'btn-contact': 'お問い合わせ',
-      'meta-apps': 'テスト中', 'meta-langs': '対応言語', 'meta-ads': '広告 · 追跡なし',
+      'meta-apps': 'テスト中', 'meta-langs': '対応言語', 'meta-ads': '広告なし',
       'meta-data': '記録は <b>デバイス内のみ</b> · 共有は任意',
       'sec-apps-label': '— アプリ', 'sec-apps-title': '今すぐ使えるアプリ',
       'sec-apps-sub': '各アプリの詳細は GitHub の README でご確認いただけます。',
@@ -965,8 +916,6 @@
       'btn-video': '紹介動画', 'btn-readme': 'README を見る',
       'tag-offline': 'オフライン', 'tag-offline-suffix': ' + 任意共有',
       'tag-langs': '10 言語対応', 'tag-themes': '8 種のパステルテーマ', 'tag-extras': 'ウィジェット · 通知 · チャート',
-      'soon-badge': 'コイン購入 · 準備中', 'soon-title': '現金でのコイン購入機能が近日公開',
-      'soon-desc': '<strong>Yomi Coin</strong>はお弁当の登録ボーナスと毎日のチェックインで、すでに無料で貯められます。現金でコインを購入できる機能も近日追加予定です。',
       'sec-story-label': '— ストーリー',
       'sec-story-title': '小さく、ゆっくり、<em style="font-style:italic;color:var(--ink-soft);font-variation-settings:\'opsz\' 144,\'SOFT\' 100;">温かく。</em>',
       'sec-story-sub': 'アプリを作るときに守りたい三つの約束です。',
@@ -985,7 +934,7 @@
       'headline': 'Maliliit na app para<br/><em>sa iyong araw</em>.',
       'lede': 'Gumagawa ang yourboardlab ng maliliit na apps para <span class="accent-underline">walang pahirap</span> na magtala<br/>ng mga sandali sa araw-araw — memo, gastos, gawain, mood, iskedyul —<br/>at ibahagi tulad ng bento kung nais mo.',
       'btn-apps': 'Tingnan ang Apps', 'btn-contact': 'Makipag-ugnayan',
-      'meta-apps': 'app na tinetesting', 'meta-langs': 'mga wika', 'meta-ads': 'ads · tracking',
+      'meta-apps': 'app na tinetesting', 'meta-langs': 'mga wika', 'meta-ads': 'ads',
       'meta-data': 'datos <b>sa device mo lang</b> · pagbabahagi opsyonal',
       'sec-apps-label': '— Mga App', 'sec-apps-title': 'Mga app na available ngayon',
       'sec-apps-sub': 'Bawat app ay may detalyadong README sa GitHub.',
@@ -996,8 +945,6 @@
       'btn-video': 'Intro Video', 'btn-readme': 'Tingnan ang README',
       'tag-offline': 'Offline', 'tag-offline-suffix': ' + opsyonal na pagbabahagi',
       'tag-langs': '10 wika', 'tag-themes': '8 pastel na tema', 'tag-extras': 'Widget · Paalala · Chart',
-      'soon-badge': 'Coin top-up · Paparating', 'soon-title': 'Paparating ang cash top-up para sa Coin',
-      'soon-desc': 'Libre nang makukuha ang <strong>Yomi Coin</strong> mula sa sign-up bonus ng Bento at araw-araw na check-in. Paparating din ang opsyon na bumili ng coin gamit ang totoong pera.',
       'sec-story-label': '— Kwento',
       'sec-story-title': 'Maliit, dahan-dahan, <em style="font-style:italic;color:var(--ink-soft);font-variation-settings:\'opsz\' 144,\'SOFT\' 100;">mainit.</em>',
       'sec-story-sub': 'Tatlong pangako na sinisikap naming gawin sa bawat app.',
@@ -1016,7 +963,7 @@
       'headline': 'Ứng dụng nhỏ để<br/><em>lưu giữ hôm nay</em>.',
       'lede': 'yourboardlab tạo ra những ứng dụng nhỏ giúp bạn ghi lại khoảnh khắc hàng ngày<br/>— ghi chú, chi tiêu, danh sách, tâm trạng, lịch — một cách <span class="accent-underline">dễ dàng</span>,<br/>và chia sẻ như hộp cơm khi bạn muốn.',
       'btn-apps': 'Xem ứng dụng', 'btn-contact': 'Liên hệ',
-      'meta-apps': 'ứng dụng đang thử nghiệm', 'meta-langs': 'ngôn ngữ', 'meta-ads': 'quảng cáo · theo dõi',
+      'meta-apps': 'ứng dụng đang thử nghiệm', 'meta-langs': 'ngôn ngữ', 'meta-ads': 'quảng cáo',
       'meta-data': 'dữ liệu <b>chỉ trên thiết bị</b> · chia sẻ tùy chọn',
       'sec-apps-label': '— Ứng dụng', 'sec-apps-title': 'Ứng dụng hiện có',
       'sec-apps-sub': 'Mỗi ứng dụng có README chi tiết trên GitHub.',
@@ -1027,8 +974,6 @@
       'btn-video': 'Video giới thiệu', 'btn-readme': 'Xem README',
       'tag-offline': 'Ngoại tuyến', 'tag-offline-suffix': ' + chia sẻ tùy chọn',
       'tag-langs': '10 ngôn ngữ', 'tag-themes': '8 chủ đề pastel', 'tag-extras': 'Widget · Thông báo · Biểu đồ',
-      'soon-badge': 'Nạp Coin · Sắp ra mắt', 'soon-title': 'Tính năng nạp Coin bằng tiền thật sắp ra mắt',
-      'soon-desc': 'Bạn đã có thể nhận <strong>Yomi Coin</strong> miễn phí qua thưởng đăng ký Bento và điểm danh hằng ngày. Tính năng nạp Coin bằng tiền thật sẽ sớm ra mắt.',
       'sec-story-label': '— Câu chuyện',
       'sec-story-title': 'Nhỏ, chậm, <em style="font-style:italic;color:var(--ink-soft);font-variation-settings:\'opsz\' 144,\'SOFT\' 100;">ấm áp.</em>',
       'sec-story-sub': 'Ba cam kết chúng tôi giữ khi tạo ra mỗi ứng dụng.',
@@ -1047,7 +992,7 @@
       'headline': 'Маленькие приложения<br/>для <em>записи дня</em>.',
       'lede': 'yourboardlab создаёт маленькие приложения, где каждый момент дня — заметки, расходы, задачи, настроение, расписание — можно записать <span class="accent-underline">без усилий</span>,<br/>а поделиться — когда захочется.',
       'btn-apps': 'Смотреть приложения', 'btn-contact': 'Связаться',
-      'meta-apps': 'приложение в тестировании', 'meta-langs': 'языков', 'meta-ads': 'реклама · слежка',
+      'meta-apps': 'приложение в тестировании', 'meta-langs': 'языков', 'meta-ads': 'реклама',
       'meta-data': 'данные <b>только на устройстве</b> · sharing по желанию',
       'sec-apps-label': '— Приложения', 'sec-apps-title': 'Доступные приложения',
       'sec-apps-sub': 'У каждого приложения есть подробный README на GitHub.',
@@ -1058,8 +1003,6 @@
       'btn-video': 'Видео', 'btn-readme': 'Смотреть README',
       'tag-offline': 'Оффлайн', 'tag-offline-suffix': ' + sharing по желанию',
       'tag-langs': '10 языков', 'tag-themes': '8 пастельных тем', 'tag-extras': 'Виджеты · Уведомления · Графики',
-      'soon-badge': 'Пополнение Coin · Скоро', 'soon-title': 'Скоро: пополнение Yomi Coin за реальные деньги',
-      'soon-desc': '<strong>Yomi Coin</strong> уже можно бесплатно получать за бонус регистрации в Bento и ежедневный чек-ин. Скоро появится возможность пополнять баланс за реальные деньги.',
       'sec-story-label': '— История',
       'sec-story-title': 'Маленькое, медленное, <em style="font-style:italic;color:var(--ink-soft);font-variation-settings:\'opsz\' 144,\'SOFT\' 100;">тёплое.</em>',
       'sec-story-sub': 'Три обещания, которые мы выполняем при создании каждого приложения.',
@@ -1078,7 +1021,7 @@
       'headline': 'Pequeñas apps para<br/><em>capturar hoy</em>.',
       'lede': 'yourboardlab crea pequeñas apps para registrar los momentos del día — notas, gastos, tareas, humor, agenda — <span class="accent-underline">sin esfuerzo</span>,<br/>y compartirlos como un bento cuando quieras.',
       'btn-apps': 'Ver Apps', 'btn-contact': 'Contacto',
-      'meta-apps': 'app en pruebas', 'meta-langs': 'idiomas', 'meta-ads': 'anuncios · rastreo',
+      'meta-apps': 'app en pruebas', 'meta-langs': 'idiomas', 'meta-ads': 'anuncios',
       'meta-data': 'datos <b>solo en tu dispositivo</b> · compartir es opcional',
       'sec-apps-label': '— Apps', 'sec-apps-title': 'Apps disponibles ahora',
       'sec-apps-sub': 'Cada app tiene un README detallado en GitHub.',
@@ -1089,8 +1032,6 @@
       'btn-video': 'Video intro', 'btn-readme': 'Ver README',
       'tag-offline': 'Sin conexión', 'tag-offline-suffix': ' + compartir opcional',
       'tag-langs': '10 idiomas', 'tag-themes': '8 temas pastel', 'tag-extras': 'Widgets · Notificaciones · Gráficos',
-      'soon-badge': 'Recarga de Coin · Próximamente', 'soon-title': 'Llega la recarga de Coin con dinero real',
-      'soon-desc': 'Ya puedes ganar <strong>Yomi Coin</strong> gratis con el bono de registro de Bento y el check-in diario. Pronto llegará la opción de recargar con dinero real.',
       'sec-story-label': '— Historia',
       'sec-story-title': 'Pequeño, lento, <em style="font-style:italic;color:var(--ink-soft);font-variation-settings:\'opsz\' 144,\'SOFT\' 100;">cálido.</em>',
       'sec-story-sub': 'Tres promesas que mantenemos al crear cada app.',
@@ -1109,7 +1050,7 @@
       'headline': 'Kleine Apps zum<br/><em>Festhalten des Tages</em>.',
       'lede': 'yourboardlab baut kleine Apps, mit denen du tägliche Momente — Notizen, Ausgaben, Aufgaben, Stimmung, Termine — <span class="accent-underline">mühelos</span> festhältst<br/>und wie ein Bento teilst, wann du möchtest.',
       'btn-apps': 'Apps ansehen', 'btn-contact': 'Kontakt',
-      'meta-apps': 'App im Test', 'meta-langs': 'Sprachen', 'meta-ads': 'Werbung · Tracking',
+      'meta-apps': 'App im Test', 'meta-langs': 'Sprachen', 'meta-ads': 'Werbung',
       'meta-data': 'Daten <b>nur auf dem Gerät</b> · Teilen optional',
       'sec-apps-label': '— Apps', 'sec-apps-title': 'Verfügbare Apps',
       'sec-apps-sub': 'Jede App hat eine ausführliche README auf GitHub.',
@@ -1120,8 +1061,6 @@
       'btn-video': 'Intro-Video', 'btn-readme': 'README ansehen',
       'tag-offline': 'Offline', 'tag-offline-suffix': ' + opt. Teilen',
       'tag-langs': '10 Sprachen', 'tag-themes': '8 Pastell-Themes', 'tag-extras': 'Widgets · Erinnerungen · Diagramme',
-      'soon-badge': 'Coin-Aufladung · Demnächst', 'soon-title': 'Bezahlte Coin-Aufladung kommt bald',
-      'soon-desc': '<strong>Yomi Coin</strong> kannst du bereits kostenlos über den Bento-Anmeldebonus und das tägliche Check-in sammeln. Eine Aufladung mit echtem Geld folgt bald.',
       'sec-story-label': '— Geschichte',
       'sec-story-title': 'Klein, langsam, <em style="font-style:italic;color:var(--ink-soft);font-variation-settings:\'opsz\' 144,\'SOFT\' 100;">warm.</em>',
       'sec-story-sub': 'Drei Versprechen, die wir beim Bauen jeder App halten.',
@@ -1140,7 +1079,7 @@
       'headline': 'Petites apps pour<br/><em>capturer aujourd\'hui</em>.',
       'lede': 'yourboardlab crée de petites apps pour noter sans effort les moments du quotidien — mémos, dépenses, tâches, humeur, agenda — <span class="accent-underline">facilement</span>,<br/>et les partager comme un bento quand vous le souhaitez.',
       'btn-apps': 'Voir les apps', 'btn-contact': 'Contact',
-      'meta-apps': 'app en test', 'meta-langs': 'langues', 'meta-ads': 'pubs · tracking',
+      'meta-apps': 'app en test', 'meta-langs': 'langues', 'meta-ads': 'pubs',
       'meta-data': 'données <b>sur votre appareil</b> · partage optionnel',
       'sec-apps-label': '— Apps', 'sec-apps-title': 'Apps disponibles maintenant',
       'sec-apps-sub': 'Chaque app a un README détaillé sur GitHub.',
@@ -1151,8 +1090,6 @@
       'btn-video': 'Vidéo intro', 'btn-readme': 'Voir README',
       'tag-offline': 'Hors ligne', 'tag-offline-suffix': ' + partage optionnel',
       'tag-langs': '10 langues', 'tag-themes': '8 thèmes pastel', 'tag-extras': 'Widgets · Notifications · Graphiques',
-      'soon-badge': 'Recharge Coin · Bientôt', 'soon-title': 'La recharge de Coin en argent réel arrive bientôt',
-      'soon-desc': 'Vous pouvez déjà gagner des <strong>Yomi Coin</strong> gratuitement grâce au bonus d\'inscription Bento et au pointage quotidien. Une option de recharge en argent réel arrivera bientôt.',
       'sec-story-label': '— Histoire',
       'sec-story-title': 'Petit, lent, <em style="font-style:italic;color:var(--ink-soft);font-variation-settings:\'opsz\' 144,\'SOFT\' 100;">chaleureux.</em>',
       'sec-story-sub': 'Trois promesses que nous tenons en créant chaque app.',
