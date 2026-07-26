@@ -88,7 +88,7 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
 .modal-feedback.succ{background:rgba(157,201,160,.12);border:1px solid rgba(157,201,160,.25);color:var(--green);display:block}
 
 /* ── Main layout ── */
-.main-wrap{max-width:1280px;margin:0 auto;padding:28px 24px 80px}
+.main-wrap{max-width:1680px;margin:0 auto;padding:28px 24px 80px}
 .error-banner{background:rgba(244,100,100,.1);border:1px solid rgba(244,100,100,.2);border-radius:10px;padding:14px 18px;font-size:13px;color:var(--red);margin-bottom:20px;display:none}
 .error-banner.visible{display:block}
 .last-updated{text-align:right;font-family:var(--mono);font-size:10px;color:var(--ink-mute);letter-spacing:.06em;margin-bottom:6px}
@@ -171,6 +171,8 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
 .ev-table tbody tr:hover{background:rgba(255,255,255,.03)}
 .ev-table tbody td{padding:11px 20px;font-size:14px;color:var(--ink-soft);border-bottom:1px solid rgba(46,43,39,.5);white-space:nowrap;vertical-align:middle}
 .ev-table tbody tr:last-child td{border-bottom:none}
+.detail-table{min-width:1420px}
+.detail-table th:nth-child(2),.detail-table td:nth-child(2){min-width:240px}
 .loading-row td{text-align:center;padding:32px!important;color:var(--ink-mute);font-size:13px}
 
 @media(max-width:759px){.event-trend-layout,.action-trend-layout,.line-checkbox-layout,.line-checkbox-layout.geo,.line-checkbox-layout.session{height:auto}.event-trend-canvas{height:320px}.action-trend-canvas{height:280px}.line-checkbox-canvas{height:280px}.chart-checkbox-legend{max-height:120px;border-bottom:1px solid var(--line);padding:0 0 8px}}
@@ -410,7 +412,7 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
         <span id="account-signup-count">—</span>
       </div>
       <div class="table-scroll">
-        <table class="ev-table">
+        <table class="ev-table detail-table">
           <thead>
             <tr><th>가입 시각</th><th>도시락 ID</th><th>국가</th><th>지역</th><th>도시</th><th>최근 활동</th><th>최근 이벤트</th><th>기록 상태</th></tr>
           </thead>
@@ -457,7 +459,7 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
         <span id="attendance-user-count">—</span>
       </div>
       <div class="table-scroll">
-        <table class="ev-table">
+        <table class="ev-table detail-table">
           <thead>
             <tr><th>최근 출석</th><th>도시락 ID</th><th>출석 횟수</th><th>첫 출석</th><th>국가</th><th>지역</th><th>도시</th><th>기록 상태</th></tr>
           </thead>
