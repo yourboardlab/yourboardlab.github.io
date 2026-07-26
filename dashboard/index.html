@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Yomi Analytics v.1.5 · yourboardlab</title>
+<title>Yomi Analytics v.1.6 · yourboardlab</title>
 <meta name="robots" content="noindex, nofollow" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -309,7 +309,7 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
     <div class="header-left">
       <div class="header-mark"></div>
       <h1>Yomi Analytics</h1>
-      <span class="header-version">v.1.5</span>
+      <span class="header-version">v.1.6</span>
       <span class="header-badge">ADMIN</span>
     </div>
     <div class="header-right">
@@ -398,26 +398,24 @@ header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
         <div class="stat-sub">마지막 계정 생성 시각</div>
       </div>
     </div>
-    <div class="chart-grid-2">
-      <div class="chart-card">
-        <div class="chart-card-head">
-          <div class="chart-title">도시락 계정 가입 추이 <span id="account-signup-period">최근 30일</span></div>
-        </div>
-        <div class="chart-wrap-lg"><canvas id="account-signup-chart"></canvas></div>
+    <div class="chart-card">
+      <div class="chart-card-head">
+        <div class="chart-title">도시락 계정 가입 추이 <span id="account-signup-period">최근 30일</span></div>
       </div>
-      <div class="table-card">
-        <div class="table-head">
-          <h3>가입자 리스트</h3>
-          <span id="account-signup-count">—</span>
-        </div>
-        <div class="table-scroll">
-          <table class="ev-table">
-            <thead>
-              <tr><th>가입 시각</th><th>도시락 ID</th><th>익명 해시</th><th>기록 상태</th></tr>
-            </thead>
-            <tbody id="account-signup-tbody"><tr class="loading-row"><td colspan="4">로딩 중…</td></tr></tbody>
-          </table>
-        </div>
+      <div class="chart-wrap-lg"><canvas id="account-signup-chart"></canvas></div>
+    </div>
+    <div class="table-card" style="margin-top:16px">
+      <div class="table-head">
+        <h3>가입자 리스트</h3>
+        <span id="account-signup-count">—</span>
+      </div>
+      <div class="table-scroll">
+        <table class="ev-table">
+          <thead>
+            <tr><th>가입 시각</th><th>도시락 ID</th><th>국가</th><th>지역</th><th>도시</th><th>최근 활동</th><th>최근 이벤트</th><th>기록 상태</th></tr>
+          </thead>
+          <tbody id="account-signup-tbody"><tr class="loading-row"><td colspan="8">로딩 중…</td></tr></tbody>
+        </table>
       </div>
     </div>
 
@@ -1035,6 +1033,16 @@ const EV = {
 function ev(t){return EV[t]||{bg:'rgba(180,170,160,.2)',bd:'#B4AAA0',tx:'#B4AAA0'}}
 const countryNames = new Intl.DisplayNames(['ko'], { type: 'region' });
 function countryName(code) { try { return countryNames.of(code) || code; } catch { return code; } }
+const KR_REGION_NAMES = {
+  '11':'서울','26':'부산','27':'대구','28':'인천','29':'광주','30':'대전','31':'울산','36':'세종',
+  '41':'경기','42':'강원','43':'충북','44':'충남','45':'전북','46':'전남','47':'경북','48':'경남',
+  '50':'제주','51':'강원','52':'전북',
+};
+function regionName(country, code) {
+  if (!code) return '—';
+  if (country === 'KR' && KR_REGION_NAMES[code]) return `${KR_REGION_NAMES[code]} (${code})`;
+  return code;
+}
 function flagEmoji(code) {
   if (!code || code.length !== 2) return '';
   return String.fromCodePoint(...[...code.toUpperCase()].map(c => 0x1F1E6 + c.charCodeAt(0) - 65));
@@ -1854,18 +1862,26 @@ function renderAccountSignups(data){
 
   const tbody = document.getElementById('account-signup-tbody');
   if(!accounts.length){
-    tbody.innerHTML = '<tr class="loading-row"><td colspan="4">가입자 기록 없음</td></tr>';
+    tbody.innerHTML = '<tr class="loading-row"><td colspan="8">가입자 기록 없음</td></tr>';
     return;
   }
   tbody.innerHTML = accounts.map((account)=>{
     const created = account.createdAt ? new Date(account.createdAt).toLocaleString('ko-KR') : '—';
+    const lastActivity = account.lastActivityAt ? new Date(account.lastActivityAt).toLocaleString('ko-KR') : '—';
     const userId = account.userId || account.userMasked || '기존 로그: 해시만 보유';
-    const hash = account.userHash ? `${String(account.userHash).slice(0,12)}…` : '—';
-    const status = account.legacyHashOnly ? 'HASH_ONLY' : (account.source || 'ACCOUNT_CREATE');
+    const country = account.country ? `${flagEmoji(account.country)} ${countryName(account.country)}` : '—';
+    const region = regionName(account.country, account.region);
+    const city = account.city || '—';
+    const lastEvent = account.lastEventType ? evLabel(account.lastEventType) : '—';
+    const status = account.legacyHashOnly ? 'HASH_ONLY' : '등록 완료';
     return `<tr>
       <td>${escapeHtml(created)}</td>
       <td title="${escapeHtml(account.userMasked || account.userId || '')}">${escapeHtml(userId)}</td>
-      <td style="font-family:var(--mono);font-size:12px;color:var(--ink-mute)">${escapeHtml(hash)}</td>
+      <td>${escapeHtml(country)}</td>
+      <td>${escapeHtml(region)}</td>
+      <td>${escapeHtml(city)}</td>
+      <td>${escapeHtml(lastActivity)}</td>
+      <td>${escapeHtml(lastEvent)}</td>
       <td>${escapeHtml(status)}</td>
     </tr>`;
   }).join('');
